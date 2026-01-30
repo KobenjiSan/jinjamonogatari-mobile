@@ -1,0 +1,213 @@
+{
+  "shrines": [
+    {
+      "shrine_id": 1,
+      "inputted_id": "test-import-kyoto-001",
+      "lat": 35.0069,
+      "lon": 135.7742,
+      "slug": "kyo-test-inari-1",
+      "name_en": "Kyo Test Inari Shrine",
+      "name_jp": "京テスト稲荷神社",
+      "shrine_desc": "A small test shrine record near central Kyoto, used for development fixtures. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "address_raw": "Kyoto, Japan (test address)",
+      "prefecture": "Kyoto",
+      "city": "Kyoto",
+      "ward": "Shimogyo",
+      "locality": "Downtown",
+      "postal_code": "600-0000",
+      "country": "Japan",
+      "phone_number": null,
+      "email": null,
+      "website": null,
+      "img_id": 101,
+      "status": "published",
+      "created_at": "2026-01-27T18:40:00Z",
+      "updated_at": "2026-01-27T18:40:00Z",
+      "published_at": "2026-01-27T18:40:00Z"
+    },
+    {
+      "shrine_id": 2,
+      "inputted_id": "test-import-kyoto-002",
+      "lat": 35.0132,
+      "lon": 135.7609,
+      "slug": "kyo-test-tenmangu-2",
+      "name_en": "Kyo Test Tenmangu",
+      "name_jp": "京テスト天満宮",
+      "shrine_desc": "Second fixture shrine within walking distance of Kyoto center; includes tags, kami, and citations.",
+      "address_raw": "Kyoto, Japan (test address)",
+      "prefecture": "Kyoto",
+      "city": "Kyoto",
+      "ward": "Nakagyo",
+      "locality": "Downtown",
+      "postal_code": "604-0000",
+      "country": "Japan",
+      "phone_number": null,
+      "email": null,
+      "website": null,
+      "img_id": 102,
+      "status": "review",
+      "created_at": "2026-01-27T18:41:00Z",
+      "updated_at": "2026-01-27T18:41:00Z",
+      "published_at": null
+    }
+  ],
+  "tags": [
+    {
+      "tag_id": 1,
+      "title_en": "Inari",
+      "title_jp": "稲荷",
+      "created_at": "2026-01-27T18:39:00Z",
+      "updated_at": "2026-01-27T18:39:00Z"
+    },
+    {
+      "tag_id": 2,
+      "title_en": "Tenjin",
+      "title_jp": "天神",
+      "created_at": "2026-01-27T18:39:00Z",
+      "updated_at": "2026-01-27T18:39:00Z"
+    },
+    {
+      "tag_id": 3,
+      "title_en": "Downtown",
+      "title_jp": "市街地",
+      "created_at": "2026-01-27T18:39:00Z",
+      "updated_at": "2026-01-27T18:39:00Z"
+    }
+  ],
+  "shrine_tags": [
+    { "shrine_id": 1, "tag_id": 1, "created_at": "2026-01-27T18:40:10Z" },
+    { "shrine_id": 1, "tag_id": 3, "created_at": "2026-01-27T18:40:10Z" },
+    { "shrine_id": 2, "tag_id": 2, "created_at": "2026-01-27T18:41:10Z" },
+    { "shrine_id": 2, "tag_id": 3, "created_at": "2026-01-27T18:41:10Z" }
+  ],
+  "kami": [
+    {
+      "kami_id": 1,
+      "name_en": "Inari Ōkami",
+      "name_jp": "稲荷大神",
+      "img_id": null,
+      "desc": "A commonly referenced kami for Inari-type shrines (fixture text).",
+      "status": "published",
+      "created_at": "2026-01-27T18:38:00Z",
+      "updated_at": "2026-01-27T18:38:00Z",
+      "published_at": "2026-01-27T18:38:00Z"
+    },
+    {
+      "kami_id": 2,
+      "name_en": "Sugawara no Michizane",
+      "name_jp": "菅原道真",
+      "img_id": null,
+      "desc": "Often associated with Tenmangu shrines (fixture text).",
+      "status": "review",
+      "created_at": "2026-01-27T18:38:30Z",
+      "updated_at": "2026-01-27T18:38:30Z",
+      "published_at": null
+    }
+  ],
+  "shrine_kami": [
+    { "shrine_id": 1, "kami_id": 1, "created_at": "2026-01-27T18:40:20Z" },
+    { "shrine_id": 2, "kami_id": 2, "created_at": "2026-01-27T18:41:20Z" }
+  ],
+  "images": [
+    {
+      "img_id": 101,
+      "img_source": "https://media.istockphoto.com/id/515824638/photo/fushimi-inari-shrine-of-kyoto.jpg?s=2048x2048&w=is&k=20&c=TwPT62bno8foiF-09zoETsfC4zj6yPRJwnDeMXpZogw=",
+      "title": "Shrine 1 Hero (Test)",
+      "desc": "Placeholder hero image for Shrine 1.",
+      "cite_id": 1,
+      "created_at": "2026-01-27T18:39:30Z",
+      "updated_at": "2026-01-27T18:39:30Z"
+    },
+    {
+      "img_id": 102,
+      "img_source": "https://www.howto-osaka.com/en/wp/wp-content/uploads/2023/03/koyasan-4.jpg",
+      "title": "Shrine 2 Hero (Test)",
+      "desc": "Placeholder hero image for Shrine 2.",
+      "cite_id": 1,
+      "created_at": "2026-01-27T18:39:40Z",
+      "updated_at": "2026-01-27T18:39:40Z"
+    },
+    {
+      "img_id": 201,
+      "img_source": "https://example.com/test/shrine-1-gallery-1.jpg",
+      "title": "Shrine 1 Gallery (Test)",
+      "desc": "Gallery placeholder for Shrine 1.",
+      "cite_id": 2,
+      "created_at": "2026-01-27T18:39:50Z",
+      "updated_at": "2026-01-27T18:39:50Z"
+    }
+  ],
+  "shrine_gallery": [
+    { "shrine_id": 1, "img_id": 201, "created_at": "2026-01-27T18:40:30Z" }
+  ],
+  "history": [
+    {
+      "history_id": 1,
+      "shrine_id": 1,
+      "event_date": "1890-01-01",
+      "sort_order": 1,
+      "title": "Founded (Fixture)",
+      "information": "Fixture history event used for UI timelines and citation linking.",
+      "img_id": null,
+      "status": "published",
+      "created_at": "2026-01-27T18:42:00Z",
+      "updated_at": "2026-01-27T18:42:00Z",
+      "published_at": "2026-01-27T18:42:00Z"
+    },
+    {
+      "history_id": 2,
+      "shrine_id": 2,
+      "event_date": "1955-01-01",
+      "sort_order": 1,
+      "title": "Rebuilt (Fixture)",
+      "information": "Fixture event for testing ordering, status, and citations.",
+      "img_id": null,
+      "status": "review",
+      "created_at": "2026-01-27T18:42:30Z",
+      "updated_at": "2026-01-27T18:42:30Z",
+      "published_at": null
+    }
+  ],
+  "folklore": [
+    {
+      "folklore_id": 1,
+      "shrine_id": 1,
+      "title": "Fox Messenger Tale (Fixture)",
+      "story": "A short placeholder folklore story to test long-form content rendering and citations.",
+      "img_id": null,
+      "status": "published",
+      "created_at": "2026-01-27T18:43:00Z",
+      "updated_at": "2026-01-27T18:43:00Z",
+      "published_at": "2026-01-27T18:43:00Z"
+    }
+  ],
+  "citations": [
+    {
+      "cite_id": 1,
+      "title": "Test Reference: Kyoto Shrines Overview",
+      "author": "Fixture Author",
+      "url": "https://example.com/test/citation-1",
+      "year": 2020,
+      "notes": "Development-only citation entry."
+    },
+    {
+      "cite_id": 2,
+      "title": "Test Reference: Image Attribution Pack",
+      "author": "Fixture Author",
+      "url": "https://example.com/test/citation-2",
+      "year": 2021,
+      "notes": "Development-only image attribution entry."
+    }
+  ],
+  "history_citations": [
+    { "history_id": 1, "cite_id": 1, "created_at": "2026-01-27T18:42:10Z" },
+    { "history_id": 2, "cite_id": 1, "created_at": "2026-01-27T18:42:40Z" }
+  ],
+  "folklore_citations": [
+    { "folklore_id": 1, "cite_id": 1, "created_at": "2026-01-27T18:43:10Z" }
+  ],
+  "kami_citations": [
+    { "kami_id": 1, "cite_id": 1, "created_at": "2026-01-27T18:38:10Z" },
+    { "kami_id": 2, "cite_id": 1, "created_at": "2026-01-27T18:38:40Z" }
+  ]
+}
