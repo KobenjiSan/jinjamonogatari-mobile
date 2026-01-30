@@ -9,6 +9,8 @@ import { useMapFixtureData } from "./useMapFixtureData";
 const kyotoLat = 35.0116;
 const kyotoLng = 135.7681;
 
+const fakeUser = { lat: 35.0122, lon: 135.7702 };
+
 const MAPTILER_KEY = process.env.EXPO_PUBLIC_MAPTILER_KEY;
 
 if (!MAPTILER_KEY) {
@@ -37,6 +39,7 @@ export default function MapView() {
     center: { lat: kyotoLat, lng: kyotoLng },
     zoom: 14,
     markers,
+    userLocation: fakeUser,
   });
 
   const selectedShrine =

@@ -11,6 +11,7 @@ type BuildMapHtmlParams = {
   center: { lat: number; lng: number };
   zoom: number;
   markers: WebMapMarker[];
+  userLocation?: { lat: number; lon: number };
 };
 
 export function buildMapHtml({
@@ -18,10 +19,13 @@ export function buildMapHtml({
   center,
   zoom,
   markers,
+  userLocation,
 }: BuildMapHtmlParams): string {
   // Embed markers directly into the HTML as JSON for now (fastest path).
   // Later, we can push markers via postMessage using the bridge.
   const markersJson = JSON.stringify(markers);
+
+  
 
   return `<!DOCTYPE html>
 <html>
@@ -53,6 +57,7 @@ export function buildMapHtml({
 
       // --- Markers (from React Native) ---
       const markers = ${markersJson};
+      const userLocation = ${JSON.stringify(userLocation ?? null)};
 
       function sendToRN(payload) {
         if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
@@ -70,6 +75,20 @@ export function buildMapHtml({
           sendToRN({ type: "MARKER_PRESS", shrineId: m.id });
         });
       });
+
+      if (userLocation && typeof userLocation.lat === "number" && typeof userLocation.lon === "number") {
+        const dot = document.createElement("div");
+        dot.style.width = "12px";
+        dot.style.height = "12px";
+        dot.style.borderRadius = "999px";
+        dot.style.backgroundColor = "#2563EB";       // blue
+        dot.style.border = "2px solid #FFFFFF";      // white ring
+        dot.style.boxShadow = "0 0 0 6px rgba(37, 99, 235, 0.25)"; // soft aura
+
+        new maplibregl.Marker({ element: dot })
+          .setLngLat([userLocation.lon, userLocation.lat])
+          .addTo(map);
+      }
     </script>
   </body>
 </html>`;
