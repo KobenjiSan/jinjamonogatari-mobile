@@ -3,7 +3,7 @@ import { View, StyleSheet, Animated } from "react-native";
 import { WebView } from "react-native-webview";
 import { buildMapHtml } from "./mapWebView/htmlTemplate";
 import type { WebViewMessageEvent } from "react-native-webview";
-import MapPopupCard from "./components/MapPopupCard";
+import MapPopupCard from "./components/MapPopupCard/MapPopupCard";
 import { useMapFixtureData } from "./useMapFixtureData";
 
 const kyotoLat = 35.0116;
