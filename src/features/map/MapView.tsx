@@ -5,11 +5,9 @@ import { buildMapHtml } from "./mapWebView/htmlTemplate";
 import type { WebViewMessageEvent } from "react-native-webview";
 import MapPopupCard from "./components/MapPopupCard/MapPopupCard";
 import { useMapFixtureData } from "./useMapFixtureData";
+import { useUserLocation } from "../../shared/useUserLocation";
 
-const kyotoLat = 35.0116;
-const kyotoLng = 135.7681;
-
-const fakeUser = { lat: 35.0122, lon: 135.7702 };
+const DEFAULT_CENTER = { lat: 35.0116, lng: 135.7681 }; // Kyoto
 
 const MAPTILER_KEY = process.env.EXPO_PUBLIC_MAPTILER_KEY;
 
@@ -25,6 +23,11 @@ type MapWebViewEvent =
 
 export default function MapView() {
   const { markers, shrinesById } = useMapFixtureData();
+  const { location: userLocation } = useUserLocation();
+
+  const initialCenter = userLocation
+  ? { lat: userLocation.lat, lng: userLocation.lon }
+  : DEFAULT_CENTER;
 
   // Separate "content" from "visibility"
   const [selectedShrineId, setSelectedShrineId] = useState<number | null>(null);
@@ -36,10 +39,10 @@ export default function MapView() {
 
   const html = buildMapHtml({
     apiKey: mapTilerKey,
-    center: { lat: kyotoLat, lng: kyotoLng },
-    zoom: 14,
+    center: initialCenter,
+    zoom: 15,
     markers,
-    userLocation: fakeUser,
+    userLocation: userLocation ?? undefined,
   });
 
   const selectedShrine =
@@ -123,6 +126,7 @@ export default function MapView() {
     slideYAnim={slideY}
     backdropAnim={backdrop}
     shrine={selectedShrine}
+    userLocation={userLocation}
     onClose={closePopup}
   />
 )}

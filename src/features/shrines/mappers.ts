@@ -21,6 +21,8 @@
 export type Shrine = {
   shrine_id: number;
   slug: string;
+  lat?: number | null;
+  lon?: number | null;
   name_en?: string | null;
   name_jp?: string | null;
   shrine_desc?: string | null;

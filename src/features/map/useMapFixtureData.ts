@@ -30,12 +30,12 @@ export function useMapFixtureData(): {
   );
 
   const markers: MapMarker[] = previews
-    .filter((s: any) => typeof (s as any).lat === "number" && typeof (s as any).lon === "number")
-    .map((s: any) => ({
-      id: s.shrine_id,
-      lat: s.lat,
-      lon: s.lon,
-    }));
+  .filter((s) => typeof s.lat === "number" && typeof s.lon === "number")
+  .map((s) => ({
+    id: s.shrine_id,
+    lat: s.lat as number,
+    lon: s.lon as number,
+  }));
 
   return { markers, shrinesById };
 }

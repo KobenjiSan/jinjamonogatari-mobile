@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import ShrineCard from "./components/ShrineCard";
 import { useShrineList } from "./useShrineList";
+import { useUserLocation } from "../../shared/useUserLocation";
 
 const TOP_PADDING =
   Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
@@ -18,6 +19,7 @@ const H_PADDING = Math.min(24, width * 0.05);
 
 export default function ShrineListScreen() {
   const { shrines, isEmpty } = useShrineList();
+  const { location: userLocation } = useUserLocation();
 
   if (isEmpty) {
     return (
@@ -35,7 +37,9 @@ export default function ShrineListScreen() {
         <FlatList
           data={shrines}
           keyExtractor={(item) => String(item.shrine_id)}
-          renderItem={({ item }) => <ShrineCard shrine={item} />}
+          renderItem={({ item }) => (
+            <ShrineCard shrine={item} userLocation={userLocation} />
+          )}
           ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
         />
       </View>

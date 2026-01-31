@@ -12,22 +12,32 @@ import { FontAwesome, FontAwesome6 } from "@expo/vector-icons";
 import { font } from "../../../../shared/styles/typography";
 import TagPill, { Tag } from "../../../shrines/components/TagPill";
 import { usePressScale } from "./usePressScale";
+import type { LatLon } from "../../../../shared/distance";
+import { getDistanceLabel } from "../../../../shared/distance";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 type Props = {
   shrine: ShrinePreviewModel;
+  userLocation: LatLon | null;
   onClose: () => void;
   children?: ReactNode;
 };
 
-export default function MapPopupCardContent({ shrine, onClose, children }: Props) {
+export default function MapPopupCardContent({
+  shrine,
+  userLocation,
+  onClose,
+  children,
+}: Props) {
   const fallbackImage = require("../../../../../assets/images/placeholder.png");
 
   const bookmarkPress = usePressScale(0.9);
   const viewPress = usePressScale(0.95);
   const directionPress = usePressScale(0.95);
   const closePress = usePressScale(0.9);
+
+  const distanceLabel = getDistanceLabel(userLocation, shrine.lat, shrine.lon);
 
   return (
     <View>
@@ -77,7 +87,8 @@ export default function MapPopupCardContent({ shrine, onClose, children }: Props
           </Text>
         ) : null}
 
-        {Array.isArray((shrine as any).tags) && (shrine as any).tags.length > 0 ? (
+        {Array.isArray((shrine as any).tags) &&
+        (shrine as any).tags.length > 0 ? (
           <View style={styles.tagsRow}>
             {(shrine as any).tags.map((tag: Tag) => (
               <TagPill
@@ -103,14 +114,18 @@ export default function MapPopupCardContent({ shrine, onClose, children }: Props
         <AnimatedPressable
           {...directionPress.handlers}
           hitSlop={8}
-          onPress={() => console.log(`distance button clicked (${shrine.name_en})`)}
+          onPress={() =>
+            console.log(`distance button clicked (${shrine.name_en})`)
+          }
           style={[
             styles.distanceButton,
             { transform: [{ scale: directionPress.scale }] },
           ]}
         >
           <FontAwesome6 name="location-dot" size={18} color="#111" />
-          <Text style={styles.distanceButtonText}>85 m • Directions</Text>
+          <Text style={styles.distanceButtonText}>
+            {distanceLabel ? `${distanceLabel} • Directions` : "Directions"}
+          </Text>
         </AnimatedPressable>
 
         <AnimatedPressable

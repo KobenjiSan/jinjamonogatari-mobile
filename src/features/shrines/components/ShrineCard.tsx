@@ -11,8 +11,16 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { font } from "../../../shared/styles/typography";
 import { ShrineCardModel } from "../mappers";
+import type { LatLon } from "../../../shared/distance";
+import { getDistanceLabel } from "../../../shared/distance";
 
-const ShrineCard = ({ shrine }: { shrine: ShrineCardModel }) => {
+const ShrineCard = ({ 
+  shrine ,
+  userLocation,
+}: { 
+  shrine: ShrineCardModel;
+  userLocation: LatLon | null;
+}) => {
   const fallbackImage = require("../../../../assets/images/placeholder.png");
   const cardScale = useRef(new Animated.Value(1)).current;
   const bookmarkScale = useRef(new Animated.Value(1)).current;
@@ -28,6 +36,8 @@ const ShrineCard = ({ shrine }: { shrine: ShrineCardModel }) => {
   const cardHandlers = makePressHandlers(cardScale, 0.97);
   const bookmarkHandlers = makePressHandlers(bookmarkScale, 0.9);
   const viewHandlers = makePressHandlers(viewScale, 0.95);
+
+  const distanceLabel = getDistanceLabel(userLocation, shrine.lat, shrine.lon);
 
   return (
     <Pressable
@@ -75,7 +85,7 @@ const ShrineCard = ({ shrine }: { shrine: ShrineCardModel }) => {
             <View style={styles.locationRow}>
               <FontAwesome6 name="location-dot" size={18} color="#666" />
               <Text style={[styles.locationText, { fontFamily: font.title }]}>
-                85 m {/* ADD DISTANCE VARIABLE HERE LATER */}
+                {distanceLabel ?? "—"}
               </Text>
             </View>
             <Pressable

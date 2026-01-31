@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 import { View, StyleSheet, Pressable, Animated } from "react-native";
 import type { ShrinePreviewModel } from "../../../shrines/mappers";
 import MapPopupCardContent from "./MapPopupCardContent";
+import type { LatLon } from "../../../../shared/distance";
 
 type MapPopupCardProps = {
   isOpen: boolean;
@@ -11,6 +12,7 @@ type MapPopupCardProps = {
   backdropAnim: Animated.Value;
 
   shrine: ShrinePreviewModel;
+  userLocation: LatLon | null;
   onClose: () => void;
 
   children?: ReactNode;
@@ -22,6 +24,7 @@ export default function MapPopupCard({
   slideYAnim,
   backdropAnim,
   shrine,
+  userLocation,
   onClose,
   children,
 }: MapPopupCardProps) {
@@ -50,7 +53,7 @@ export default function MapPopupCard({
           },
         ]}
       >
-        <MapPopupCardContent shrine={shrine} onClose={onClose}>
+        <MapPopupCardContent shrine={shrine} userLocation={userLocation} onClose={onClose}>
           {children}
         </MapPopupCardContent>
       </Animated.View>
