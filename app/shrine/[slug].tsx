@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import ShrineScreen from "../..//src/features/shrines/ShrineScreen";
+import ShrineScreen from "../../src/features/shrines/shrineScreen/ShrineScreen";
 
 export default function ShrineRoute() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
