@@ -192,11 +192,13 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: 20,
+    lineHeight: 24,
     flex: 1,
   },
 
   jpName: {
     fontSize: 18,
+    lineHeight: 20,
     opacity: 0.85,
   },
 

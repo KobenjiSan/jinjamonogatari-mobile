@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingTop: TOP_PADDING,
+    paddingTop: TOP_PADDING + 8,
     paddingHorizontal: H_PADDING,
   },
 });

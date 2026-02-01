@@ -160,11 +160,13 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: 18,
+    lineHeight: 24,
     flex: 1,
   },
 
   jpName: {
     fontSize: 18,
+    lineHeight: 28,
     opacity: 0.85,
   },
 
@@ -172,6 +174,7 @@ const styles = StyleSheet.create({
     padding: 8,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
 
   viewButton: {
@@ -184,6 +187,7 @@ const styles = StyleSheet.create({
 
   viewButtonText: {
     fontSize: 14,
+    lineHeight: 22,
   },
 
   locationRow: {

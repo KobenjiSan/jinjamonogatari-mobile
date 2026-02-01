@@ -1,5 +1,5 @@
-import React, { useMemo, useRef } from "react";
-import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
+import React, { useMemo, useRef, useState, useCallback, useEffect } from "react";
+import { View, Text, StyleSheet, Image, useWindowDimensions } from "react-native";
 import { useShrineBySlug } from "./useShrineBySlug";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import TagPill from "../shrines/components/TagPill";
@@ -15,9 +15,41 @@ export default function ShrineScreen({ slug }: Props) {
   const shrine = useShrineBySlug(slug);
   const insets = useSafeAreaInsets();
 
-  // Bottom sheet snap points
-  const snapPoints = useMemo(() => ["46%", "99%"], []);
+  const [containerH, setContainerH] = useState(0);
+  const [heroH, setHeroH] = useState(0);
+  const [introH, setIntroH] = useState(0);
+
+  const onContainerLayout = useCallback((e: any) => {
+    setContainerH(Math.round(e.nativeEvent.layout.height));
+  }, []);
+
+  const onHeroLayout = useCallback((e: any) => {
+    setHeroH(Math.round(e.nativeEvent.layout.height));
+  }, []);
+
+  const onIntroLayout = useCallback((e: any) => {
+    setIntroH(Math.round(e.nativeEvent.layout.height));
+  }, []);
+
+  const snapPoints = useMemo(() => {
+    if (containerH === 0 || heroH === 0 || introH === 0) return ["45%", "99%"];
+
+    const aboveH = (insets.top + 8) + heroH + introH;
+    let collapsed = Math.round(containerH - aboveH);
+
+    collapsed = Math.max(120, Math.min(collapsed, Math.round(containerH * 0.85)));
+
+    const expanded = Math.round(containerH * 0.99);
+    return [collapsed, expanded];
+  }, [containerH, heroH, introH, insets.top]);
+
   const sheetRef = useRef<BottomSheet>(null);
+
+  useEffect(() => {
+    if (containerH && heroH && introH) {
+      sheetRef.current?.snapToIndex(0);
+    }
+  }, [containerH, heroH, introH]);
 
   if (!shrine) {
     return (
@@ -30,11 +62,10 @@ export default function ShrineScreen({ slug }: Props) {
   const fallbackImage = require("../../../assets/images/placeholder.png");
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onLayout={onContainerLayout}>
       {/* --- Background Layer (behind sheet) --- */}
       <View style={{ backgroundColor: "#fff", height: insets.top + 8 }} />
-      <View style={styles.heroWrap}>
-
+      <View style={styles.heroWrap} onLayout={onHeroLayout}>
         {/* TODO: Back Button Top Left Corner */}
 
         <Image
@@ -60,7 +91,7 @@ export default function ShrineScreen({ slug }: Props) {
         />
       </View>
 
-      <View style={styles.introOverlay}>
+      <View style={styles.introOverlay} onLayout={onIntroLayout}>
         {/* Title */}
         <Text
           style={[styles.title, { fontFamily: font.title }]}
@@ -78,10 +109,9 @@ export default function ShrineScreen({ slug }: Props) {
 
         <View>
           {/* Tags */}
-          {Array.isArray((shrine as any).tags) &&
-          (shrine as any).tags.length > 0 ? (
+          {shrine.tags?.length > 0 ? (
             <View style={styles.tagsRow}>
-              {(shrine as any).tags.map((tag: any) => (
+              {shrine.tags.map((tag) => (
                 <TagPill
                   key={tag.tag_id}
                   tag={tag}
@@ -106,13 +136,9 @@ export default function ShrineScreen({ slug }: Props) {
         handleIndicatorStyle={styles.handleIndicator}
       >
         <BottomSheetScrollView contentContainerStyle={styles.sheetContent}>
-          <View>
-            {/* TODO: Tab Group */}
-          </View>
+          <View>{/* TODO: Tab Group */}</View>
 
-          <View>
-            {/* TODO: Navigation Group */}
-          </View>
+          <View>{/* TODO: Navigation Group */}</View>
 
           {/* Description */}
           <View style={styles.card}>
@@ -153,17 +179,19 @@ const styles = StyleSheet.create({
   title: {
     color: "#fff",
     fontSize: 22,
+    lineHeight: 24,
   },
   jpName: {
     color: "#fff",
     fontSize: 22,
+    lineHeight: 28,
   },
   topFade: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    height: 65, 
+    height: 65,
   },
   bottomFade: {
     position: "absolute",
