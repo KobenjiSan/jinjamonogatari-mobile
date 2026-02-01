@@ -14,6 +14,7 @@ import TagPill, { Tag } from "../../../shrines/components/TagPill";
 import { usePressScale } from "./usePressScale";
 import type { LatLon } from "../../../../shared/distance";
 import { getDistanceLabel } from "../../../../shared/distance";
+import { useRouter } from "expo-router";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -31,6 +32,8 @@ export default function MapPopupCardContent({
   children,
 }: Props) {
   const fallbackImage = require("../../../../../assets/images/placeholder.png");
+
+  const router = useRouter();
 
   const bookmarkPress = usePressScale(0.9);
   const viewPress = usePressScale(0.95);
@@ -131,7 +134,7 @@ export default function MapPopupCardContent({
         <AnimatedPressable
           {...viewPress.handlers}
           hitSlop={8}
-          onPress={() => console.log(`Viewed Shrine ${shrine.name_en}`)}
+          onPress={() => router.push({ pathname: "/shrine/[slug]", params: { slug: shrine.slug } })}
           style={[
             styles.viewButton,
             { transform: [{ scale: viewPress.scale }] },

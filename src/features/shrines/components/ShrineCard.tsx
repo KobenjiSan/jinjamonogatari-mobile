@@ -13,15 +13,19 @@ import { font } from "../../../shared/styles/typography";
 import { ShrineCardModel } from "../mappers";
 import type { LatLon } from "../../../shared/distance";
 import { getDistanceLabel } from "../../../shared/distance";
+import { useRouter } from "expo-router";
 
-const ShrineCard = ({ 
-  shrine ,
+const ShrineCard = ({
+  shrine,
   userLocation,
-}: { 
+}: {
   shrine: ShrineCardModel;
   userLocation: LatLon | null;
 }) => {
   const fallbackImage = require("../../../../assets/images/placeholder.png");
+
+  const router = useRouter();
+
   const cardScale = useRef(new Animated.Value(1)).current;
   const bookmarkScale = useRef(new Animated.Value(1)).current;
   const viewScale = useRef(new Animated.Value(1)).current;
@@ -42,7 +46,12 @@ const ShrineCard = ({
   return (
     <Pressable
       {...cardHandlers}
-      onPress={() => console.log(`Shrine ${shrine.name_en} Card Clicked`)}
+      onPress={() =>
+        router.push({
+          pathname: "/shrine/[slug]",
+          params: { slug: shrine.slug },
+        })
+      }
     >
       <Animated.View style={{ transform: [{ scale: cardScale }] }}>
         <View style={styles.card}>
@@ -91,7 +100,12 @@ const ShrineCard = ({
             <Pressable
               {...viewHandlers}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              onPress={() => console.log(`Viewed Shrine ${shrine.name_en}`)}
+              onPress={() =>
+                router.push({
+                  pathname: "/shrine/[slug]",
+                  params: { slug: shrine.slug },
+                })
+              }
             >
               <Animated.View style={{ transform: [{ scale: viewScale }] }}>
                 <View style={styles.viewButton}>
