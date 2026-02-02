@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Animated } from "react-native";
 import { WebView } from "react-native-webview";
-import { buildMapHtml } from "./mapWebView/htmlTemplate";
 import type { WebViewMessageEvent } from "react-native-webview";
+
+import { buildMapHtml } from "./mapWebView/htmlTemplate";
 import MapPopupCard from "./components/MapPopupCard/MapPopupCard";
 import { useMapFixtureData } from "./useMapFixtureData";
 import { useUserLocation } from "../../shared/useUserLocation";
+import { useMarkerIcons } from "./useMarkerIcons";
 
 const DEFAULT_CENTER = { lat: 35.0116, lng: 135.7681 }; // Kyoto
 
@@ -22,35 +24,42 @@ type MapWebViewEvent =
   | { type: string; [key: string]: any };
 
 export default function MapView() {
+  // Data hooks
   const { markers, shrinesById } = useMapFixtureData();
   const { location: userLocation } = useUserLocation();
+  const markerIcons = useMarkerIcons();
 
-  const initialCenter = userLocation
-  ? { lat: userLocation.lat, lng: userLocation.lon }
-  : DEFAULT_CENTER;
-
-  // Separate "content" from "visibility"
+  // Selection + popup state
   const [selectedShrineId, setSelectedShrineId] = useState<number | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
+  // Anim values (must always run, no early returns above this)
   const slideY = useRef(new Animated.Value(80)).current;
   const fade = useRef(new Animated.Value(0)).current;
   const backdrop = useRef(new Animated.Value(0)).current;
+  const webRef = useRef<WebView>(null);
 
-  const html = buildMapHtml({
-    apiKey: mapTilerKey,
-    center: initialCenter,
-    zoom: 15,
-    markers,
-    userLocation: userLocation ?? undefined,
-  });
+  const initialCenter = userLocation
+    ? { lat: userLocation.lat, lng: userLocation.lon }
+    : DEFAULT_CENTER;
+
+  // Build HTML only when icons are ready (prevents hook-order bugs)
+  const html = markerIcons
+    ? buildMapHtml({
+        apiKey: mapTilerKey,
+        center: initialCenter,
+        zoom: 15,
+        markers,
+        userLocation: userLocation ?? undefined,
+        markerIcons,
+      })
+    : null;
 
   const selectedShrine =
-  selectedShrineId != null ? shrinesById.get(selectedShrineId) ?? null : null;
+    selectedShrineId != null ? shrinesById.get(selectedShrineId) ?? null : null;
 
   // Animate whenever open/close changes
   useEffect(() => {
-    // Stop any in-flight animations so we don't get stuck mid-state
     slideY.stopAnimation();
     fade.stopAnimation();
     backdrop.stopAnimation();
@@ -72,7 +81,6 @@ export default function MapView() {
         useNativeDriver: true,
       }),
     ]).start(({ finished }) => {
-      // After closing animation completes, clear the selected shrine
       if (finished && !isOpen) {
         setSelectedShrineId(null);
       }
@@ -80,14 +88,16 @@ export default function MapView() {
   }, [isOpen, fade, slideY, backdrop]);
 
   const openPopup = useCallback((shrineId: number) => {
-    // Set content first, then open (so the card has a title immediately)
     setSelectedShrineId(shrineId);
     setIsOpen(true);
   }, []);
 
   const closePopup = useCallback(() => {
-    // Close first (animate out). Content clears after animation completes.
     setIsOpen(false);
+
+    webRef.current?.postMessage(
+      JSON.stringify({ type: "CLEAR_SELECTED_SHRINE" })
+    );
   }, []);
 
   const onMessage = useCallback(
@@ -102,34 +112,39 @@ export default function MapView() {
         console.log("WebView message parse failed:", err);
       }
     },
-    [openPopup],
+    [openPopup]
   );
 
   // Only mount overlay layers while open OR while closing animation is running
-  // (selectedShrineId stays until close animation finishes)
   const shouldRenderOverlay = selectedShrineId != null || isOpen;
 
   return (
     <View style={styles.container}>
-      <WebView
-        originWhitelist={["*"]}
-        source={{ html }}
-        javaScriptEnabled
-        domStorageEnabled
-        onMessage={onMessage}
-      />
+      {html ? (
+        <WebView
+          ref={webRef}
+          originWhitelist={["*"]}
+          source={{ html }}
+          javaScriptEnabled
+          domStorageEnabled
+          onMessage={onMessage}
+        />
+      ) : (
+        // Placeholder while marker icons load
+        <View style={styles.container} />
+      )}
 
       {selectedShrine && (
-  <MapPopupCard
-    isOpen={shouldRenderOverlay}
-    fadeAnim={fade}
-    slideYAnim={slideY}
-    backdropAnim={backdrop}
-    shrine={selectedShrine}
-    userLocation={userLocation}
-    onClose={closePopup}
-  />
-)}
+        <MapPopupCard
+          isOpen={shouldRenderOverlay}
+          fadeAnim={fade}
+          slideYAnim={slideY}
+          backdropAnim={backdrop}
+          shrine={selectedShrine}
+          userLocation={userLocation}
+          onClose={closePopup}
+        />
+      )}
     </View>
   );
 }
