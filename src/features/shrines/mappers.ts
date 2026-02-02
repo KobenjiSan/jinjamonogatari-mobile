@@ -26,6 +26,16 @@ export type Shrine = {
   name_en?: string | null;
   name_jp?: string | null;
   shrine_desc?: string | null;
+  address_raw?: string | null;
+  prefecture?: string | null;
+  city?: string | null;
+  ward?: string | null;
+  locality?: string | null;
+  postal_code?: string | null;
+  country?: string | null;
+  phone_number?: string | null;
+  email?: string | null;
+  website?: string | null;
   img_id?: number | null;
 };
 
