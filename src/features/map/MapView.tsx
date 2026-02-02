@@ -8,6 +8,7 @@ import MapPopupCard from "./components/MapPopupCard/MapPopupCard";
 import { useMapFixtureData } from "./useMapFixtureData";
 import { useUserLocation } from "../../shared/useUserLocation";
 import { useMarkerIcons } from "./useMarkerIcons";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 const DEFAULT_CENTER = { lat: 35.0116, lng: 135.7681 }; // Kyoto
 
@@ -24,6 +25,8 @@ type MapWebViewEvent =
   | { type: string; [key: string]: any };
 
 export default function MapView() {
+  const tabBarHeight = useBottomTabBarHeight();
+
   // Data hooks
   const { markers, shrinesById } = useMapFixtureData();
   const { location: userLocation } = useUserLocation();
@@ -143,6 +146,7 @@ export default function MapView() {
           shrine={selectedShrine}
           userLocation={userLocation}
           onClose={closePopup}
+          bottomOffset={tabBarHeight}
         />
       )}
     </View>

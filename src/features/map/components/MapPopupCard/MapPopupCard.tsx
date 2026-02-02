@@ -15,6 +15,8 @@ type MapPopupCardProps = {
   userLocation: LatLon | null;
   onClose: () => void;
 
+  bottomOffset?: number;
+
   children?: ReactNode;
 };
 
@@ -26,6 +28,7 @@ export default function MapPopupCard({
   shrine,
   userLocation,
   onClose,
+  bottomOffset = 0,
   children,
 }: MapPopupCardProps) {
   if (!isOpen) return null;
@@ -50,6 +53,7 @@ export default function MapPopupCard({
           {
             opacity: fadeAnim,
             transform: [{ translateY: slideYAnim }],
+            bottom: 16 + bottomOffset,
           },
         ]}
       >
@@ -68,7 +72,6 @@ const styles = StyleSheet.create({
 
   card: {
     position: "absolute",
-    bottom: 16,
     left: 16,
     right: 16,
 
