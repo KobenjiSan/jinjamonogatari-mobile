@@ -6,6 +6,7 @@ import {
   Text,
   Pressable,
   Animated,
+  ScrollView,
 } from "react-native";
 import type { ShrinePreviewModel } from "../../../shrines/mappers";
 import { FontAwesome, FontAwesome6 } from "@expo/vector-icons";
@@ -92,7 +93,12 @@ export default function MapPopupCardContent({
 
         {Array.isArray((shrine as any).tags) &&
         (shrine as any).tags.length > 0 ? (
-          <View style={styles.tagsRow}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.tagsRow}
+            style={styles.tagsScroll}
+          >
             {(shrine as any).tags.map((tag: Tag) => (
               <TagPill
                 key={tag.tag_id}
@@ -101,7 +107,7 @@ export default function MapPopupCardContent({
                 textStyle={styles.tagPillText}
               />
             ))}
-          </View>
+          </ScrollView>
         ) : null}
 
         <Text
@@ -134,7 +140,12 @@ export default function MapPopupCardContent({
         <AnimatedPressable
           {...viewPress.handlers}
           hitSlop={8}
-          onPress={() => router.push({ pathname: "/shrine/[slug]", params: { slug: shrine.slug } })}
+          onPress={() =>
+            router.push({
+              pathname: "/shrine/[slug]",
+              params: { slug: shrine.slug },
+            })
+          }
           style={[
             styles.viewButton,
             { transform: [{ scale: viewPress.scale }] },
@@ -202,22 +213,26 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
 
+  tagsScroll: {
+    overflow: "hidden",
+  },
+
   tagsRow: {
     flexDirection: "row",
     flexWrap: "nowrap",
-    overflow: "hidden",
     gap: 6,
     marginTop: 12,
     marginBottom: 6,
+    paddingRight: 6,
   },
 
   tagPill: {
-    flexShrink: 1,
-    maxWidth: "40%",
+    flexShrink: 0,
+    maxWidth: undefined,
   },
 
   tagPillText: {
-    flexShrink: 1,
+    flexShrink: 0,
   },
 
   desc: {
