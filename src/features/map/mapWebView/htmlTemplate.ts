@@ -73,7 +73,8 @@ export function buildMapHtml({
 
       const map = new maplibregl.Map({
         container: "map",
-        style: "https://api.maptiler.com/maps/streets-v2/style.json?key=${apiKey}",
+        // style: "https://api.maptiler.com/maps/dataviz/style.json?key=${apiKey}",
+        style: "https://api.maptiler.com/maps/019c2031-d766-7298-bdc2-c88076ef2f99/style.json?key=${apiKey}",
         center: [${center.lng}, ${center.lat}],
         zoom: ${zoom}
       });
