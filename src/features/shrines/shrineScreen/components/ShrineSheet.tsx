@@ -9,13 +9,13 @@ import ShrineHistoryTab from "../tabs/ShrineHistoryTab";
 import ShrineFolkloreTab from "../tabs/ShrineFolkloreTab";
 import ShrineGalleryTab from "../tabs/ShrineGalleryTab";
 
-import type { ShrinePreviewModel } from "../../mappers";
+import type { ShrineDetailModel } from "../../mappers";
 
 const TABS = ["Info", "Kami", "History", "Folklore", "Gallery"] as const;
 export type Tab = (typeof TABS)[number];
 
 type Props = {
-  shrine: ShrinePreviewModel;
+  shrine: ShrineDetailModel;
   sheetRef: React.RefObject<BottomSheet | null>;
   snapPoints: (string | number)[];
   activeTab: Tab;
@@ -50,9 +50,6 @@ export default function ShrineSheet({
         {activeTab === "History" && <ShrineHistoryTab shrine={shrine} />}
         {activeTab === "Folklore" && <ShrineFolkloreTab shrine={shrine} />}
         {activeTab === "Gallery" && <ShrineGalleryTab shrine={shrine} />}
-
-        {/* temp spacing while building */}
-        <View style={{ height: 800 }} />
       </BottomSheetScrollView>
     </BottomSheet>
   );

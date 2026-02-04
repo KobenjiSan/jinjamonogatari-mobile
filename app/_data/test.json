@@ -104,8 +104,8 @@
       "kami_id": 1,
       "name_en": "Inari Ōkami",
       "name_jp": "稲荷大神",
-      "img_id": null,
-      "desc": "A commonly referenced kami for Inari-type shrines (fixture text).",
+      "img_id": 201,
+      "desc": "A commonly referenced kami for Inari-type shrines (fixture text). Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
       "status": "published",
       "created_at": "2026-01-27T18:38:00Z",
       "updated_at": "2026-01-27T18:38:00Z",
@@ -121,11 +121,23 @@
       "created_at": "2026-01-27T18:38:30Z",
       "updated_at": "2026-01-27T18:38:30Z",
       "published_at": null
+    },
+    {
+      "kami_id": 3,
+      "name_en": "Uka-no-Mitama no Kami",
+      "name_jp": "宇迦之御魂神",
+      "img_id": null,
+      "desc": "A deity closely associated with agriculture, fertility, and prosperity, frequently linked to Inari worship. Uka-no-Mitama is venerated as a provider of abundant harvests and business success, and in many traditions is understood as one of the core identities behind Inari. Over centuries, local beliefs, syncretic practices, and regional folklore have shaped how this kami is perceived, sometimes merging attributes with other food and grain deities. This longer fixture text is intended to test extended content rendering, scrolling behavior, and layout stability in the CMS and mobile views.",
+      "status": "published",
+      "created_at": "2026-01-27T18:38:50Z",
+      "updated_at": "2026-01-27T18:38:50Z",
+      "published_at": "2026-01-27T18:38:50Z"
     }
   ],
   "shrine_kami": [
     { "shrine_id": 1, "kami_id": 1, "created_at": "2026-01-27T18:40:20Z" },
-    { "shrine_id": 2, "kami_id": 2, "created_at": "2026-01-27T18:41:20Z" }
+    { "shrine_id": 2, "kami_id": 2, "created_at": "2026-01-27T18:41:20Z" },
+    { "shrine_id": 1, "kami_id": 3, "created_at": "2026-01-27T18:40:25Z" }
   ],
   "images": [
     {
@@ -148,9 +160,9 @@
     },
     {
       "img_id": 201,
-      "img_source": "https://example.com/test/shrine-1-gallery-1.jpg",
-      "title": "Shrine 1 Gallery (Test)",
-      "desc": "Gallery placeholder for Shrine 1.",
+      "img_source": "https://japanhousela.com/wp-content/uploads/2025/02/Sengen-sama.jpg",
+      "title": "Inari Okami test",
+      "desc": "Image of Inari Okami",
       "cite_id": 2,
       "created_at": "2026-01-27T18:39:50Z",
       "updated_at": "2026-01-27T18:39:50Z"
@@ -227,6 +239,8 @@
   ],
   "kami_citations": [
     { "kami_id": 1, "cite_id": 1, "created_at": "2026-01-27T18:38:10Z" },
-    { "kami_id": 2, "cite_id": 1, "created_at": "2026-01-27T18:38:40Z" }
+    { "kami_id": 2, "cite_id": 1, "created_at": "2026-01-27T18:38:40Z" },
+    { "kami_id": 1, "cite_id": 2, "created_at": "2026-01-27T18:38:10Z" },
+    { "kami_id": 3, "cite_id": 1, "created_at": "2026-01-27T18:38:10Z" }
   ]
 }

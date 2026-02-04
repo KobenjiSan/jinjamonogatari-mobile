@@ -1,14 +1,14 @@
 import React, { useRef, useMemo } from "react";
 import { View, Text, StyleSheet, Pressable, Animated } from "react-native";
 import { font } from "../../../../shared/styles/typography";
-import type { ShrinePreviewModel } from "../../mappers";
+import type { ShrineDetailModel } from "../../mappers";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { getDistanceLabel } from "../../../../shared/distance";
 import { useUserLocation } from "../../../../shared/useUserLocation";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 type Props = {
-  shrine: ShrinePreviewModel;
+  shrine: ShrineDetailModel;
 };
 
 function InfoRow({
