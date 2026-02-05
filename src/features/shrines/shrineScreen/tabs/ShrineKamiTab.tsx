@@ -30,11 +30,14 @@ export default function ShrineKamiTab({ shrine }: Props) {
   return (
     <View style={styles.container}>
       {kami.length === 0 ? (
-        <View style={styles.card}>
-          <Text style={styles.emptyText}>
-            No kami have been linked to this shrine yet.
-          </Text>
-        </View>
+        <>
+          <View style={styles.card}>
+            <Text style={styles.emptyText}>
+              No kami have been linked to this shrine yet.
+            </Text>
+          </View>
+          <View style={{height: 600}}></View>
+        </>
       ) : (
         <View>
           {kami.map((k) => (
@@ -176,10 +179,10 @@ const styles = StyleSheet.create({
   },
 
   emptyText: {
-    marginTop: 10,
     fontSize: 14,
     opacity: 0.7,
     lineHeight: 20,
+    textAlign: "center"
   },
 
   kamiTitle: {

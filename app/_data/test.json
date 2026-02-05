@@ -49,6 +49,31 @@
       "created_at": "2026-01-27T18:41:00Z",
       "updated_at": "2026-01-27T18:41:00Z",
       "published_at": null
+    },
+    {
+      "shrine_id": 3,
+      "inputted_id": "test-import-kyoto-003",
+      "lat": 35.0131,
+      "lon": 135.7675,
+      "slug": "kyo-test-tenmangu-3",
+      "name_en": "Kyo Test shrine things",
+      "name_jp": "京テスト天満宮",
+      "shrine_desc": "3rd fixture shrine within walking distance of Kyoto center; includes tags, kami, and citations.",
+      "address_raw": "Kyoto, Japan (test address)",
+      "prefecture": "Kyoto",
+      "city": "Kyoto",
+      "ward": "Nakagyo",
+      "locality": "Downtown",
+      "postal_code": "604-0000",
+      "country": "Japan",
+      "phone_number": null,
+      "email": null,
+      "website": null,
+      "img_id": 202,
+      "status": "review",
+      "created_at": "2026-01-27T18:41:00Z",
+      "updated_at": "2026-01-27T18:41:00Z",
+      "published_at": null
     }
   ],
   "tags": [
@@ -97,7 +122,9 @@
     { "shrine_id": 1, "tag_id": 5, "created_at": "2026-01-27T18:40:10Z" },
 
     { "shrine_id": 2, "tag_id": 2, "created_at": "2026-01-27T18:41:10Z" },
-    { "shrine_id": 2, "tag_id": 3, "created_at": "2026-01-27T18:41:10Z" }
+    { "shrine_id": 2, "tag_id": 3, "created_at": "2026-01-27T18:41:10Z" },
+
+    { "shrine_id": 3, "tag_id": 2, "created_at": "2026-01-27T18:41:10Z" }
   ],
   "kami": [
     {
@@ -166,6 +193,15 @@
       "cite_id": 2,
       "created_at": "2026-01-27T18:39:50Z",
       "updated_at": "2026-01-27T18:39:50Z"
+    },
+    {
+      "img_id": 202,
+      "img_source": "https://images.squarespace-cdn.com/content/v1/6683b1f0c2de43611580eee6/1728974165706-O2AL95S7KY0WP49D8TWE/Japan-shrine-qTPCqxCR-LA.jpg",
+      "title": "random history test img",
+      "desc": "Image of shrine",
+      "cite_id": 2,
+      "created_at": "2026-01-27T18:39:50Z",
+      "updated_at": "2026-01-27T18:39:50Z"
     }
   ],
   "shrine_gallery": [
@@ -186,6 +222,32 @@
       "published_at": "2026-01-27T18:42:00Z"
     },
     {
+      "history_id": 3,
+      "shrine_id": 1,
+      "event_date": "1923-09-01",
+      "sort_order": 2,
+      "title": "Damage During Regional Disaster (Fixture)",
+      "information": "Fixture event representing partial damage and later repairs after a regional disaster.",
+      "img_id": 102,
+      "status": "published",
+      "created_at": "2026-01-27T19:00:00Z",
+      "updated_at": "2026-01-27T19:00:00Z",
+      "published_at": "2026-01-27T19:00:00Z"
+    },
+    {
+      "history_id": 4,
+      "shrine_id": 1,
+      "event_date": "1978-01-01",
+      "sort_order": 3,
+      "title": "Major Renovation (Fixture)",
+      "information": "Fixture renovation event used to test longer timelines and multiple citations per shrine.",
+      "img_id": 202,
+      "status": "review",
+      "created_at": "2026-01-27T19:10:00Z",
+      "updated_at": "2026-01-27T19:10:00Z",
+      "published_at": null
+    },
+    {
       "history_id": 2,
       "shrine_id": 2,
       "event_date": "1955-01-01",
@@ -197,6 +259,32 @@
       "created_at": "2026-01-27T18:42:30Z",
       "updated_at": "2026-01-27T18:42:30Z",
       "published_at": null
+    },
+    {
+      "history_id": 5,
+      "shrine_id": 2,
+      "event_date": "1989-01-01",
+      "sort_order": 2,
+      "title": "Precinct Expansion (Fixture)",
+      "information": "Fixture event representing expansion of shrine grounds and facilities.",
+      "img_id": 202,
+      "status": "published",
+      "created_at": "2026-01-27T19:20:00Z",
+      "updated_at": "2026-01-27T19:20:00Z",
+      "published_at": "2026-01-27T19:20:00Z"
+    },
+    {
+      "history_id": 6,
+      "shrine_id": 2,
+      "event_date": "2011-03-11",
+      "sort_order": 3,
+      "title": "Community Restoration Efforts (Fixture)",
+      "information": "Fixture event noting post-disaster community-led restoration and support activities.",
+      "img_id": null,
+      "status": "published",
+      "created_at": "2026-01-27T19:30:00Z",
+      "updated_at": "2026-01-27T19:30:00Z",
+      "published_at": "2026-01-27T19:30:00Z"
     }
   ],
   "folklore": [
@@ -232,7 +320,11 @@
   ],
   "history_citations": [
     { "history_id": 1, "cite_id": 1, "created_at": "2026-01-27T18:42:10Z" },
-    { "history_id": 2, "cite_id": 1, "created_at": "2026-01-27T18:42:40Z" }
+    { "history_id": 2, "cite_id": 1, "created_at": "2026-01-27T18:42:40Z" },
+    { "history_id": 3, "cite_id": 2, "created_at": "2026-01-27T19:00:10Z" },
+    { "history_id": 4, "cite_id": 1, "created_at": "2026-01-27T19:10:10Z" },
+    { "history_id": 5, "cite_id": 2, "created_at": "2026-01-27T19:20:10Z" },
+    { "history_id": 6, "cite_id": 1, "created_at": "2026-01-27T19:30:10Z" }
   ],
   "folklore_citations": [
     { "folklore_id": 1, "cite_id": 1, "created_at": "2026-01-27T18:43:10Z" }
