@@ -155,6 +155,30 @@ export type HistoryModel = History & {
 };
 
 /* ============================================================================
+ * Folklore (Stories with Citations)
+ * ============================================================================
+ */
+
+export type Folklore = {
+  folklore_id: number;
+  shrine_id: number;
+  title: string;
+  story: string;
+  img_id?: number | null;
+};
+
+export type FolkloreCitation = {
+  folklore_id: number;
+  cite_id: number;
+};
+
+export type FolkloreModel = Folklore & {
+  imageUrl?: string | null;
+  imageCitation: Citation | null;
+  citations: Citation[];
+};
+
+/* ============================================================================
  * View Models (UI-Facing Shapes)
  * ============================================================================
  */
@@ -170,6 +194,7 @@ export type ShrinePreviewModel = ShrineCardModel & {
 export type ShrineDetailModel = ShrinePreviewModel & {
   kami: KamiModel[];
   history: HistoryModel[];
+  folklore: FolkloreModel[];
 };
 
 /* ============================================================================
@@ -210,9 +235,7 @@ export function toShrinePreviewModels(
     images.map((img) => [img.img_id, img.img_source]),
   );
 
-  const tagsById = new Map<number, Tag>(
-    tags.map((t) => [t.tag_id, t]),
-  );
+  const tagsById = new Map<number, Tag>(tags.map((t) => [t.tag_id, t]));
 
   // shrine_id → [tag_id...]
   const tagIdsByShrineId = new Map<number, number[]>();
@@ -256,6 +279,8 @@ export function toShrineDetailModels(
   kamiCitations: KamiCitation[],
   history: History[],
   historyCitations: HistoryCitation[],
+  folklore: Folklore[],
+  folkloreCitations: FolkloreCitation[],
 ): ShrineDetailModel[] {
   /**
    * Pre-index all lookup tables to avoid nested loops.
@@ -267,9 +292,7 @@ export function toShrineDetailModels(
     images.map((img) => [img.img_id, img]),
   );
 
-  const tagsById = new Map<number, Tag>(
-    tags.map((t) => [t.tag_id, t]),
-  );
+  const tagsById = new Map<number, Tag>(tags.map((t) => [t.tag_id, t]));
 
   const citationsById = new Map<number, Citation>(
     citations.map((c) => [c.cite_id, c]),
@@ -284,9 +307,7 @@ export function toShrineDetailModels(
   }
 
   // kami_id → Kami
-  const kamiById = new Map<number, Kami>(
-    kami.map((k) => [k.kami_id, k]),
-  );
+  const kamiById = new Map<number, Kami>(kami.map((k) => [k.kami_id, k]));
 
   // shrine_id → [kami_id...]
   const kamiIdsByShrineId = new Map<number, number[]>();
@@ -318,6 +339,22 @@ export function toShrineDetailModels(
     const arr = citeIdsByHistoryId.get(hc.history_id) ?? [];
     arr.push(hc.cite_id);
     citeIdsByHistoryId.set(hc.history_id, arr);
+  }
+
+  // shrine_id → [folklore...]
+  const folkloreByShrineId = new Map<number, Folklore[]>();
+  for (const f of folklore) {
+    const arr = folkloreByShrineId.get(f.shrine_id) ?? [];
+    arr.push(f);
+    folkloreByShrineId.set(f.shrine_id, arr);
+  }
+
+  // folklore_id → [cite_id...]
+  const citeIdsByFolkloreId = new Map<number, number[]>();
+  for (const fc of folkloreCitations) {
+    const arr = citeIdsByFolkloreId.get(fc.folklore_id) ?? [];
+    arr.push(fc.cite_id);
+    citeIdsByFolkloreId.set(fc.folklore_id, arr);
   }
 
   return shrines.map((s) => {
@@ -371,12 +408,33 @@ export function toShrineDetailModels(
         };
       });
 
+    // Resolve folklore stories
+    const shrineFolkloreResolved: FolkloreModel[] = (
+      folkloreByShrineId.get(s.shrine_id) ?? []
+    )
+      .sort((a, b) => a.folklore_id - b.folklore_id)
+      .map((f) => {
+        const img = f.img_id ? imagesById.get(f.img_id) : undefined;
+
+        return {
+          ...f,
+          imageUrl: img?.img_source ?? null,
+          imageCitation: img?.cite_id
+            ? (citationsById.get(img.cite_id) ?? null)
+            : null,
+          citations: (citeIdsByFolkloreId.get(f.folklore_id) ?? [])
+            .map((cid) => citationsById.get(cid))
+            .filter(isDefined),
+        };
+      });
+
     return {
       ...s,
       imageUrl,
       tags: shrineTagsResolved,
       kami: shrineKamiResolved,
       history: shrineHistoryResolved,
+      folklore: shrineFolkloreResolved,
     };
   });
 }

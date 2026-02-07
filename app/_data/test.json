@@ -293,11 +293,44 @@
       "shrine_id": 1,
       "title": "Fox Messenger Tale (Fixture)",
       "story": "A short placeholder folklore story to test long-form content rendering and citations.",
-      "img_id": null,
+      "img_id": 201,
       "status": "published",
       "created_at": "2026-01-27T18:43:00Z",
       "updated_at": "2026-01-27T18:43:00Z",
       "published_at": "2026-01-27T18:43:00Z"
+    },
+    {
+      "folklore_id": 2,
+      "shrine_id": 2,
+      "title": "The Whispering Cedar",
+      "story": "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.",
+      "img_id": 201,
+      "status": "published",
+      "created_at": "2026-02-05T17:00:00Z",
+      "updated_at": "2026-02-05T17:00:00Z",
+      "published_at": "2026-02-05T17:00:00Z"
+    },
+    {
+      "folklore_id": 3,
+      "shrine_id": 2,
+      "title": "The Lantern of Returning",
+      "story": "A paper lantern once lit itself during a storm, guiding a lost child back to the shrine. Since then, visitors leave small lantern charms praying for safe returns.",
+      "img_id": null,
+      "status": "published",
+      "created_at": "2026-02-05T17:05:00Z",
+      "updated_at": "2026-02-05T17:05:00Z",
+      "published_at": "2026-02-05T17:05:00Z"
+    },
+    {
+      "folklore_id": 4,
+      "shrine_id": 2,
+      "title": "The Fox’s Hidden Path",
+      "story": "It is said a white fox appears on misty mornings, walking a path only the sincere can see. Following it supposedly leads to a small stone offering site behind the shrine.",
+      "img_id": null,
+      "status": "draft",
+      "created_at": "2026-02-05T17:10:00Z",
+      "updated_at": "2026-02-05T17:10:00Z",
+      "published_at": "2026-02-05T17:00:00Z"
     }
   ],
   "citations": [
@@ -316,6 +349,14 @@
       "url": "https://example.com/test/citation-2",
       "year": 2021,
       "notes": "Development-only image attribution entry."
+    },
+    {
+      "cite_id": 3,
+      "title": "Test Reference: random text",
+      "author": "Fixture Author",
+      "url": "https://example.com/test/citation-2",
+      "year": 2022,
+      "notes": "Development-only image attribution entry."
     }
   ],
   "history_citations": [
@@ -327,7 +368,12 @@
     { "history_id": 6, "cite_id": 1, "created_at": "2026-01-27T19:30:10Z" }
   ],
   "folklore_citations": [
-    { "folklore_id": 1, "cite_id": 1, "created_at": "2026-01-27T18:43:10Z" }
+    { "folklore_id": 1, "cite_id": 1, "created_at": "2026-01-27T18:43:10Z" },
+    { "folklore_id": 2, "cite_id": 1, "created_at": "2026-01-27T18:43:10Z" },
+    { "folklore_id": 2, "cite_id": 2, "created_at": "2026-01-27T18:43:10Z" },
+    { "folklore_id": 2, "cite_id": 3, "created_at": "2026-01-27T18:43:10Z" },
+    { "folklore_id": 3, "cite_id": 1, "created_at": "2026-01-27T18:43:10Z" },
+    { "folklore_id": 4, "cite_id": 1, "created_at": "2026-01-27T18:43:10Z" }
   ],
   "kami_citations": [
     { "kami_id": 1, "cite_id": 1, "created_at": "2026-01-27T18:38:10Z" },
