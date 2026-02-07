@@ -16,6 +16,9 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import Octicons from "@expo/vector-icons/Octicons";
 import { FontAwesome } from "@expo/vector-icons";
+import { g } from "../../../../shared/styles/global";
+import { t } from "../../../../shared/styles/text";
+import { colors, spacing, radius } from "../../../../shared/styles/tokens";
 
 type Props = {
   shrine: ShrinePreviewModel;
@@ -46,18 +49,23 @@ export default function ShrineHeader({
       Animated.spring(val, { toValue: 1, useNativeDriver: true }).start(),
   });
 
-  const bookmarkHandlers = makePressHandlers(bookmarkScale, 0.9);
-  const shareHandlers = makePressHandlers(shareScale, 0.9);
-  const backHandlers = makePressHandlers(backScale, 0.9);
+  const bookmarkHandlers = makePressHandlers(bookmarkScale);
+  const shareHandlers = makePressHandlers(shareScale);
+  const backHandlers = makePressHandlers(backScale);
 
   return (
     <>
-      {/* top white spacer */}
-      <View style={{ backgroundColor: "#fff", height: insetsTop + 8 }} />
+      {/* top spacer */}
+      <View
+        style={{
+          backgroundColor: colors.white,
+          height: insetsTop + spacing.sm,
+        }}
+      />
 
-      {/* Hero */}
+      {/* HERO */}
       <View style={styles.heroWrap} onLayout={onHeroLayout}>
-        {/* Back Button */}
+        {/* Back */}
         <Pressable
           onPress={onBack}
           {...backHandlers}
@@ -65,8 +73,8 @@ export default function ShrineHeader({
           style={styles.backButton}
         >
           <Animated.View style={{ transform: [{ scale: backScale }] }}>
-            <View style={styles.backButtonBg}>
-              <Ionicons name="chevron-back" size={22} color="#000" />
+            <View style={[g.iconBtnCircle, g.iconBtnOverlay]}>
+              <Ionicons name="chevron-back" size={22} color="black" />
             </View>
           </Animated.View>
         </Pressable>
@@ -77,7 +85,6 @@ export default function ShrineHeader({
           resizeMode="cover"
         />
 
-        {/* Top fade into white */}
         <LinearGradient
           pointerEvents="none"
           colors={["rgba(255,255,255,1)", "rgba(255,255,255,0)"]}
@@ -85,7 +92,6 @@ export default function ShrineHeader({
           style={styles.topFade}
         />
 
-        {/* Bottom fade into black */}
         <LinearGradient
           pointerEvents="none"
           colors={["rgba(0,0,0,0)", "rgba(0,0,0,1)"]}
@@ -94,26 +100,26 @@ export default function ShrineHeader({
         />
       </View>
 
-      {/* Title + Tags */}
+      {/* INTRO */}
       <View style={styles.introOverlay} onLayout={onIntroLayout}>
         <Text
-          style={[styles.title, { fontFamily: font.title }]}
+          style={[t.hero, t.white, { fontFamily: font.title }]}
           numberOfLines={1}
           ellipsizeMode="tail"
         >
           {shrine.name_en ?? "Unnamed Shrine"}
         </Text>
 
-        {shrine.name_jp ? (
-          <Text style={[styles.jpName, { fontFamily: font.strong }]}>
+        {shrine.name_jp && (
+          <Text style={[t.hero, t.white, { fontFamily: font.strong }]}>
             {shrine.name_jp}
           </Text>
-        ) : null}
+        )}
 
         <View style={styles.tagsAndActionsRow}>
-          {/* LEFT: Tags */}
+          {/* TAGS */}
           <View style={styles.tagsWrap}>
-            {shrine.tags?.length > 0 ? (
+            {shrine.tags?.length > 0 && (
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -124,14 +130,14 @@ export default function ShrineHeader({
                     key={tag.tag_id}
                     tag={tag}
                     backgroundColor="#505050"
-                    textColor="#fff"
+                    textColor={colors.white}
                   />
                 ))}
               </ScrollView>
-            ) : null}
+            )}
           </View>
 
-          {/* RIGHT: Share / Save */}
+          {/* ACTIONS */}
           <View style={styles.actions}>
             <Pressable
               {...shareHandlers}
@@ -139,20 +145,20 @@ export default function ShrineHeader({
               onPress={() => console.log(`Shared Shrine ${shrine.name_en}`)}
             >
               <Animated.View style={{ transform: [{ scale: shareScale }] }}>
-                <View style={styles.actionBtn}>
-                  <Octicons name="share" size={18} color="#fff" />
+                <View style={[g.iconBtnCircle, { backgroundColor: "#505050" }]}>
+                  <Octicons name="share" size={18} color="white" />
                 </View>
               </Animated.View>
             </Pressable>
 
             <Pressable
               {...bookmarkHandlers}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              hitSlop={8}
               onPress={() => console.log(`Saved Shrine ${shrine.name_en}`)}
             >
               <Animated.View style={{ transform: [{ scale: bookmarkScale }] }}>
-                <View style={styles.actionBtn}>
-                  <FontAwesome name="bookmark-o" size={18} color="#fff" />
+                <View style={[g.iconBtnCircle, { backgroundColor: "#505050" }]}>
+                  <FontAwesome name="bookmark-o" size={18} color="white" />
                 </View>
               </Animated.View>
             </Pressable>
@@ -169,23 +175,16 @@ const styles = StyleSheet.create({
     position: "relative",
     overflow: "hidden",
   },
+
   hero: {
     width: "100%",
     aspectRatio: 4 / 3,
   },
+
   introOverlay: {
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
   },
-  title: {
-    color: "#fff",
-    fontSize: 22,
-    lineHeight: 24,
-  },
-  jpName: {
-    color: "#fff",
-    fontSize: 22,
-    lineHeight: 28,
-  },
+
   topFade: {
     position: "absolute",
     top: 0,
@@ -193,6 +192,7 @@ const styles = StyleSheet.create({
     right: 0,
     height: 65,
   },
+
   bottomFade: {
     position: "absolute",
     left: 0,
@@ -200,41 +200,26 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: 90,
   },
+
   tagsRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: spacing.sm,
     marginTop: 10,
-    marginBottom: 14,
+    marginBottom: spacing.md,
   },
 
   backButton: {
     position: "absolute",
-    top: 12,
-    left: 12,
+    top: spacing.md,
+    left: spacing.md,
     zIndex: 50,
-  },
-
-  backButtonBg: {
-    backgroundColor: "rgba(255, 255, 255, 0.86)",
-    borderRadius: 999,
-    width: 34,
-    height: 34,
-    alignItems: "center",
-    justifyContent: "center",
-
-    // subtle shadow
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 2,
-    elevation: 2,
   },
 
   tagsAndActionsRow: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: 12,
+    gap: spacing.md,
   },
 
   tagsWrap: {
@@ -243,17 +228,7 @@ const styles = StyleSheet.create({
   },
 
   actions: {
-    flexShrink: 0,
     flexDirection: "row",
-    gap: 10,
-  },
-
-  actionBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 999,
-    backgroundColor: "#505050",
-    alignItems: "center",
-    justifyContent: "center",
+    gap: spacing.sm,
   },
 });

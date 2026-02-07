@@ -7,6 +7,14 @@ import {
   LayoutChangeEvent,
   Animated,
 } from "react-native";
+import { g } from "../../../../shared/styles/global";
+import { t } from "../../../../shared/styles/text";
+import {
+  colors,
+  spacing,
+  radius,
+  fontSize,
+} from "../../../../shared/styles/tokens";
 
 type Props<T extends readonly string[]> = {
   tabs: T;
@@ -21,7 +29,6 @@ export default function ShrineTabBar<T extends readonly string[]>({
   activeTab,
   onChange,
 }: Props<T>) {
-  // Store measured x/width for each tab by label
   const [layouts, setLayouts] = useState<Record<string, TabLayout>>({});
 
   const translateX = useRef(new Animated.Value(0)).current;
@@ -43,7 +50,7 @@ export default function ShrineTabBar<T extends readonly string[]>({
       }),
       Animated.spring(indicatorW, {
         toValue: activeLayout.width,
-        useNativeDriver: false, // width can't use native driver
+        useNativeDriver: false,
         speed: 20,
         bounciness: 6,
       }),
@@ -57,7 +64,6 @@ export default function ShrineTabBar<T extends readonly string[]>({
 
       setLayouts((prev) => {
         const existing = prev[tab];
-        // avoid state churn if unchanged
         if (existing && existing.x === x && existing.width === width)
           return prev;
         return { ...prev, [tab]: { x, width } };
@@ -66,7 +72,7 @@ export default function ShrineTabBar<T extends readonly string[]>({
 
   return (
     <View style={styles.wrap}>
-      <View style={styles.tabBar}>
+      <View style={[g.rowBetween, styles.tabBar]}>
         {tabs.map((tab) => {
           const active = tab === activeTab;
 
@@ -78,7 +84,13 @@ export default function ShrineTabBar<T extends readonly string[]>({
               style={styles.tabItem}
               hitSlop={10}
             >
-              <Text style={[styles.tabText, active && styles.tabTextActive]}>
+              <Text
+                style={[
+                  t.title,
+                  styles.tabText,
+                  active && styles.tabTextActive,
+                ]}
+              >
                 {tab}
               </Text>
             </Pressable>
@@ -86,10 +98,10 @@ export default function ShrineTabBar<T extends readonly string[]>({
         })}
       </View>
 
-      {/* Baseline track */}
+      {/* Baseline */}
       <View style={styles.track} />
 
-      {/* Sliding indicator */}
+      {/* Indicator */}
       <Animated.View
         style={[
           styles.indicator,
@@ -106,14 +118,12 @@ export default function ShrineTabBar<T extends readonly string[]>({
 const styles = StyleSheet.create({
   wrap: {
     position: "relative",
-    marginBottom: 12,
-    paddingHorizontal: 4,
+    marginBottom: spacing.md,
+    paddingHorizontal: spacing.xs,
   },
 
   tabBar: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingBottom: 10, 
+    paddingBottom: spacing.sm,
   },
 
   tabItem: {
@@ -121,27 +131,26 @@ const styles = StyleSheet.create({
   },
 
   tabText: {
-    fontSize: 20,
-    color: "#888",
+    fontSize: fontSize.xxl,
+    color: colors.gray500,
   },
 
   tabTextActive: {
-    color: "#000",
-    fontWeight: "700",
+    color: colors.black,
   },
 
   track: {
     height: 1,
-    backgroundColor: "#d0d0d0",
+    backgroundColor: colors.gray300,
     width: "100%",
   },
 
   indicator: {
     position: "absolute",
-    left: 4,
+    left: spacing.xs,
     bottom: 0,
     height: 2,
-    backgroundColor: "#000",
-    borderRadius: 2,
+    backgroundColor: colors.black,
+    borderRadius: radius.sm,
   },
 });

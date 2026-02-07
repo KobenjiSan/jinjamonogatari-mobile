@@ -6,6 +6,9 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import { getDistanceLabel } from "../../../../shared/distance";
 import { useUserLocation } from "../../../../shared/useUserLocation";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { g } from "../../../../shared/styles/global";
+import { t } from "../../../../shared/styles/text";
+import { colors, spacing, radius } from "../../../../shared/styles/tokens";
 
 type Props = {
   shrine: ShrineDetailModel;
@@ -23,11 +26,11 @@ function InfoRow({
   return (
     <>
       <View style={styles.infoRow}>
-        <Text style={styles.label}>{label}</Text>
-        <Text style={styles.value}>{value ?? "Not available"}</Text>
+        <Text style={[t.small, t.secondary]}>{label}</Text>
+        <Text style={[t.body, t.primary]}>{value ?? "Not available"}</Text>
       </View>
 
-      {showDivider && <View style={styles.divider} />}
+      {showDivider && <View style={g.divider} />}
     </>
   );
 }
@@ -68,13 +71,21 @@ export default function ShrineInfoTab({ shrine }: Props) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.navigation}>
+      {/* NAVIGATION */}
+      <View style={[g.rowCenter, styles.navigation]}>
         <View style={styles.locationRow}>
-          <FontAwesome6 name="location-dot" size={18} color="#000" />
-          <Text style={[styles.locationText, { fontFamily: font.title }]}>
+          <FontAwesome6 name="location-dot" size={18} color="black" />
+          <Text
+            style={[
+              t.body,
+              t.primary,
+              { fontFamily: font.title, marginLeft: 4 },
+            ]}
+          >
             {distanceLabel ?? "—"}
           </Text>
         </View>
+
         <Pressable
           {...directionHandlers}
           style={{ flex: 1 }}
@@ -84,14 +95,9 @@ export default function ShrineInfoTab({ shrine }: Props) {
           }
         >
           <Animated.View style={{ transform: [{ scale: directionScale }] }}>
-            <View style={styles.directionButton}>
+            <View style={[g.btnPrimary, g.rowCenter, styles.directionBtnFix]}>
               <FontAwesome5 name="directions" size={24} color="white" />
-              <Text
-                style={[
-                  styles.directionButtonText,
-                  { fontFamily: font.strong },
-                ]}
-              >
+              <Text style={[t.body, t.white, { fontFamily: font.strong }]}>
                 Directions
               </Text>
             </View>
@@ -99,126 +105,52 @@ export default function ShrineInfoTab({ shrine }: Props) {
         </Pressable>
       </View>
 
-      {/* Description */}
-      <View style={styles.card}>
-        <Text style={[styles.cardTitle, { fontFamily: font.title }]}>
-          Description
-        </Text>
-        <Text style={[styles.desc, { fontFamily: font.body }]}>
+      {/* DESCRIPTION */}
+      <View style={g.card}>
+        <Text style={[t.hero, { fontFamily: font.title }]}>Description</Text>
+
+        <Text style={[t.body, { marginTop: 6, fontFamily: font.body }]}>
           {shrine.shrine_desc ?? "No description yet."}
         </Text>
       </View>
 
-      {/* INFORMATION CARD */}
-      <View style={styles.card}>
-        <Text style={[styles.cardTitle, { fontFamily: font.title }]}>
-          Information
-        </Text>
+      {/* INFORMATION */}
+      <View style={g.card}>
+        <Text style={[t.hero, { fontFamily: font.title }]}>Information</Text>
 
         <InfoRow label="Address" value={address} />
         <InfoRow label="Phone" value={phone} />
         <InfoRow label="Email" value={email} />
         <InfoRow label="Website" value={website} showDivider={false} />
       </View>
-
-      {/* Possibly add Event (much later) */}
-
-      {/* Add disclaimer box */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    gap: 16,
-  },
-
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-
-    // iOS
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 2,
-
-    // Android
-    elevation: 2,
-  },
-
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: "900",
-    letterSpacing: 0.6,
-  },
-
-  desc: {
-    marginTop: 6,
-    fontSize: 13,
-    lineHeight: 20,
+    gap: spacing.lg,
   },
 
   navigation: {
-    paddingVertical: 8,
-    flexDirection: "row",
-    alignItems: "center",
+    paddingVertical: spacing.sm,
   },
 
   locationRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#d8d8d8",
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    marginRight: 12,
+    backgroundColor: colors.gray300,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.md,
+    marginRight: spacing.md,
     height: "100%",
   },
 
-  locationText: {
-    color: "#000000",
-    fontSize: 16,
-    marginLeft: 4,
-  },
-
-  directionButton: {
-    flex: 1,
-    flexDirection: "row",
+  directionBtnFix: {
     gap: 8,
-    backgroundColor: "#111111",
-    borderRadius: 8,
-    paddingVertical: 11,
-    paddingHorizontal: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  directionButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "700",
-    textAlign: "center",
-  },
-
-  label: {
-    fontSize: 12,
-    color: "#666",
-    marginTop: 6,
-  },
-
-  value: {
-    fontSize: 14,
-    color: "#111",
   },
 
   infoRow: {
     paddingVertical: 4,
-  },
-
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: "#d8d8d8",
   },
 });

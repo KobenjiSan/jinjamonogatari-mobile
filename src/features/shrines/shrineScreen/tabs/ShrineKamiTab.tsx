@@ -1,8 +1,17 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Pressable,
+  Linking,
+} from "react-native";
 import { font } from "../../../../shared/styles/typography";
 import type { ShrineDetailModel } from "../../mappers";
-import { Pressable, Linking } from "react-native";
+import { g } from "../../../../shared/styles/global";
+import { t } from "../../../../shared/styles/text";
+import { colors, spacing, radius } from "../../../../shared/styles/tokens";
 
 const openLink = async (url?: string | null) => {
   if (!url) return;
@@ -31,17 +40,19 @@ export default function ShrineKamiTab({ shrine }: Props) {
     <View style={styles.container}>
       {kami.length === 0 ? (
         <>
-          <View style={styles.card}>
-            <Text style={styles.emptyText}>
+          <View style={g.card}>
+            <Text style={[t.body, t.center, t.muted]}>
               No kami have been linked to this shrine yet.
             </Text>
           </View>
-          <View style={{height: 600}}></View>
+
+          <View style={{ height: 600 }} />
         </>
       ) : (
         <View>
           {kami.map((k) => (
             <View key={k.kami_id}>
+              {/* KAMI IMAGE CARD */}
               <View style={styles.kamiCard}>
                 <View style={styles.kamiImgContainer}>
                   <Image
@@ -52,55 +63,75 @@ export default function ShrineKamiTab({ shrine }: Props) {
 
                   {k.imageCitation?.url && (
                     <Pressable
-                      style={styles.imageCreditOverlay}
+                      style={g.imageCreditOverlay}
                       onPress={() => openLink(k.imageCitation?.url)}
                     >
-                      <Text style={styles.imageCreditText}>
+                      <Text style={[t.meta, t.white]}>
                         {k.imageCitation.author ?? k.imageCitation.title}
                       </Text>
                     </Pressable>
                   )}
                 </View>
+
                 <View style={styles.kamiTitle}>
-                  <Text style={[styles.kamiNameEN, { fontFamily: font.title }]}>
+                  <Text
+                    style={[
+                      t.title,
+                      { fontFamily: font.title },
+                      styles.kamiNameEN,
+                    ]}
+                  >
                     {k.name_en ?? "Unnamed kami"}
                   </Text>
+
                   <Text
-                    style={[styles.kamiNameJP, { fontFamily: font.strong }]}
+                    style={[
+                      t.title,
+                      { fontFamily: font.strong },
+                      styles.kamiNameJP,
+                    ]}
                   >
-                    {k.name_jp ? `${k.name_jp}` : ""}
+                    {k.name_jp ?? ""}
                   </Text>
                 </View>
               </View>
 
-              <View style={styles.card}>
-                <Text style={[styles.cardTitle, { fontFamily: font.title }]}>
+              {/* DESCRIPTION CARD */}
+              <View style={g.card}>
+                <Text
+                  style={[
+                    t.title,
+                    { fontFamily: font.title },
+                    styles.cardTitle,
+                  ]}
+                >
                   Who They Are
                 </Text>
-                {k.desc ? (
-                  <Text style={[styles.kamiDesc, { fontFamily: font.body }]}>
+
+                {k.desc && (
+                  <Text
+                    style={[t.body, { fontFamily: font.body, marginTop: 6 }]}
+                  >
                     {k.desc}
                   </Text>
-                ) : null}
+                )}
 
                 {k.citations.length > 0 && (
                   <View style={styles.citationBlock}>
-                    <Text style={styles.citationHeader}>Sources</Text>
+                    <Text style={[t.body]}>Sources</Text>
 
                     {k.citations.map((c) => (
                       <View key={c.cite_id} style={styles.citationItem}>
-                        <Text style={styles.citationText}>
+                        <Text style={t.meta}>
                           • {c.title}
                           {c.year ? ` (${c.year})` : ""}
                         </Text>
 
-                        {c.author && (
-                          <Text style={styles.citationMeta}>By {c.author}</Text>
-                        )}
+                        {c.author && <Text style={t.meta}>By {c.author}</Text>}
 
                         {c.url && (
                           <Pressable onPress={() => openLink(c.url)}>
-                            <Text style={styles.citationLink}>{c.url}</Text>
+                            <Text style={[t.meta, t.link]}>{c.url}</Text>
                           </Pressable>
                         )}
                       </View>
@@ -108,6 +139,7 @@ export default function ShrineKamiTab({ shrine }: Props) {
                   </View>
                 )}
               </View>
+
               <View style={styles.track} />
             </View>
           ))}
@@ -119,48 +151,15 @@ export default function ShrineKamiTab({ shrine }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    gap: 16,
-    paddingTop: 12,
-  },
-
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-
-    // iOS
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 2,
-
-    // Android
-    elevation: 2,
-  },
-
-  cardTitle: {
-    fontSize: 18,
-    lineHeight: 24,
-    letterSpacing: 0.6,
+    gap: spacing.lg,
+    paddingTop: spacing.md,
   },
 
   kamiCard: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    paddingHorizontal: 4,
-    paddingVertical: 4,
-
-    // iOS
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 2,
-
-    // Android
-    elevation: 2,
-
-    marginBottom: 12,
+    ...g.card,
+    paddingHorizontal: spacing.xs,
+    paddingVertical: spacing.xs,
+    marginBottom: spacing.md,
   },
 
   kamiImgContainer: {
@@ -168,95 +167,47 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
-    borderRadius: 6,
+    borderRadius: radius.sm,
     aspectRatio: 3 / 4,
   },
 
   kamiImg: {
     width: "100%",
     aspectRatio: 3 / 4,
-    borderRadius: 6,
-  },
-
-  emptyText: {
-    fontSize: 14,
-    opacity: 0.7,
-    lineHeight: 20,
-    textAlign: "center"
+    borderRadius: radius.sm,
   },
 
   kamiTitle: {
-    paddingTop: 12,
-    paddingBottom: 8,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.sm,
     alignItems: "center",
   },
 
   kamiNameEN: {
-    fontSize: 18,
-    lineHeight: 20,
-    paddingBottom: 6,
+    paddingBottom: spacing.xs,
   },
+
   kamiNameJP: {
-    fontSize: 18,
-    lineHeight: 20,
-    color: "#0000009d",
+    color: colors.textSecondary,
   },
 
-  kamiDesc: {
-    fontSize: 14,
-    lineHeight: 20,
-  },
-
-  track: {
-    marginVertical: 36,
-    height: 1,
-    backgroundColor: "#d0d0d0",
-    width: "100%",
+  cardTitle: {
+    letterSpacing: 0.6,
   },
 
   citationBlock: {
-    marginTop: 14,
+    marginTop: spacing.md,
     gap: 4,
   },
 
-  citationHeader: {
-    fontWeight: "700",
-    fontSize: 14,
-    opacity: 0.8,
-  },
-
   citationItem: {
-    gap: 0.5,
+    gap: 2,
   },
 
-  citationText: {
-    fontSize: 10,
-    lineHeight: 12,
-  },
-
-  citationMeta: {
-    fontSize: 8,
-    opacity: 0.7,
-  },
-
-  citationLink: {
-    fontSize: 8,
-    color: "#2a6db0",
-  },
-
-  imageCreditOverlay: {
-    position: "absolute",
-    bottom: 6,
-    right: 6,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-
-  imageCreditText: {
-    color: "#fff",
-    fontSize: 10,
-    lineHeight: 12,
+  track: {
+    marginVertical: spacing.xl,
+    height: 1,
+    backgroundColor: colors.gray300,
+    width: "100%",
   },
 });

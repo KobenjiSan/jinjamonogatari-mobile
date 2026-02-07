@@ -16,6 +16,9 @@ import { usePressScale } from "./usePressScale";
 import type { LatLon } from "../../../../shared/distance";
 import { getDistanceLabel } from "../../../../shared/distance";
 import { useRouter } from "expo-router";
+import { g } from "../../../../shared/styles/global";
+import { t } from "../../../../shared/styles/text";
+import { colors, spacing, radius } from "../../../../shared/styles/tokens";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -61,14 +64,19 @@ export default function MapPopupCardContent({
             { transform: [{ scale: closePress.scale }] },
           ]}
         >
-          <Text style={styles.close}>✕</Text>
+          <Text style={[t.body, t.primary, styles.closeText]}>✕</Text>
         </AnimatedPressable>
       </View>
 
       <View style={styles.body}>
         <View style={styles.headerRow}>
           <Text
-            style={[styles.title, { fontFamily: font.title }]}
+            style={[
+              t.hero,
+              t.primary,
+              { fontFamily: font.title },
+              styles.title,
+            ]}
             numberOfLines={1}
             ellipsizeMode="tail"
           >
@@ -86,7 +94,7 @@ export default function MapPopupCardContent({
         </View>
 
         {shrine.name_jp ? (
-          <Text style={[styles.jpName, { fontFamily: font.title }]}>
+          <Text style={[t.title, { fontFamily: font.title }, styles.jpName]}>
             {shrine.name_jp}
           </Text>
         ) : null}
@@ -111,7 +119,7 @@ export default function MapPopupCardContent({
         ) : null}
 
         <Text
-          style={[styles.desc, { fontFamily: font.strong }]}
+          style={[t.body, t.muted, { fontFamily: font.strong }, styles.desc]}
           numberOfLines={4}
           ellipsizeMode="tail"
         >
@@ -131,8 +139,12 @@ export default function MapPopupCardContent({
             { transform: [{ scale: directionPress.scale }] },
           ]}
         >
-          <FontAwesome6 name="location-dot" size={18} color="#111" />
-          <Text style={styles.distanceButtonText}>
+          <FontAwesome6
+            name="location-dot"
+            size={18}
+            color={colors.textPrimary}
+          />
+          <Text style={[t.body, t.primary, styles.distanceButtonText]}>
             {distanceLabel ? `${distanceLabel} • Directions` : "Directions"}
           </Text>
         </AnimatedPressable>
@@ -147,11 +159,14 @@ export default function MapPopupCardContent({
             })
           }
           style={[
+            g.btnPrimary,
             styles.viewButton,
             { transform: [{ scale: viewPress.scale }] },
           ]}
         >
-          <Text style={styles.viewButtonText}>View Shrine</Text>
+          <Text style={[t.body, t.white, styles.viewButtonText]}>
+            View Shrine
+          </Text>
         </AnimatedPressable>
       </View>
 
@@ -174,10 +189,10 @@ const styles = StyleSheet.create({
 
   closeButton: {
     position: "absolute",
-    top: 12,
-    right: 12,
+    top: spacing.md,
+    right: spacing.md,
     zIndex: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.86)",
+    backgroundColor: colors.overlayLight,
     width: 28,
     height: 28,
     borderRadius: 14,
@@ -185,10 +200,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  close: {
-    color: "#000000",
+  closeText: {
     fontSize: 14,
-    fontWeight: "900",
+    lineHeight: 16,
   },
 
   body: {
@@ -199,16 +213,15 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
 
   title: {
-    fontSize: 20,
-    lineHeight: 24,
     flex: 1,
+    lineHeight: 24,
   },
 
   jpName: {
-    fontSize: 18,
     lineHeight: 20,
     opacity: 0.85,
   },
@@ -221,7 +234,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "nowrap",
     gap: 6,
-    marginTop: 12,
+    marginTop: spacing.md,
     marginBottom: 6,
     paddingRight: 6,
   },
@@ -238,14 +251,13 @@ const styles = StyleSheet.create({
   desc: {
     fontSize: 13,
     lineHeight: 18,
-    color: "#8b8b8b",
   },
 
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: 12,
+    gap: spacing.md,
     paddingHorizontal: 14,
     paddingBottom: 14,
     paddingTop: 2,
@@ -257,14 +269,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.white,
     borderWidth: 2,
-    borderColor: "#111111",
-    borderRadius: 8,
+    borderColor: colors.textPrimary,
+    borderRadius: radius.md,
     paddingVertical: 9,
-    paddingHorizontal: 12,
+    paddingHorizontal: spacing.md,
 
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOpacity: 0.12,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
@@ -273,25 +285,19 @@ const styles = StyleSheet.create({
 
   distanceButtonText: {
     fontSize: 15,
-    color: "#111111",
   },
 
   viewButton: {
-    backgroundColor: "#111111",
-    borderRadius: 8,
     paddingVertical: 11,
-    paddingHorizontal: 16,
-    alignItems: "center",
-    justifyContent: "center",
+    paddingHorizontal: spacing.lg,
+    borderRadius: radius.md,
   },
 
   viewButtonText: {
-    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "700",
   },
 
   content: {
-    marginTop: 8,
+    marginTop: spacing.sm,
   },
 });

@@ -1,5 +1,8 @@
 import React from "react";
 import { Text, View, StyleSheet, ViewStyle, TextStyle } from "react-native";
+import { g } from "../../../shared/styles/global";
+import { t } from "../../../shared/styles/text";
+import { colors, spacing, radius } from "../../../shared/styles/tokens";
 
 export type Tag = {
   tag_id: number;
@@ -11,18 +14,16 @@ export type Tag = {
 
 type TagPillProps = {
   tag: Tag;
-  // Override colors
   backgroundColor?: string;
   textColor?: string;
-  // tweak spacing/size without forking the component
   style?: ViewStyle;
   textStyle?: TextStyle;
 };
 
 const TagPill: React.FC<TagPillProps> = ({
   tag,
-  backgroundColor = "#dadada", // light gray
-  textColor = "#000000",
+  backgroundColor = "#dadada",
+  textColor = colors.black,
   style,
   textStyle,
 }) => {
@@ -34,14 +35,22 @@ const TagPill: React.FC<TagPillProps> = ({
   return (
     <View
       style={[
-        styles.pill,
+        g.pill,
         { backgroundColor },
         style,
       ]}
       accessibilityRole="text"
       accessibilityLabel={label}
     >
-      <Text style={[styles.text, { color: textColor }, textStyle]} numberOfLines={1}>
+      <Text
+        style={[
+          t.small,
+          styles.text,
+          { color: textColor },
+          textStyle,
+        ]}
+        numberOfLines={1}
+      >
         {label}
       </Text>
     </View>
@@ -49,16 +58,8 @@ const TagPill: React.FC<TagPillProps> = ({
 };
 
 const styles = StyleSheet.create({
-  pill: {
-    alignSelf: "flex-start",
-    paddingHorizontal: 6,
-    paddingVertical: 5,
-    borderRadius: 6,
-  },
   text: {
-    fontSize: 12,
     lineHeight: 14,
-    fontWeight: "600",
   },
 });
 

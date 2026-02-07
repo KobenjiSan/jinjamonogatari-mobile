@@ -14,6 +14,9 @@ import { ShrineCardModel } from "../mappers";
 import type { LatLon } from "../../../shared/distance";
 import { getDistanceLabel } from "../../../shared/distance";
 import { useRouter } from "expo-router";
+import { g } from "../../../shared/styles/global";
+import { t } from "../../../shared/styles/text";
+import { colors, spacing, radius } from "../../../shared/styles/tokens";
 
 const ShrineCard = ({
   shrine,
@@ -43,18 +46,16 @@ const ShrineCard = ({
 
   const distanceLabel = getDistanceLabel(userLocation, shrine.lat, shrine.lon);
 
+  const goToShrine = () =>
+    router.push({
+      pathname: "/shrine/[slug]",
+      params: { slug: shrine.slug },
+    });
+
   return (
-    <Pressable
-      {...cardHandlers}
-      onPress={() =>
-        router.push({
-          pathname: "/shrine/[slug]",
-          params: { slug: shrine.slug },
-        })
-      }
-    >
+    <Pressable {...cardHandlers} onPress={goToShrine}>
       <Animated.View style={{ transform: [{ scale: cardScale }] }}>
-        <View style={styles.card}>
+        <View style={[g.cardNoPadding, styles.card]}>
           <Image
             source={shrine.imageUrl ? { uri: shrine.imageUrl } : fallbackImage}
             style={styles.image}
@@ -64,12 +65,13 @@ const ShrineCard = ({
           <View style={styles.body}>
             <View style={styles.headerRow}>
               <Text
-                style={[styles.title, { fontFamily: font.title }]}
+                style={[t.title, { fontFamily: font.title }, styles.title]}
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
                 {shrine.name_en ?? "Unnamed Shrine"}
               </Text>
+
               <Pressable
                 {...bookmarkHandlers}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -84,33 +86,45 @@ const ShrineCard = ({
             </View>
 
             {shrine.name_jp ? (
-              <Text style={[styles.jpName, { fontFamily: font.strong }]}>
+              <Text
+                style={[t.title, { fontFamily: font.strong }, styles.jpName]}
+              >
                 {shrine.name_jp}
               </Text>
             ) : null}
           </View>
 
           <View style={styles.footer}>
-            <View style={styles.locationRow}>
-              <FontAwesome6 name="location-dot" size={18} color="#666" />
-              <Text style={[styles.locationText, { fontFamily: font.title }]}>
+            <View style={g.rowCenter}>
+              <FontAwesome6
+                name="location-dot"
+                size={20}
+                color={colors.gray600}
+              />
+              <Text
+                style={[
+                  t.body,
+                  { fontFamily: font.title },
+                  styles.locationText,
+                ]}
+              >
                 {distanceLabel ?? "—"}
               </Text>
             </View>
+
             <Pressable
               {...viewHandlers}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              onPress={() =>
-                router.push({
-                  pathname: "/shrine/[slug]",
-                  params: { slug: shrine.slug },
-                })
-              }
+              onPress={goToShrine}
             >
               <Animated.View style={{ transform: [{ scale: viewScale }] }}>
-                <View style={styles.viewButton}>
+                <View style={[g.btnOutline, styles.viewButton]}>
                   <Text
-                    style={[styles.viewButtonText, { fontFamily: font.strong }]}
+                    style={[
+                      t.body,
+                      { fontFamily: font.strong },
+                      styles.viewButtonText,
+                    ]}
                   >
                     View Shrine
                   </Text>
@@ -128,17 +142,9 @@ export default ShrineCard;
 
 const styles = StyleSheet.create({
   card: {
+    paddingHorizontal: 0,
+    paddingVertical: 0,
     borderRadius: 10,
-    backgroundColor: "#fff",
-
-    // iOS
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 2,
-
-    // Android
-    elevation: 2,
   },
 
   image: {
@@ -149,55 +155,44 @@ const styles = StyleSheet.create({
   },
 
   body: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm,
   },
 
   headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
 
   title: {
-    fontSize: 18,
-    lineHeight: 24,
     flex: 1,
   },
 
   jpName: {
-    fontSize: 18,
-    lineHeight: 28,
     opacity: 0.85,
+    lineHeight: 28,
   },
 
   footer: {
-    padding: 8,
+    padding: spacing.sm,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
 
   viewButton: {
-    borderColor: "#000",
-    opacity: 0.85,
-    borderWidth: 1,
-    borderRadius: 6,
-    padding: 4,
+    borderRadius: radius.sm,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
   },
 
   viewButtonText: {
-    fontSize: 14,
     lineHeight: 22,
   },
 
-  locationRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-
   locationText: {
-    color: "#666",
-    fontSize: 16,
-    marginLeft: 4,
+    marginLeft: spacing.xs,
+    color: colors.gray600,
   },
 });

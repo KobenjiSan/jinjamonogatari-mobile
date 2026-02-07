@@ -7,9 +7,11 @@ import {
   FlatList,
   Dimensions,
 } from "react-native";
-import ShrineCard from "./components/ShrineCard";
-import { useShrineList } from "./useShrineList";
-import { useUserLocation } from "../../shared/useUserLocation";
+import ShrineCard from "./ShrineCard";
+import { useShrineList } from "../useShrineList";
+import { useUserLocation } from "../../../shared/useUserLocation";
+import { g } from "../../../shared/styles/global";
+import { spacing } from "../../../shared/styles/tokens";
 
 const TOP_PADDING =
   Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
@@ -26,14 +28,14 @@ export default function ShrineListScreen() {
 
   if (isEmpty) {
     return (
-      <View style={styles.emptyContainer}>
+      <View style={[g.fill, g.center, styles.emptyContainer]}>
         <Text>No shrines found.</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={g.fill}>
       <FlatList
         data={shrines}
         keyExtractor={(item) => String(item.shrine_id)}
@@ -52,12 +54,8 @@ export default function ShrineListScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-
   listContent: {
-    paddingTop: TOP_PADDING + 8,
+    paddingTop: TOP_PADDING + spacing.sm,
     paddingHorizontal: H_PADDING,
     rowGap: 10,
   },
@@ -67,9 +65,6 @@ const styles = StyleSheet.create({
   },
 
   emptyContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
     paddingHorizontal: H_PADDING,
   },
 });

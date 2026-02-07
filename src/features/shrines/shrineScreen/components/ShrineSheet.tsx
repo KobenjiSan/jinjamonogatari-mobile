@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import ShrineTabBar from "./ShrineTabBar";
 
@@ -10,6 +10,7 @@ import ShrineFolkloreTab from "../tabs/ShrineFolkloreTab";
 import ShrineGalleryTab from "../tabs/ShrineGalleryTab";
 
 import type { ShrineDetailModel } from "../../mappers";
+import { colors, spacing, radius } from "../../../../shared/styles/tokens";
 
 const TABS = ["Info", "Kami", "History", "Folklore", "Gallery"] as const;
 export type Tab = (typeof TABS)[number];
@@ -57,13 +58,15 @@ export default function ShrineSheet({
 
 const styles = StyleSheet.create({
   sheetBackground: {
-    backgroundColor: "#f0f0f0",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    backgroundColor: colors.gray100,
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
   },
-  handleIndicator: { backgroundColor: "#bbb" },
+  handleIndicator: {
+    backgroundColor: "#bbb",
+  },
   sheetContent: {
-    padding: 16,
-    paddingBottom: 32,
+    padding: spacing.lg,
+    paddingBottom: spacing.xl + spacing.sm,
   },
 });

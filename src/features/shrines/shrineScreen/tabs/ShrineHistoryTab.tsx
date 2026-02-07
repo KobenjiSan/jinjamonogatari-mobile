@@ -9,6 +9,9 @@ import {
 } from "react-native";
 import { font } from "../../../../shared/styles/typography";
 import type { ShrineDetailModel } from "../../mappers";
+import { g } from "../../../../shared/styles/global";
+import { t } from "../../../../shared/styles/text";
+import { spacing, radius } from "../../../../shared/styles/tokens";
 
 const openLink = async (url?: string | null) => {
   if (!url) return;
@@ -37,36 +40,37 @@ export default function ShrineHistoryTab({ shrine }: Props) {
     <View style={styles.container}>
       {history.length === 0 ? (
         <>
-          <View style={styles.card}>
-            <Text style={styles.emptyText}>
+          <View style={g.card}>
+            <Text style={[t.body, t.center, t.muted]}>
               No historical records are available for this shrine yet.
             </Text>
           </View>
-          <View style={{height: 600}}></View>
+
+          <View style={{ height: 600 }} />
         </>
       ) : (
         history.map((h, index) => (
-          <View key={h.history_id} style={styles.card}>
-            {/* Timeline spine INSIDE card */}
+          <View key={h.history_id} style={[g.card, styles.card]}>
+            {/* Timeline spine */}
             <View style={styles.timeline}>
               <View style={styles.dot} />
-              {index !== history.length - 1 && (
-                <View style={styles.line} />
-              )}
+              {index !== history.length - 1 && <View style={styles.line} />}
             </View>
 
-            {/* Card content */}
+            {/* Content */}
             <View style={styles.content}>
-              <Text style={styles.historyDate}>
+              <Text style={[t.body, t.secondary, styles.historyDate]}>
                 {new Date(h.event_date).getFullYear()}
               </Text>
 
-              <Text style={[styles.cardTitle, { fontFamily: font.title }]}>
+              <Text
+                style={[t.title, { fontFamily: font.title }, styles.cardTitle]}
+              >
                 {h.title}
               </Text>
 
               {h.information && (
-                <Text style={[styles.desc, { fontFamily: font.body }]}>
+                <Text style={[t.body, { fontFamily: font.body, marginTop: 4 }]}>
                   {h.information}
                 </Text>
               )}
@@ -81,12 +85,11 @@ export default function ShrineHistoryTab({ shrine }: Props) {
 
                   {h.imageCitation?.url && (
                     <Pressable
-                      style={styles.imageCreditOverlay}
+                      style={g.imageCreditOverlay}
                       onPress={() => openLink(h.imageCitation?.url)}
                     >
-                      <Text style={styles.imageCreditText}>
-                        {h.imageCitation.author ??
-                          h.imageCitation.title}
+                      <Text style={[t.meta, t.white]}>
+                        {h.imageCitation.author ?? h.imageCitation.title}
                       </Text>
                     </Pressable>
                   )}
@@ -95,26 +98,20 @@ export default function ShrineHistoryTab({ shrine }: Props) {
 
               {h.citations.length > 0 && (
                 <View style={styles.citationBlock}>
-                  <Text style={styles.citationHeader}>Sources</Text>
+                  <Text style={t.body}>Sources</Text>
 
                   {h.citations.map((c) => (
                     <View key={c.cite_id} style={styles.citationItem}>
-                      <Text style={styles.citationText}>
+                      <Text style={t.meta}>
                         • {c.title}
                         {c.year ? ` (${c.year})` : ""}
                       </Text>
 
-                      {c.author && (
-                        <Text style={styles.citationMeta}>
-                          By {c.author}
-                        </Text>
-                      )}
+                      {c.author && <Text style={t.meta}>By {c.author}</Text>}
 
                       {c.url && (
                         <Pressable onPress={() => openLink(c.url)}>
-                          <Text style={styles.citationLink}>
-                            {c.url}
-                          </Text>
+                          <Text style={[t.meta, t.link]}>{c.url}</Text>
                         </Pressable>
                       )}
                     </View>
@@ -128,31 +125,22 @@ export default function ShrineHistoryTab({ shrine }: Props) {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
-    gap: 16,
-    paddingTop: 12,
+    gap: spacing.lg,
+    paddingTop: spacing.md,
   },
 
   card: {
     position: "relative",
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 2,
-    elevation: 2,
   },
 
   timeline: {
     position: "absolute",
-    left: 12,
-    top: 12,
-    bottom: 12,
+    left: spacing.md,
+    top: spacing.md,
+    bottom: spacing.md,
     alignItems: "center",
   },
 
@@ -172,89 +160,35 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    paddingLeft: 20, // makes room for timeline INSIDE card
+    paddingLeft: 20,
   },
 
   historyDate: {
-    fontSize: 16,
-    opacity: 0.6,
     marginBottom: 4,
   },
 
   cardTitle: {
-    fontSize: 18,
-    lineHeight: 24,
     letterSpacing: 0.6,
   },
 
-  desc: {
-    marginTop: 2,
-    fontSize: 14,
-    lineHeight: 20,
-  },
-
   imageCard: {
-    marginTop: 8,
-    borderRadius: 8,
+    marginTop: spacing.sm,
+    borderRadius: radius.md,
     overflow: "hidden",
   },
 
   image: {
     width: "100%",
     aspectRatio: 4 / 3,
-    borderRadius: 6,
-  },
-
-  emptyText: {
-    fontSize: 14,
-    opacity: 0.7,
-    lineHeight: 20,
-    textAlign: "center"
+    borderRadius: radius.sm,
   },
 
   citationBlock: {
-    marginTop: 14,
+    marginTop: spacing.md,
     gap: 4,
   },
 
-  citationHeader: {
-    fontWeight: "700",
-    fontSize: 14,
-    opacity: 0.8,
-  },
-
   citationItem: {
-    gap: 0.5,
-  },
-
-  citationText: {
-    fontSize: 10,
-    lineHeight: 12,
-  },
-
-  citationMeta: {
-    fontSize: 8,
-    opacity: 0.7,
-  },
-
-  citationLink: {
-    fontSize: 8,
-    color: "#2a6db0",
-  },
-
-  imageCreditOverlay: {
-    position: "absolute",
-    bottom: 6,
-    right: 6,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-
-  imageCreditText: {
-    color: "#fff",
-    fontSize: 10,
-    lineHeight: 12,
+    gap: 2,
   },
 });

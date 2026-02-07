@@ -3,6 +3,8 @@ import { View, StyleSheet, Pressable, Animated } from "react-native";
 import type { ShrinePreviewModel } from "../../../shrines/mappers";
 import MapPopupCardContent from "./MapPopupCardContent";
 import type { LatLon } from "../../../../shared/distance";
+import { g } from "../../../../shared/styles/global";
+import { colors, spacing, radius } from "../../../../shared/styles/tokens";
 
 type MapPopupCardProps = {
   isOpen: boolean;
@@ -35,7 +37,7 @@ export default function MapPopupCard({
 
   return (
     <>
-      {/* Dimmed backdrop */}
+      {/* Backdrop */}
       <Animated.View
         style={[
           StyleSheet.absoluteFillObject,
@@ -46,18 +48,23 @@ export default function MapPopupCard({
         <Pressable style={{ flex: 1 }} onPress={onClose} />
       </Animated.View>
 
-      {/* Bottom popup card */}
+      {/* Popup Card */}
       <Animated.View
         style={[
+          g.cardNoPadding,
           styles.card,
           {
             opacity: fadeAnim,
             transform: [{ translateY: slideYAnim }],
-            bottom: 16 + bottomOffset,
+            bottom: spacing.lg + bottomOffset,
           },
         ]}
       >
-        <MapPopupCardContent shrine={shrine} userLocation={userLocation} onClose={onClose}>
+        <MapPopupCardContent
+          shrine={shrine}
+          userLocation={userLocation}
+          onClose={onClose}
+        >
           {children}
         </MapPopupCardContent>
       </Animated.View>
@@ -72,13 +79,12 @@ const styles = StyleSheet.create({
 
   card: {
     position: "absolute",
-    left: 16,
-    right: 16,
+    left: spacing.lg,
+    right: spacing.lg,
 
-    backgroundColor: "#fff",
-    borderRadius: 12,
+    backgroundColor: colors.white,
+    borderRadius: radius.lg,
 
-    shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 6,
