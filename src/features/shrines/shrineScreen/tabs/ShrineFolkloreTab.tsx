@@ -6,7 +6,7 @@ import Feather from "@expo/vector-icons/Feather";
 import { font } from "../../../../shared/styles/typography";
 import { g } from "../../../../shared/styles/global";
 import { t } from "../../../../shared/styles/text";
-import { spacing, radius } from "../../../../shared/styles/tokens";
+import { spacing, radius, colors } from "../../../../shared/styles/tokens";
 
 type Props = {
   shrine: ShrineDetailModel;
@@ -55,33 +55,6 @@ export default function ShrineFolkloreTab({ shrine }: Props) {
         </>
       ) : (
         <View style={{ gap: spacing.sm }}>
-          {/* Controls */}
-          {hasMultiple && (
-            <View style={g.rowBetween}>
-              <Pressable onPress={goPrev} style={styles.navBtn} hitSlop={8}>
-                <Feather name="circle" size={20} color="#0000008f" />
-                <Text
-                  style={[t.small, { fontFamily: font.body, opacity: 0.85 }]}
-                >
-                  Prev
-                </Text>
-              </Pressable>
-
-              <Text style={[t.small, t.muted]}>
-                {index + 1} / {folklore.length}
-              </Text>
-
-              <Pressable onPress={goNext} style={styles.navBtn} hitSlop={8}>
-                <Feather name="circle" size={20} color="#0000008f" />
-                <Text
-                  style={[t.small, { fontFamily: font.body, opacity: 0.85 }]}
-                >
-                  Next
-                </Text>
-              </Pressable>
-            </View>
-          )}
-
           {current && (
             <FolkloreFlipCard
               title={current.title}
@@ -93,7 +66,38 @@ export default function ShrineFolkloreTab({ shrine }: Props) {
             />
           )}
 
-          <View style={{ height: 150 }} />
+          {/* Controls */}
+          {hasMultiple ? (
+            <>
+              <View style={[g.rowBetween, { paddingTop: spacing.xl }]}>
+                <Pressable onPress={goPrev} style={styles.navBtn} hitSlop={8}>
+                  <Feather name="circle" size={20} color="#0000008f" />
+                  <Text
+                    style={[t.small, { fontFamily: font.body, opacity: 0.85 }]}
+                  >
+                    Prev
+                  </Text>
+                </Pressable>
+
+                <Text style={[t.small, t.muted]}>
+                  {index + 1} / {folklore.length}
+                </Text>
+
+                <Pressable onPress={goNext} style={styles.navBtn} hitSlop={8}>
+                  <Feather name="circle" size={20} color="#0000008f" />
+                  <Text
+                    style={[t.small, { fontFamily: font.body, opacity: 0.85 }]}
+                  >
+                    Next
+                  </Text>
+                </Pressable>
+              </View>
+
+              <View style={styles.track} />
+            </>
+          ) : (
+            <View style={{ height: 150 }} />
+          )}
         </View>
       )}
     </View>
@@ -111,5 +115,12 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.sm,
     borderRadius: radius.md,
     alignItems: "center",
+  },
+
+  track: {
+    marginVertical: spacing.xl,
+    height: 1,
+    backgroundColor: colors.gray300,
+    width: "100%",
   },
 });

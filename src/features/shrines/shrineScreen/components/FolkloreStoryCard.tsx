@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,8 +6,9 @@ import {
   Image,
   Pressable,
   Linking,
-  Animated,
-  Easing,
+  Modal,
+  ScrollView,
+  useWindowDimensions,
 } from "react-native";
 import { font } from "../../../../shared/styles/typography";
 import { g } from "../../../../shared/styles/global";
@@ -19,10 +20,7 @@ const openLink = async (url?: string | null) => {
 
   try {
     const supported = await Linking.canOpenURL(url);
-    if (!supported) {
-      console.warn("Unsupported URL:", url);
-      return;
-    }
+    if (!supported) return;
     await Linking.openURL(url);
   } catch (err) {
     console.warn("Failed to open URL:", url, err);
@@ -61,64 +59,15 @@ export default function FolkloreStoryCard({
   fallbackImage,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [panelContentHeight, setPanelContentHeight] = useState(0);
+  const { height: winH } = useWindowDimensions();
 
-  const progress = useRef(new Animated.Value(0)).current;
-
-  const panelHeight = useMemo(() => {
-    return progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, panelContentHeight || 0],
-    });
-  }, [progress, panelContentHeight]);
-
-  const panelOpacity = useMemo(() => {
-    return progress.interpolate({
-      inputRange: [0, 0.15, 1],
-      outputRange: [0, 1, 1],
-    });
-  }, [progress]);
-
-  const panelTranslateY = useMemo(() => {
-    return progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [-8, 0],
-    });
-  }, [progress]);
-
-  const openPanel = () => {
-    if (isOpen) return;
-    setIsOpen(true);
-
-    Animated.timing(progress, {
-      toValue: 1,
-      duration: 260,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: false,
-    }).start();
-  };
-
-  const closePanel = () => {
-    if (!isOpen) return;
-    setIsOpen(false);
-
-    Animated.timing(progress, {
-      toValue: 0,
-      duration: 220,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: false,
-    }).start();
-  };
-
-  const togglePanel = () => {
-    if (isOpen) closePanel();
-    else openPanel();
-  };
+  const closeModal = () => setIsOpen(false);
+  const openModal = () => setIsOpen(true);
 
   return (
-    <View style={styles.storyContainer}>
+    <View style={styles.container}>
       {/* MAIN card */}
-      <Pressable onPress={togglePanel}>
+      <Pressable onPress={openModal}>
         <View style={[g.card, styles.card]}>
           <View style={styles.imgContainer}>
             <Image
@@ -149,87 +98,61 @@ export default function FolkloreStoryCard({
             </Text>
           </View>
 
-          <View style={styles.toggleHintBlock}>
+          <View style={styles.tapHintBlock}>
             <Text
-              style={[t.meta, styles.toggleHintText, { fontFamily: font.body }]}
+              style={[t.meta, styles.tapHintText, { fontFamily: font.body }]}
             >
-              {isOpen ? "Tap to close story" : "Tap to read story"}
+              Tap to read story
             </Text>
           </View>
         </View>
       </Pressable>
 
-      {/* HIDDEN MEASURER */}
-      <View
-        style={styles.storyPanelMeasurer}
-        pointerEvents="none"
-        onLayout={(e) => {
-          const h = e.nativeEvent.layout.height;
-          if (h > 0 && h !== panelContentHeight) setPanelContentHeight(h);
-        }}
+      {/* MODAL */}
+      <Modal
+        visible={isOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={closeModal}
       >
-        <View style={[g.card, styles.card, styles.storyCard]}>
-          <Text style={[t.body, styles.storyText, { fontFamily: font.body }]}>
-            {story}
-          </Text>
+        {/* Backdrop */}
+        <Pressable style={styles.backdrop} onPress={closeModal} />
 
-          {citations.length > 0 && (
-            <View style={styles.citationBlock}>
-              <Text style={[t.body, styles.citationHeader]}>Sources</Text>
-
-              {citations.map((c) => (
-                <View key={c.cite_id} style={styles.citationItem}>
-                  <Text style={[t.meta, styles.citationText]}>
-                    • {c.title}
-                    {c.year ? ` (${c.year})` : ""}
-                  </Text>
-
-                  {c.author && <Text style={t.meta}>By {c.author}</Text>}
-
-                  {c.url && <Text style={[t.meta, t.link]}>{c.url}</Text>}
-                </View>
-              ))}
+        {/* CENTER WRAPPER */}
+        <View style={styles.centerWrap}>
+          <View style={[styles.sheet, { maxHeight: winH * 0.75 }]}>
+            {/* X button */}
+            <View style={styles.closeRow}>
+              <Pressable
+                style={styles.closeButton}
+                onPress={closeModal}
+                hitSlop={12}
+              >
+                <Text style={[t.body, t.primary, styles.closeText]}>✕</Text>
+              </Pressable>
             </View>
-          )}
 
-          <View style={styles.closeHintBlock}>
-            <Text
-              style={[t.meta, styles.toggleHintText, { fontFamily: font.body }]}
+            {/* content */}
+            <ScrollView
+              contentContainerStyle={styles.sheetContent}
+              showsVerticalScrollIndicator
             >
-              Tap to close story
-            </Text>
-          </View>
-        </View>
-      </View>
+              <Text style={[t.title, { fontFamily: font.title }]}>{title}</Text>
 
-      {/* STORY PANEL */}
-      <Animated.View
-        style={[
-          styles.storyPanelOuter,
-          {
-            height: panelHeight,
-            opacity: panelOpacity,
-            transform: [{ translateY: panelTranslateY }],
-          },
-        ]}
-        pointerEvents={isOpen ? "auto" : "none"}
-      >
-        <View>
-          <Pressable onPress={closePanel}>
-            <View style={[g.card, styles.card, styles.storyCard]}>
               <Text
                 style={[t.body, styles.storyText, { fontFamily: font.body }]}
               >
                 {story}
               </Text>
 
+              {/* Citations */}
               {citations.length > 0 && (
                 <View style={styles.citationBlock}>
-                  <Text style={[t.body, styles.citationHeader]}>Sources</Text>
+                  <Text style={t.body}>Sources</Text>
 
                   {citations.map((c) => (
                     <View key={c.cite_id} style={styles.citationItem}>
-                      <Text style={[t.meta, styles.citationText]}>
+                      <Text style={t.meta}>
                         • {c.title}
                         {c.year ? ` (${c.year})` : ""}
                       </Text>
@@ -237,43 +160,24 @@ export default function FolkloreStoryCard({
                       {c.author && <Text style={t.meta}>By {c.author}</Text>}
 
                       {c.url && (
-                        <Pressable
-                          onPress={(e) => {
-                            e.stopPropagation();
-                            openLink(c.url ?? null);
-                          }}
-                        >
-                          <Text style={[t.meta, t.link, styles.citationLink]}>
-                            {c.url}
-                          </Text>
+                        <Pressable onPress={() => openLink(c.url)}>
+                          <Text style={[t.meta, t.link]}>{c.url}</Text>
                         </Pressable>
                       )}
                     </View>
                   ))}
                 </View>
               )}
-
-              <View style={styles.closeHintBlock}>
-                <Text
-                  style={[
-                    t.meta,
-                    styles.toggleHintText,
-                    { fontFamily: font.body },
-                  ]}
-                >
-                  Tap to close story
-                </Text>
-              </View>
-            </View>
-          </Pressable>
+            </ScrollView>
+          </View>
         </View>
-      </Animated.View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  storyContainer: {
+  container: {
     position: "relative",
     width: "100%",
   },
@@ -309,67 +213,86 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  toggleHintBlock: {
+  tapHintBlock: {
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.xs,
   },
 
-  toggleHintText: {
+  tapHintText: {
     letterSpacing: 0.4,
     lineHeight: 14,
     textAlign: "center",
     opacity: 0.8,
   },
 
-  storyPanelOuter: {
+  // modal
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.55)",
+  },
+
+  centerWrap: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: spacing.lg,
+  },
+
+  sheet: {
+    width: "100%",
+    backgroundColor: colors.white,
+    borderRadius: radius.lg,
     overflow: "hidden",
-    zIndex: -1,
-    marginTop: -6,
+    paddingBottom: spacing.md,
+
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
   },
 
-  storyPanelMeasurer: {
+  closeRow: {
+    height: spacing.md,
+    alignItems: "flex-end",
+    justifyContent: "center",
+    paddingHorizontal: spacing.md,
+  },
+
+  closeButton: {
     position: "absolute",
-    left: 0,
-    right: 0,
-    top: "100%",
-    opacity: 0,
-    zIndex: -1,
+    top: spacing.sm,
+    right: spacing.sm,
+    zIndex: 10,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.overlayLight,
   },
 
-  storyCard: {
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
+  closeText: {
+    fontSize: 14,
+    lineHeight: 16,
+  },
+
+  sheetContent: {
+    padding: spacing.md,
+    paddingBottom: spacing.xl,
+    gap: spacing.sm,
   },
 
   storyText: {
     lineHeight: 20,
-    paddingVertical: spacing.sm,
   },
 
   citationBlock: {
+    marginTop: spacing.md,
     gap: 4,
-    paddingTop: 2,
-  },
-
-  citationHeader: {
-    opacity: 0.8,
   },
 
   citationItem: {
     gap: 2,
-  },
-
-  citationText: {
-    lineHeight: 12,
-  },
-
-  citationLink: {
-    textDecorationLine: "underline",
-  },
-
-  closeHintBlock: {
-    paddingTop: spacing.lg,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.xs,
   },
 });
