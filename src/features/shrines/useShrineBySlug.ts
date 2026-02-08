@@ -30,6 +30,7 @@ import {
   type HistoryCitation,
   type Folklore,
   type FolkloreCitation,
+  type ShrineGallery,
 } from "./mappers";
 
 /**
@@ -72,6 +73,8 @@ export function useShrineBySlug(slug: string): ShrineDetailModel | null {
   const folkloreCitations: FolkloreCitation[] =
     (data as any).folklore_citations ?? [];
 
+  const shrineGallery: ShrineGallery[] = (data as any).shrine_gallery ?? [];
+
   /**
    * Perform a full data composition pass.
    * This produces UI-ready shrine detail models
@@ -90,6 +93,7 @@ export function useShrineBySlug(slug: string): ShrineDetailModel | null {
     historyCitations,
     folklore,
     folkloreCitations,
+    shrineGallery,
   );
 
   /**

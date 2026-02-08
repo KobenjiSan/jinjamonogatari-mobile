@@ -63,6 +63,8 @@ export type Shrine = {
 export type ShrineImage = {
   img_id: number;
   img_source: string; // URL or asset path
+  title?: string | null;
+  desc?: string | null;
   cite_id?: number | null; // Foreign key → Citation
 };
 
@@ -179,6 +181,24 @@ export type FolkloreModel = Folklore & {
 };
 
 /* ============================================================================
+ * Gallery (Many-to-Many)
+ * ============================================================================
+ */
+
+export type ShrineGallery = {
+  shrine_id: number;
+  img_id: number;
+};
+
+export type GalleryImageModel = {
+  img_id: number;
+  imageUrl: string;
+  title?: string | null;
+  desc?: string | null;
+  imageCitation: Citation | null;
+};
+
+/* ============================================================================
  * View Models (UI-Facing Shapes)
  * ============================================================================
  */
@@ -195,6 +215,7 @@ export type ShrineDetailModel = ShrinePreviewModel & {
   kami: KamiModel[];
   history: HistoryModel[];
   folklore: FolkloreModel[];
+  gallery: GalleryImageModel[];
 };
 
 /* ============================================================================
@@ -281,6 +302,7 @@ export function toShrineDetailModels(
   historyCitations: HistoryCitation[],
   folklore: Folklore[],
   folkloreCitations: FolkloreCitation[],
+  shrineGallery: ShrineGallery[],
 ): ShrineDetailModel[] {
   /**
    * Pre-index all lookup tables to avoid nested loops.
@@ -357,6 +379,14 @@ export function toShrineDetailModels(
     citeIdsByFolkloreId.set(fc.folklore_id, arr);
   }
 
+  // shrine_id → [img_id...]
+  const galleryImgIdsByShrineId = new Map<number, number[]>();
+  for (const sg of shrineGallery) {
+    const arr = galleryImgIdsByShrineId.get(sg.shrine_id) ?? [];
+    arr.push(sg.img_id);
+    galleryImgIdsByShrineId.set(sg.shrine_id, arr);
+  }
+
   return shrines.map((s) => {
     // Resolve shrine hero image
     const shrineImg = s.img_id ? imagesById.get(s.img_id) : undefined;
@@ -428,6 +458,22 @@ export function toShrineDetailModels(
         };
       });
 
+    // Resolve gallery images (with citations)
+    const shrineGalleryResolved: GalleryImageModel[] = (
+      galleryImgIdsByShrineId.get(s.shrine_id) ?? []
+    )
+      .map((imgId) => imagesById.get(imgId))
+      .filter(isDefined)
+      .map((img) => ({
+        img_id: img.img_id,
+        imageUrl: img.img_source,
+        title: img.title ?? null,
+        desc: img.desc ?? null,
+        imageCitation: img.cite_id
+          ? (citationsById.get(img.cite_id) ?? null)
+          : null,
+      }));
+
     return {
       ...s,
       imageUrl,
@@ -435,6 +481,7 @@ export function toShrineDetailModels(
       kami: shrineKamiResolved,
       history: shrineHistoryResolved,
       folklore: shrineFolkloreResolved,
+      gallery: shrineGalleryResolved,
     };
   });
 }

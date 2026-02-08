@@ -189,7 +189,7 @@
       "img_id": 201,
       "img_source": "https://japanhousela.com/wp-content/uploads/2025/02/Sengen-sama.jpg",
       "title": "Inari Okami test",
-      "desc": "Image of Inari Okami",
+      "desc": "Image of Inari Ok osely associated with agriculture, fertility, and prosperity, frequently linked to Inari worship. Uka-no-Mitama is venerated as a provider of abundant harvests and business success, and in many traditions is understood as one of the core identities behind Inari. Over centuries, local beliefs, syncretic practices, and regional folklore have shaped how this kami is perceived, sometimes merging attributes with other food and grain deities. This longer fixture text is intended to test extended content rendering, scrolling behavior, and layout stability in the CMS and mobile views.",
       "cite_id": 2,
       "created_at": "2026-01-27T18:39:50Z",
       "updated_at": "2026-01-27T18:39:50Z"
@@ -205,7 +205,11 @@
     }
   ],
   "shrine_gallery": [
-    { "shrine_id": 1, "img_id": 201, "created_at": "2026-01-27T18:40:30Z" }
+    { "shrine_id": 1, "img_id": 201, "created_at": "2026-01-27T18:40:30Z" },
+    { "shrine_id": 1, "img_id": 202, "created_at": "2026-01-27T18:40:30Z" },
+    { "shrine_id": 1, "img_id": 102, "created_at": "2026-01-27T18:40:30Z" },
+    { "shrine_id": 2, "img_id": 201, "created_at": "2026-01-27T18:40:30Z" },
+    { "shrine_id": 2, "img_id": 101, "created_at": "2026-01-27T18:40:30Z" }
   ],
   "history": [
     {
