@@ -361,6 +361,46 @@
       "url": "https://example.com/test/citation-2",
       "year": 2022,
       "notes": "Development-only image attribution entry."
+    },
+    {
+      "cite_id": 4,
+      "title": "Jinja Honchō (Association of Shinto Shrines) — Shinto Basics / Worship at Shrines",
+      "author": "Jinja Honchō",
+      "url": "https://www.jinjahoncho.or.jp/en/",
+      "year": 2020,
+      "notes": "General overview of shrine worship etiquette (varies by shrine)."
+    },
+    {
+      "cite_id": 5,
+      "title": "Meiji Jingu — How to Pray / Shrine Manners",
+      "author": "Meiji Jingu",
+      "url": "https://www.meijijingu.or.jp/en/",
+      "year": 2021,
+      "notes": "Practical visitor-facing etiquette for approach, purification, and prayer."
+    },
+    {
+      "cite_id": 6,
+      "title": "Kanda Myojin — Visiting / How to Pray",
+      "author": "Kanda Myojin Shrine",
+      "url": "https://www.kandamyoujin.or.jp/",
+      "year": 2022,
+      "notes": "Visitor guidance; includes temizuya usage and prayer steps (may be Japanese-only sections)."
+    },
+    {
+      "cite_id": 7,
+      "title": "Bunkachō (Agency for Cultural Affairs) — Shrines and Cultural Properties (overview)",
+      "author": "Agency for Cultural Affairs, Japan",
+      "url": "https://www.bunka.go.jp/english/",
+      "year": 2019,
+      "notes": "Background context on shrines as cultural sites; not a step-by-step etiquette guide."
+    },
+    {
+      "cite_id": 8,
+      "title": "Kyoto City Official Travel Guide — Shrine & Temple Manners (visitor summary)",
+      "author": "Kyoto City / Kyoto Travel",
+      "url": "https://kyoto.travel/en/",
+      "year": 2023,
+      "notes": "Tourism-oriented etiquette summary; good for common-sense do/don’t guidance."
     }
   ],
   "history_citations": [
@@ -384,5 +424,275 @@
     { "kami_id": 2, "cite_id": 1, "created_at": "2026-01-27T18:38:40Z" },
     { "kami_id": 1, "cite_id": 2, "created_at": "2026-01-27T18:38:10Z" },
     { "kami_id": 3, "cite_id": 1, "created_at": "2026-01-27T18:38:10Z" }
+  ],
+  "etiquette_topics": [
+    {
+      "topic_id": 1,
+      "slug": "approaching-torii",
+      "title_long": "Approaching the Torii",
+      "title_short": "Bow Torii",
+      "summary": "How to enter respectfully: pause, bow lightly, and pass through calmly.",
+      "icon_key": "torii-gate",
+      "icon_set": "fa5",
+      "show_in_glance": true,
+      "show_as_highlight": false,
+      "glance_order": 1,
+      "guide_order": 1,
+      "status": "published",
+      "published_at": "2026-02-03T09:00:00Z",
+      "created_at": "2026-02-01T12:45:00Z",
+      "updated_at": "2026-02-03T09:00:00Z"
+    },
+    {
+      "topic_id": 2,
+      "slug": "walk-the-side",
+      "title_long": "Walk Along the Side (Sandō)",
+      "title_short": "Walk Side",
+      "summary": "On the approach path, avoid the center line when possible and keep a relaxed, quiet pace.",
+      "icon_key": "walking",
+      "icon_set": "fa5",
+      "show_in_glance": true,
+      "show_as_highlight": false,
+      "glance_order": 4,
+      "guide_order": 2,
+      "status": "published",
+      "published_at": "2026-02-03T09:00:00Z",
+      "created_at": "2026-02-01T12:46:00Z",
+      "updated_at": "2026-02-03T09:00:00Z"
+    },
+    {
+      "topic_id": 3,
+      "slug": "purification-temizuya",
+      "title_long": "Purification (Temizuya)",
+      "title_short": "Purification",
+      "summary": "Perform a simple hand-and-mouth rinse ritual before approaching the main hall (if the temizuya is available).",
+      "icon_key": "hands-wash",
+      "icon_set": "fa5",
+      "show_in_glance": true,
+      "show_as_highlight": true,
+      "glance_order": 2,
+      "guide_order": 3,
+      "status": "published",
+      "published_at": "2026-02-03T09:00:00Z",
+      "created_at": "2026-02-01T12:47:00Z",
+      "updated_at": "2026-02-03T09:00:00Z"
+    },
+    {
+      "topic_id": 4,
+      "slug": "prayer-2-2-1",
+      "title_long": "Pray at the Haiden (2–2–1)",
+      "title_short": "Pray",
+      "summary": "A common prayer style is: offering → bell (if present) → two bows → two claps → one bow.",
+      "icon_key": "praying-hands",
+      "icon_set": "fa5",
+      "show_in_glance": true,
+      "show_as_highlight": false,
+      "glance_order": 3,
+      "guide_order": 4,
+      "status": "published",
+      "published_at": "2026-02-03T09:00:00Z",
+      "created_at": "2026-02-01T12:48:00Z",
+      "updated_at": "2026-02-03T09:00:00Z"
+    },
+    {
+      "topic_id": 5,
+      "slug": "mindfulness-behavior",
+      "title_long": "Mindfulness & Behavior",
+      "title_short": "Mindful",
+      "summary": "Keep your voice low, don’t block pathways, and treat the space like a place of worship—not a theme park.",
+      "icon_key": "brain",
+      "icon_set": "fa5",
+      "show_in_glance": true,
+      "show_as_highlight": false,
+      "glance_order": 5,
+      "guide_order": 5,
+      "status": "published",
+      "published_at": "2026-02-03T09:00:00Z",
+      "created_at": "2026-02-01T12:49:00Z",
+      "updated_at": "2026-02-03T09:00:00Z"
+    },
+    {
+      "topic_id": 6,
+      "slug": "photos-and-restricted-areas",
+      "title_long": "Photos & Restricted Areas",
+      "title_short": "Photos",
+      "summary": "Photography rules vary. Follow signs, avoid photographing inside buildings unless allowed, and don’t disrupt rituals.",
+      "icon_key": "camera",
+      "icon_set": "fa5",
+      "show_in_glance": true,
+      "show_as_highlight": false,
+      "glance_order": 6,
+      "guide_order": 6,
+      "status": "published",
+      "published_at": "2026-02-03T09:00:00Z",
+      "created_at": "2026-02-01T12:50:00Z",
+      "updated_at": "2026-02-03T09:00:00Z"
+    },
+    {
+      "topic_id": 7,
+      "slug": "ema-omamori-omikuji",
+      "title_long": "Ema, Omamori, and Omikuji",
+      "title_short": "Shrine Luck",
+      "summary": "How to participate respectfully in common shrine activities: charms, fortunes, and wish plaques.",
+      "icon_key": "scroll",
+      "icon_set": "fa5",
+      "show_in_glance": false,
+      "show_as_highlight": false,
+      "glance_order": null,
+      "guide_order": 7,
+      "status": "published",
+      "published_at": "2026-02-03T09:00:00Z",
+      "created_at": "2026-02-01T12:51:00Z",
+      "updated_at": "2026-02-03T09:00:00Z"
+    }
+  ],
+  "etiquette_steps": [
+    {
+      "step_id": 3001,
+      "topic_id": 3,
+      "step_order": 1,
+      "text": "At the temizuya, take the ladle with your right hand and pour water over your left hand.",
+      "img_id": 201
+    },
+    {
+      "step_id": 3002,
+      "topic_id": 3,
+      "step_order": 2,
+      "text": "Switch: hold the ladle in your left hand and rinse your right hand.",
+      "img_id": 201
+    },
+    {
+      "step_id": 3003,
+      "topic_id": 3,
+      "step_order": 3,
+      "text": "Switch back to your right hand. Pour a little water into your left palm and rinse your mouth lightly (do not drink from the ladle).",
+      "img_id": 201
+    },
+    {
+      "step_id": 3004,
+      "topic_id": 3,
+      "step_order": 4,
+      "text": "Rinse your left hand again. Then tilt the ladle vertically so remaining water runs down the handle (a simple ‘clean finish’).",
+      "img_id": 201
+    },
+    {
+      "step_id": 3005,
+      "topic_id": 3,
+      "step_order": 5,
+      "text": "Return the ladle neatly. If the temizuya is closed or dry, simply proceed respectfully—many shrines modify practices at times.",
+      "img_id": 201
+    },
+
+    {
+      "step_id": 4001,
+      "topic_id": 4,
+      "step_order": 1,
+      "text": "Approach the haiden calmly. Stand behind the offering box line and wait your turn if there’s a queue.",
+      "img_id": 202
+    },
+    {
+      "step_id": 4002,
+      "topic_id": 4,
+      "step_order": 2,
+      "text": "Place a small offering into the saisen-bako (amount is personal—there’s no fixed rule).",
+      "img_id": 202
+    },
+    {
+      "step_id": 4003,
+      "topic_id": 4,
+      "step_order": 3,
+      "text": "If there is a bell, ring it gently once to signal your presence (don’t repeatedly ring it like an alarm).",
+      "img_id": 202
+    },
+    {
+      "step_id": 4004,
+      "topic_id": 4,
+      "step_order": 4,
+      "text": "Perform the common prayer form: bow twice, clap twice, then bow once.",
+      "img_id": 202
+    },
+    {
+      "step_id": 4005,
+      "topic_id": 4,
+      "step_order": 5,
+      "text": "During the quiet moment after clapping, you can offer a short prayer: gratitude first, then your request (keep it simple).",
+      "img_id": 202
+    },
+    {
+      "step_id": 4006,
+      "topic_id": 4,
+      "step_order": 6,
+      "text": "Step away to the side so the next person can approach. Don’t stand directly in front of the hall to review photos/messages.",
+      "img_id": 202
+    },
+
+    {
+      "step_id": 5001,
+      "topic_id": 5,
+      "step_order": 1,
+      "text": "Use an ‘inside voice’ throughout the grounds. Shrines are living religious spaces, not just tourist photo spots.",
+      "img_id": null
+    },
+    {
+      "step_id": 5002,
+      "topic_id": 5,
+      "step_order": 2,
+      "text": "Don’t eat or smoke while walking around the main worship areas. If there are designated rest areas, use those.",
+      "img_id": null
+    },
+    {
+      "step_id": 5003,
+      "topic_id": 5,
+      "step_order": 3,
+      "text": "Avoid touching sacred ropes, offerings, or ritual objects unless you’re clearly invited (some items are for priests only).",
+      "img_id": null
+    },
+    {
+      "step_id": 5004,
+      "topic_id": 5,
+      "step_order": 4,
+      "text": "If a ceremony is happening, watch from a respectful distance and do not walk through the middle of the ritual space.",
+      "img_id": null
+    },
+
+    {
+      "step_id": 7001,
+      "topic_id": 7,
+      "step_order": 1,
+      "text": "Omamori (charms) are typically carried with you (bag, wallet) rather than opened. Treat them as sacred items.",
+      "img_id": null
+    },
+    {
+      "step_id": 7002,
+      "topic_id": 7,
+      "step_order": 2,
+      "text": "Ema (wish plaques): write a short wish or gratitude, then hang it in the designated ema area (not on random trees).",
+      "img_id": 102
+    },
+    {
+      "step_id": 7003,
+      "topic_id": 7,
+      "step_order": 3,
+      "text": "Omikuji (fortunes): read it, then either keep it or tie it at the shrine where indicated (ask or look for the tying area).",
+      "img_id": 102
+    },
+    {
+      "step_id": 7004,
+      "topic_id": 7,
+      "step_order": 4,
+      "text": "End-of-year/return etiquette: many people return old omamori to the shrine for appropriate disposal (often at a collection box).",
+      "img_id": null
+    }
+  ],
+  "etiquette_citations": [
+    { "topic_id": 1, "cite_id": 5, "created_at": "2026-02-03T09:00:00Z" },
+    { "topic_id": 2, "cite_id": 4, "created_at": "2026-02-03T09:00:00Z" },
+    { "topic_id": 3, "cite_id": 6, "created_at": "2026-02-03T09:00:00Z" },
+    { "topic_id": 3, "cite_id": 5, "created_at": "2026-02-03T09:00:00Z" },
+    { "topic_id": 4, "cite_id": 4, "created_at": "2026-02-03T09:00:00Z" },
+    { "topic_id": 4, "cite_id": 5, "created_at": "2026-02-03T09:00:00Z" },
+    { "topic_id": 5, "cite_id": 7, "created_at": "2026-02-03T09:00:00Z" },
+    { "topic_id": 6, "cite_id": 6, "created_at": "2026-02-03T09:00:00Z" },
+    { "topic_id": 7, "cite_id": 8, "created_at": "2026-02-03T09:00:00Z" }
   ]
 }
