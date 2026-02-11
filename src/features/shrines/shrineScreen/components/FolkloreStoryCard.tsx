@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Image,
   Pressable,
-  Linking,
   Modal,
   ScrollView,
   useWindowDimensions,
@@ -15,17 +14,9 @@ import { g } from "../../../../shared/styles/global";
 import { t } from "../../../../shared/styles/text";
 import { colors, spacing, radius } from "../../../../shared/styles/tokens";
 
-const openLink = async (url?: string | null) => {
-  if (!url) return;
-
-  try {
-    const supported = await Linking.canOpenURL(url);
-    if (!supported) return;
-    await Linking.openURL(url);
-  } catch (err) {
-    console.warn("Failed to open URL:", url, err);
-  }
-};
+import CitationBlock from "../../../../shared/components/CitationBlock";
+import type { Citation as AppCitation } from "../../../../shared/components/CitationItem";
+import ImageCitationOverlay from "../../../../shared/components/ImageCitationOverlay";
 
 export type FolkloreCitation = {
   cite_id: number;
@@ -64,6 +55,14 @@ export default function FolkloreStoryCard({
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);
 
+  const mappedCitations: AppCitation[] = citations.map((c) => ({
+    cite_id: c.cite_id,
+    title: c.title,
+    url: c.url ?? null,
+    author: c.author ?? null,
+    year: c.year ?? null,
+  }));
+
   return (
     <View style={styles.container}>
       {/* MAIN card */}
@@ -76,20 +75,9 @@ export default function FolkloreStoryCard({
               resizeMode="cover"
             />
 
-            {imageCitation?.url && (
-              <Pressable
-                style={g.imageCreditOverlay}
-                onPress={(e) => {
-                  e.stopPropagation();
-                  openLink(imageCitation.url ?? null);
-                }}
-                hitSlop={8}
-              >
-                <Text style={[t.meta, t.white]}>
-                  {imageCitation.author ?? imageCitation.title}
-                </Text>
-              </Pressable>
-            )}
+            {/* citation overlay */}
+            <ImageCitationOverlay citation={imageCitation} />
+            
           </View>
 
           <View style={styles.titleBlock}>
@@ -99,9 +87,7 @@ export default function FolkloreStoryCard({
           </View>
 
           <View style={styles.tapHintBlock}>
-            <Text
-              style={[t.meta, styles.tapHintText, { fontFamily: font.body }]}
-            >
+            <Text style={[t.meta, styles.tapHintText, { fontFamily: font.body }]}>
               Tap to read story
             </Text>
           </View>
@@ -115,13 +101,10 @@ export default function FolkloreStoryCard({
         animationType="fade"
         onRequestClose={closeModal}
       >
-        {/* Backdrop */}
         <Pressable style={styles.backdrop} onPress={closeModal} />
 
-        {/* CENTER WRAPPER */}
         <View style={styles.centerWrap}>
           <View style={[styles.sheet, { maxHeight: winH * 0.75 }]}>
-            {/* X button */}
             <View style={styles.closeRow}>
               <Pressable
                 style={styles.closeButton}
@@ -132,42 +115,17 @@ export default function FolkloreStoryCard({
               </Pressable>
             </View>
 
-            {/* content */}
             <ScrollView
               contentContainerStyle={styles.sheetContent}
               showsVerticalScrollIndicator
             >
               <Text style={[t.title, { fontFamily: font.title }]}>{title}</Text>
 
-              <Text
-                style={[t.body, styles.storyText, { fontFamily: font.body }]}
-              >
+              <Text style={[t.body, styles.storyText, { fontFamily: font.body }]}>
                 {story}
               </Text>
 
-              {/* Citations */}
-              {citations.length > 0 && (
-                <View style={styles.citationBlock}>
-                  <Text style={t.body}>Sources</Text>
-
-                  {citations.map((c) => (
-                    <View key={c.cite_id} style={styles.citationItem}>
-                      <Text style={t.meta}>
-                        • {c.title}
-                        {c.year ? ` (${c.year})` : ""}
-                      </Text>
-
-                      {c.author && <Text style={t.meta}>By {c.author}</Text>}
-
-                      {c.url && (
-                        <Pressable onPress={() => openLink(c.url)}>
-                          <Text style={[t.meta, t.link]}>{c.url}</Text>
-                        </Pressable>
-                      )}
-                    </View>
-                  ))}
-                </View>
-              )}
+              <CitationBlock citations={mappedCitations} />
             </ScrollView>
           </View>
         </View>
@@ -225,7 +183,6 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
 
-  // modal
   backdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.55)",
@@ -285,14 +242,5 @@ const styles = StyleSheet.create({
 
   storyText: {
     lineHeight: 20,
-  },
-
-  citationBlock: {
-    marginTop: spacing.md,
-    gap: 4,
-  },
-
-  citationItem: {
-    gap: 2,
   },
 });

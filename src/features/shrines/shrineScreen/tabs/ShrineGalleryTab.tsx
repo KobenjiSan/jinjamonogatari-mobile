@@ -16,6 +16,9 @@ import { g } from "../../../../shared/styles/global";
 import { t } from "../../../../shared/styles/text";
 import { colors, spacing, radius } from "../../../../shared/styles/tokens";
 
+import CitationBlock from "../../../../shared/components/CitationBlock";
+import type { Citation as AppCitation } from "../../../../shared/components/CitationItem";
+
 const openLink = async (url?: string | null) => {
   if (!url) return;
   try {
@@ -89,6 +92,19 @@ export default function ShrineGalleryTab({ shrine }: Props) {
     </Pressable>
   );
 
+  // Map selected image into Citation
+  const selectedImageCitation: AppCitation[] = selected?.imageCitation?.url
+    ? [
+        {
+          cite_id: selected.img_id,
+          title: selected.imageCitation.title ?? "Image Source",
+          author: selected.imageCitation.author ?? null,
+          url: selected.imageCitation.url ?? null,
+          year: null,
+        },
+      ]
+    : [];
+
   return (
     <View style={styles.container}>
       <View style={styles.columns}>
@@ -151,28 +167,8 @@ export default function ShrineGalleryTab({ shrine }: Props) {
                 <Text style={[t.body, t.muted]}>{selected.desc}</Text>
               )}
 
-              {selected?.imageCitation?.url && (
-                <View style={styles.citationBlock}>
-                  <Text style={t.body}>Sources</Text>
-                  <Text style={t.meta}>
-                    • {selected.imageCitation.title ?? "Image Source"}
-                  </Text>
-
-                  {selected.imageCitation.author && (
-                    <Text style={t.meta}>
-                      By {selected.imageCitation.author}
-                    </Text>
-                  )}
-
-                  <Pressable
-                    onPress={() => openLink(selected.imageCitation!.url!)}
-                  >
-                    <Text style={[t.meta, t.link]}>
-                      {selected.imageCitation.url}
-                    </Text>
-                  </Pressable>
-                </View>
-              )}
+              {/* Citations */}
+              <CitationBlock citations={selectedImageCitation} />
             </ScrollView>
           </View>
         </View>
@@ -237,10 +233,5 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
-  },
-
-  citationBlock: {
-    marginTop: spacing.md,
-    gap: 4,
   },
 });
