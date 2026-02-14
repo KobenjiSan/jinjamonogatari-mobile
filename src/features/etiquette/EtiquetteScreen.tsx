@@ -7,13 +7,15 @@ import {
   Text,
   ScrollView,
 } from "react-native";
-import { useEtiquetteGuide } from "../../features/etiquette/useEtiquetteGuide";
+// import { useEtiquetteGuide } from "../../features/etiquette/useEtiquetteGuide";
+import { useEtiquetteGuideApi } from "./useEtiquetteGuideApi";
 import GlanceCard from "./components/GlanceCard";
 import { colors, spacing } from "../../shared/styles/tokens";
 import HighlightCard from "./components/HighlightCard";
 import { font } from "../../shared/styles/typography";
 import GuideAccordionCard from "./components/GuideAccordionCard";
 import { g } from "../../shared/styles/global";
+import { t } from "../../shared/styles/text";
 
 const TOP_PADDING =
   Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
@@ -21,7 +23,8 @@ const TOP_PADDING =
 const LIST_BOTTOM_SPACER = 96;
 
 export default function EtiquetteScreen() {
-  const { guide, isEmpty } = useEtiquetteGuide();
+  // const { guide, isEmpty } = useEtiquetteGuide();
+  const { guide, isEmpty, isLoading, error } = useEtiquetteGuideApi();
 
   const highlight = useMemo(() => {
     const highlights = guide?.highlights ?? [];
@@ -39,6 +42,32 @@ export default function EtiquetteScreen() {
     };
   }, [highlight]);
 
+  if (isLoading) {
+    return (
+      <View style={[styles.container, styles.content]}>
+        <View style={styles.titleArea}>
+          <Text style={[styles.title, { fontFamily: font.title }]}>
+            Shrine Etiquette
+          </Text>
+        </View>
+        <Text style={[t.body, t.center, t.muted]}>Loading…</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.container, styles.content]}>
+        <View style={styles.titleArea}>
+          <Text style={[styles.title, { fontFamily: font.title }]}>
+            Shrine Etiquette
+          </Text>
+        </View>
+        <Text style={[t.body, t.center]}>API Error:</Text>
+        <Text style={[t.body, t.center, t.muted]}>{error}</Text>
+      </View>
+    );
+  }
   if (isEmpty) {
     return (
       <View style={[styles.container, styles.content]}>
@@ -47,7 +76,9 @@ export default function EtiquetteScreen() {
             Shrine Etiquette
           </Text>
         </View>
-        <Text>We Aplogize! The Etiquette Guide is not available.</Text>
+        <Text style={[t.body, t.center, t.muted]}>
+          We Aplogize! The Etiquette Guide is not available.
+        </Text>
       </View>
     );
   }
