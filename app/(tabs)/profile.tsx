@@ -1,24 +1,5 @@
-import { View, StyleSheet, Platform, StatusBar, Text } from "react-native";
+import ProfileScreen from "../../src/features/profile/ProfileScreen";
 
-const TOP_PADDING =
-  Platform.OS === "android" ? StatusBar.currentHeight ?? 0 : 44;
-
-export default function Profile() {
-  return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <Text>Profile</Text>
-      </View>
-    </View>
-  );
+export default function ProfileTab() {
+  return <ProfileScreen />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    paddingTop: TOP_PADDING,
-  },
-});

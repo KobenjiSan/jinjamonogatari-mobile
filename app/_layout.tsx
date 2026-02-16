@@ -3,6 +3,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { AuthProvider } from "../src/core/auth/AuthProvider";
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -19,12 +20,14 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider initialMetrics={null}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: "black" },
-          }}
-        />
+        <AuthProvider>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: "black" },
+            }}
+          />
+        </AuthProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
