@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View, Pressable } from "react-native";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import ShrineTabBar from "./ShrineTabBar";
 
@@ -23,6 +23,12 @@ type Props = {
   onChangeTab: (t: Tab) => void;
 };
 
+function clampIndex(i: number) {
+  if (i < 0) return 0;
+  if (i >= TABS.length) return TABS.length - 1;
+  return i;
+}
+
 export default function ShrineSheet({
   shrine,
   sheetRef,
@@ -30,6 +36,18 @@ export default function ShrineSheet({
   activeTab,
   onChangeTab,
 }: Props) {
+  const activeIndex = TABS.indexOf(activeTab);
+
+  function goPrev() {
+    const nextIdx = clampIndex(activeIndex - 1);
+    if (nextIdx !== activeIndex) onChangeTab(TABS[nextIdx]);
+  }
+
+  function goNext() {
+    const nextIdx = clampIndex(activeIndex + 1);
+    if (nextIdx !== activeIndex) onChangeTab(TABS[nextIdx]);
+  }
+
   return (
     <BottomSheet
       ref={sheetRef}
@@ -39,22 +57,43 @@ export default function ShrineSheet({
       backgroundStyle={styles.sheetBackground}
       handleIndicatorStyle={styles.handleIndicator}
     >
-      <BottomSheetScrollView contentContainerStyle={styles.sheetContent}>
-        <ShrineTabBar
-          tabs={TABS}
-          activeTab={activeTab}
-          onChange={onChangeTab}
-        />
+      {/* Wrap scroll + overlay so edges can sit above content */}
+      <View style={styles.wrapper}>
+        <BottomSheetScrollView contentContainerStyle={styles.sheetContent}>
+          <ShrineTabBar
+            tabs={TABS}
+            activeTab={activeTab}
+            onChange={onChangeTab}
+          />
 
-        {activeTab === "Info" && <ShrineInfoTab shrine={shrine} />}
-        {activeTab === "Kami" && <ShrineKamiTab shrine={shrine} />}
-        {activeTab === "History" && <ShrineHistoryTab shrine={shrine} />}
-        {activeTab === "Folklore" && <ShrineFolkloreTab shrine={shrine} />}
-        {activeTab === "Gallery" && <ShrineGalleryTab shrine={shrine} />}
-      </BottomSheetScrollView>
+          {activeTab === "Info" && <ShrineInfoTab shrine={shrine} />}
+          {activeTab === "Kami" && <ShrineKamiTab shrine={shrine} />}
+          {activeTab === "History" && <ShrineHistoryTab shrine={shrine} />}
+          {activeTab === "Folklore" && <ShrineFolkloreTab shrine={shrine} />}
+          {activeTab === "Gallery" && <ShrineGalleryTab shrine={shrine} />}
+        </BottomSheetScrollView>
+
+        {/* Invisible edge tap zones */}
+        <View pointerEvents="box-none" style={styles.edgeOverlay}>
+          <Pressable
+            onPress={goPrev}
+            disabled={activeIndex === 0}
+            style={styles.edgeLeft}
+            hitSlop={8}
+          />
+          <Pressable
+            onPress={goNext}
+            disabled={activeIndex === TABS.length - 1}
+            style={styles.edgeRight}
+            hitSlop={8}
+          />
+        </View>
+      </View>
     </BottomSheet>
   );
 }
+
+const EDGE_WIDTH = 28;
 
 const styles = StyleSheet.create({
   sheetBackground: {
@@ -65,8 +104,29 @@ const styles = StyleSheet.create({
   handleIndicator: {
     backgroundColor: "#bbb",
   },
+
+  wrapper: {
+    flex: 1,
+  },
+
   sheetContent: {
     padding: spacing.lg,
     paddingBottom: spacing.xl + spacing.sm,
+  },
+
+  edgeOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  edgeLeft: {
+    width: EDGE_WIDTH,
+    height: "100%",
+  },
+
+  edgeRight: {
+    width: EDGE_WIDTH,
+    height: "100%",
   },
 });
