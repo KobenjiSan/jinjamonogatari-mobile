@@ -29,16 +29,14 @@ export default function RegisterScreen() {
   const [error, setError] = useState<string | null>(null);
 
   function onBack() {
-    router.replace("/login");
+    router.back();
   }
 
   async function onRegister() {
     try {
       setError(null);
       await register(username.trim(), email.trim(), password);
-
-      // Force them to login, no extra API calls
-      router.replace("/login");
+      onBack();
     } catch (e: any) {
       setError(e.message || "Registration failed");
     }

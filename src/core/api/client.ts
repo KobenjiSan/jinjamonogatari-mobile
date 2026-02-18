@@ -1,11 +1,9 @@
+import { emitUnauthorized } from "../auth/authEvents";
 import { getToken } from "../auth/authStorage";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_BASE;
 
-export async function apiFetch(
-  path: string,
-  options: RequestInit = {}
-) {
+export async function apiFetch(path: string, options: RequestInit = {}) {
   const token = await getToken();
 
   const headers: Record<string, string> = {
@@ -24,30 +22,28 @@ export async function apiFetch(
 
   // --- Handle errors ---
   if (!res.ok) {
-  if (res.status === 401) {
-    const { clearToken } = await import("../auth/authStorage");
-    await clearToken();
+    if (res.status === 401) {
+      if (token) {
+        const { clearToken } = await import("../auth/authStorage");
+        await clearToken();
+        emitUnauthorized();
+
+        return null;
+      }
+    }
+
+    let message = `API error (${res.status})`;
+
+    try {
+      const data = await res.json();
+      message = data?.detail || data?.title || message;
+    } catch {
+      const text = await res.text();
+      if (text) message = text;
+    }
+
+    throw new Error(message);
   }
-
-  let message = `API error (${res.status})`;
-
-  try {
-    const data = await res.json();
-
-    // Prefer problem-details fields
-    message =
-      data?.detail ||
-      data?.title ||
-      message;
-  } catch {
-    // Fallback if response isn't JSON
-    const text = await res.text();
-    if (text) message = text;
-  }
-
-  throw new Error(message);
-}
-
 
   // --- Handle empty responses (204) ---
   if (res.status === 204) {

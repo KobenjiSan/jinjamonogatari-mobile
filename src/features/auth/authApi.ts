@@ -23,12 +23,16 @@ export async function loginApi(
   });
 }
 
+export type RegisterResult = {
+  accessToken: string;
+};
+
 export async function registerApi(
   username: string,
   email: string,
   password: string
-): Promise<void> {
-  await apiFetch("/api/users/register", {
+): Promise<RegisterResult> {
+  return apiFetch("/api/users/register", {
     method: "POST",
     body: JSON.stringify({ username, email, password }),
   });
