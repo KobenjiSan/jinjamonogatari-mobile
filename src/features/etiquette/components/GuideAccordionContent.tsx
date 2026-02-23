@@ -15,19 +15,19 @@ export type Citation = {
   author?: string | null;
   url?: string | null;
   year?: number | null;
-  notes?: string | null;
 };
 
 export type AccordionStep = {
   step_id: string | number;
   step_order: number;
   text: string;
-  imageUrl?: string | null;
-  imageTitle?: string | null;
-  imageCitation?: {
-    url?: string | null;
+  image_url: string | null;
+  image_citation: {
+    cite_id: number;
+    title: string;
     author?: string | null;
-    title?: string | null;
+    url?: string | null;
+    year?: number | null;
   } | null;
 };
 
@@ -110,14 +110,24 @@ export default function GuideAccordionContent({
           <View style={styles.stepsWrap}>
             {steps.map((s) => (
               <View key={s.step_id} style={styles.stepCard}>
-                {!!s.imageUrl && (
+                {!!s.image_url && (
                   <View style={styles.stepImageWrap}>
                     <Image
-                      source={{ uri: s.imageUrl }}
+                      source={{ uri: s.image_url }}
                       style={styles.stepImage}
                       resizeMode="cover"
                     />
-                    <ImageCitationOverlay citation={s.imageCitation} />
+                    <ImageCitationOverlay
+                      citation={
+                        s.image_citation
+                          ? {
+                              url: s.image_citation.url ?? null,
+                              author: s.image_citation.author ?? null,
+                              title: s.image_citation.title ?? null,
+                            }
+                          : null
+                      }
+                    />
                   </View>
                 )}
 

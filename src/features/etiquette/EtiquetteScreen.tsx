@@ -7,7 +7,6 @@ import {
   Text,
   ScrollView,
 } from "react-native";
-// import { useEtiquetteGuide } from "../../features/etiquette/useEtiquetteGuide";
 import { useEtiquetteGuideApi } from "./useEtiquetteGuideApi";
 import GlanceCard from "./components/GlanceCard";
 import { colors, spacing } from "../../shared/styles/tokens";

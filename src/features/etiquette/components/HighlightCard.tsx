@@ -9,9 +9,6 @@ type Step = {
   step_id: string | number;
   step_order: number;
   text: string;
-  imageUrl?: string | null;
-  imageTitle?: string | null;
-  imageCitation?: { title?: string | null } | null;
 };
 
 type HighlightCardProps = {

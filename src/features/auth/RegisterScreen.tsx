@@ -10,6 +10,7 @@ import {
   ScrollView,
   Keyboard,
   TouchableWithoutFeedback,
+  Image,
 } from "react-native";
 import { router } from "expo-router";
 import { useAuth } from "../../core/auth/AuthProvider";
@@ -20,6 +21,7 @@ import { font } from "../../shared/styles/typography";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function RegisterScreen() {
+  const logo = require("../../../assets/images/LogoTest.png");
   const { register } = useAuth();
 
   const [username, setUsername] = useState("");
@@ -66,8 +68,12 @@ export default function RegisterScreen() {
 
             {/* Main Content */}
             <View style={styles.content}>
-              {/* Logo Placeholder */}
-              <View style={styles.logoBox} />
+              {/* Logo */}
+              <Image
+                source={logo}
+                style={styles.logo}
+                resizeMode="contain"
+              />
 
               <Text style={[t.hero, styles.title]}>Register</Text>
 
@@ -169,12 +175,12 @@ const styles = StyleSheet.create({
     alignSelf: "baseline",
   },
 
-  logoBox: {
+  logo: {
     width: 96,
     height: 96,
     backgroundColor: colors.white,
     borderRadius: radius.lg,
-    borderWidth: 1,
+    // borderWidth: 1,
     borderColor: colors.gray300,
     marginBottom: spacing.xl,
   },
