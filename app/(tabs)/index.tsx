@@ -1,5 +1,5 @@
-import MapView from "../../src/features/map/MapView";
+import MapScreen from "../../src/features/map/screens/MapScreen";
 
 export default function MapTab() {
-  return <MapView />;
+  return <MapScreen />;
 }
