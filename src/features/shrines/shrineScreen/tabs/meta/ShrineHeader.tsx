@@ -15,10 +15,11 @@ import type { ShrinePreviewModel } from "../../mappers/shrine.mappers";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import Octicons from "@expo/vector-icons/Octicons";
-import { FontAwesome } from "@expo/vector-icons";
 import { g } from "../../../../../shared/styles/global";
 import { t } from "../../../../../shared/styles/text";
 import { colors, spacing, radius } from "../../../../../shared/styles/tokens";
+import BookmarkButton from "../../../../../shared/components/BookmarkButton";
+import { usePressScale } from "../../../../../shared/gestures/usePressScale";
 
 type Props = {
   shrine: ShrinePreviewModel;
@@ -33,25 +34,13 @@ export default function ShrineHeader({
   onHeroLayout,
   onIntroLayout,
 }: Props) {
-  const fallbackImage = require("../../../../../assets/images/placeholder.png");
+  const fallbackImage = require("../../../../../../assets/images/placeholder.png");
 
   const router = useRouter();
   const onBack = () => router.back();
 
-  const bookmarkScale = useRef(new Animated.Value(1)).current;
-  const shareScale = useRef(new Animated.Value(1)).current;
-  const backScale = useRef(new Animated.Value(1)).current;
-
-  const makePressHandlers = (val: Animated.Value, downTo = 0.9) => ({
-    onPressIn: () =>
-      Animated.spring(val, { toValue: downTo, useNativeDriver: true }).start(),
-    onPressOut: () =>
-      Animated.spring(val, { toValue: 1, useNativeDriver: true }).start(),
-  });
-
-  const bookmarkHandlers = makePressHandlers(bookmarkScale);
-  const shareHandlers = makePressHandlers(shareScale);
-  const backHandlers = makePressHandlers(backScale);
+  const backPress = usePressScale(0.9);
+  const sharePress = usePressScale(0.9);
 
   return (
     <>
@@ -68,11 +57,11 @@ export default function ShrineHeader({
         {/* Back */}
         <Pressable
           onPress={onBack}
-          {...backHandlers}
+          {...backPress.handlers}
           hitSlop={10}
           style={styles.backButton}
         >
-          <Animated.View style={{ transform: [{ scale: backScale }] }}>
+          <Animated.View style={{ transform: [{ scale: backPress.scale }] }}>
             <View style={[g.iconBtnCircle, g.iconBtnOverlay]}>
               <Ionicons name="chevron-back" size={22} color="black" />
             </View>
@@ -140,28 +129,26 @@ export default function ShrineHeader({
           {/* ACTIONS */}
           <View style={styles.actions}>
             <Pressable
-              {...shareHandlers}
+              {...sharePress.handlers}
               hitSlop={8}
               onPress={() => console.log(`Shared Shrine ${shrine.name_en}`)}
             >
-              <Animated.View style={{ transform: [{ scale: shareScale }] }}>
+              <Animated.View
+                style={{ transform: [{ scale: sharePress.scale }] }}
+              >
                 <View style={[g.iconBtnCircle, { backgroundColor: "#505050" }]}>
                   <Octicons name="share" size={18} color="white" />
                 </View>
               </Animated.View>
             </Pressable>
 
-            <Pressable
-              {...bookmarkHandlers}
-              hitSlop={8}
-              onPress={() => console.log(`Saved Shrine ${shrine.name_en}`)}
-            >
-              <Animated.View style={{ transform: [{ scale: bookmarkScale }] }}>
-                <View style={[g.iconBtnCircle, { backgroundColor: "#505050" }]}>
-                  <FontAwesome name="bookmark-o" size={18} color="white" />
-                </View>
-              </Animated.View>
-            </Pressable>
+            <BookmarkButton
+              shrineId={shrine.shrine_id}
+              size={18}
+              color="white"
+              downTo={0.9}
+              containerStyle={[g.iconBtnCircle, { backgroundColor: "#505050" }]}
+            />
           </View>
         </View>
       </View>

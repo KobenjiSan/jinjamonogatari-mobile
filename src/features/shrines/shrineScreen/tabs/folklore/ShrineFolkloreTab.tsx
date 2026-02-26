@@ -14,7 +14,7 @@ type Props = {
 };
 
 export default function ShrineFolkloreTab({ slug, enabled }: Props) {
-  const fallbackImage = require("../../../../../assets/images/placeholder-vertical.jpg");
+  const fallbackImage = require("../../../../../../assets/images/placeholder-vertical.jpg");
   const { folklore, isLoading, error } = useShrineFolkloreApi(slug, enabled);
 
   const [index, setIndex] = useState(0);

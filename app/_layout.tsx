@@ -4,6 +4,8 @@ import { useFonts } from "expo-font";
 import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider } from "../src/core/auth/AuthProvider";
+import { CollectionIdsProvider } from "../src/features/collection/api/collectionIds.store";
+import CollectionIdsBootstrap from "../src/features/collection/api/CollectionIdsBootstrap";
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -21,12 +23,15 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider initialMetrics={null}>
         <AuthProvider>
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: "black" },
-            }}
-          />
+          <CollectionIdsProvider>
+            <CollectionIdsBootstrap />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: "black" },
+              }}
+            />
+          </CollectionIdsProvider>
         </AuthProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

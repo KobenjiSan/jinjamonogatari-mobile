@@ -32,8 +32,8 @@ export function useMarkerIcons(): MarkerIcons | null {
     (async () => {
       try {
         const [defaultUri, selectedUri] = await Promise.all([
-          toDataUri(require("../../../assets/markers/shrine-default.png")),
-          toDataUri(require("../../../assets/markers/shrine-selected.png")),
+          toDataUri(require("../../../../../assets/markers/shrine-default.png")),
+          toDataUri(require("../../../../../assets/markers/shrine-selected.png")),
         ]);
 
         if (mounted) {

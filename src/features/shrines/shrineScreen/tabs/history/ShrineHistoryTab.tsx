@@ -16,7 +16,7 @@ type Props = {
 };
 
 export default function ShrineHistoryTab({ slug, enabled }: Props) {
-  const fallbackImage = require("../../../../../assets/images/placeholder-vertical.jpg");
+  const fallbackImage = require("../../../../../../assets/images/placeholder-vertical.jpg");
 
   const { history, isLoading, error } = useShrineHistoryApi(slug, enabled);
 

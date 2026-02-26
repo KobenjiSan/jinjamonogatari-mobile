@@ -1,3 +1,4 @@
+import React from "react";
 import {
   View,
   StyleSheet,
@@ -7,8 +8,9 @@ import {
   FlatList,
   Dimensions,
 } from "react-native";
+
 import ShrineCard from "./components/ShrineCard";
-import { useShrineListApi } from "./api/useShrineList";
+import { useShrineList } from "./api/useShrineList";
 import { useUserLocation } from "../../../shared/useUserLocation";
 import { g } from "../../../shared/styles/global";
 import { spacing } from "../../../shared/styles/tokens";
@@ -23,7 +25,7 @@ const H_PADDING = Math.min(24, width * 0.05);
 const LIST_BOTTOM_SPACER = 96;
 
 export default function ShrineListScreen() {
-  const { shrines, isEmpty, isLoading, error } = useShrineListApi();
+  const { shrines, isEmpty, isLoading, error } = useShrineList();
   const { location: userLocation } = useUserLocation();
 
   if (isLoading) {

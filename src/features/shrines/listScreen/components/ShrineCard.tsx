@@ -7,7 +7,6 @@ import {
   Animated,
 } from "react-native";
 import React, { useRef } from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { font } from "../../../../shared/styles/typography";
 import { ShrineCardModel } from "../api/shrineList.mapper";
@@ -17,6 +16,10 @@ import { useRouter } from "expo-router";
 import { g } from "../../../../shared/styles/global";
 import { t } from "../../../../shared/styles/text";
 import { colors, spacing, radius } from "../../../../shared/styles/tokens";
+import BookmarkButton from "../../../../shared/components/BookmarkButton";
+import { usePressScale } from "../../../../shared/gestures/usePressScale";
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const ShrineCard = ({
   shrine,
@@ -25,26 +28,14 @@ const ShrineCard = ({
   shrine: ShrineCardModel;
   userLocation: LatLon | null;
 }) => {
-  const fallbackImage = require("../../../../assets/images/placeholder.png");
+  const fallbackImage = require("../../../../../assets/images/placeholder.png");
 
   const router = useRouter();
 
-  const cardScale = useRef(new Animated.Value(1)).current;
-  const bookmarkScale = useRef(new Animated.Value(1)).current;
-  const viewScale = useRef(new Animated.Value(1)).current;
+  const cardPress = usePressScale(0.97);
+  const viewPress = usePressScale(0.95);
 
-  const makePressHandlers = (val: Animated.Value, downTo = 0.9) => ({
-    onPressIn: () =>
-      Animated.spring(val, { toValue: downTo, useNativeDriver: true }).start(),
-    onPressOut: () =>
-      Animated.spring(val, { toValue: 1, useNativeDriver: true }).start(),
-  });
-
-  const cardHandlers = makePressHandlers(cardScale, 0.97);
-  const bookmarkHandlers = makePressHandlers(bookmarkScale, 0.9);
-  const viewHandlers = makePressHandlers(viewScale, 0.95);
-
-  const distanceLabel = getDistanceLabel(userLocation, shrine.lat, shrine.lon); // issue
+  // const distanceLabel = getDistanceLabel(userLocation, shrine.lat, shrine.lon); // issue
 
   const goToShrine = () =>
     router.push({
@@ -53,92 +44,92 @@ const ShrineCard = ({
     });
 
   return (
-    <Pressable {...cardHandlers} onPress={goToShrine}>
-      <Animated.View style={{ transform: [{ scale: cardScale }] }}>
-        <View style={[g.cardNoPadding, styles.card]}>
-          <Image
-            source={shrine.imageUrl ? { uri: shrine.imageUrl } : fallbackImage}
-            style={styles.image}
-            resizeMode="cover"
-          />
+    <AnimatedPressable
+      {...cardPress.handlers}
+      onPress={goToShrine}
+      style={{ transform: [{ scale: cardPress.scale }] }}
+    >
+      <View style={[g.cardNoPadding, styles.card]}>
+        <Image
+          source={shrine.imageUrl ? { uri: shrine.imageUrl } : fallbackImage}
+          style={styles.image}
+          resizeMode="cover"
+        />
 
-          <View style={styles.body}>
-            <View style={styles.headerRow}>
-              <Text
-                style={[t.title, { fontFamily: font.title }, styles.title]}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {shrine.name_en ?? "Unnamed Shrine"}
-              </Text>
+        <View style={styles.body}>
+          <View style={styles.headerRow}>
+            <Text
+              style={[t.title, { fontFamily: font.title }, styles.title]}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {shrine.name_en ?? "Unnamed Shrine"}
+            </Text>
 
-              <Pressable
-                {...bookmarkHandlers}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                onPress={() => console.log(`Saved Shrine ${shrine.name_en}`)}
-              >
-                <Animated.View
-                  style={{ transform: [{ scale: bookmarkScale }] }}
-                >
-                  <FontAwesome name="bookmark-o" size={24} color="black" />
-                </Animated.View>
-              </Pressable>
-            </View>
-
-            {shrine.name_jp ? (
-              <Text
-                style={[t.title, { fontFamily: font.strong }, styles.jpName]}
-              >
-                {shrine.name_jp}
-              </Text>
-            ) : null}
+            <BookmarkButton
+              shrineId={shrine.shrine_id}
+              size={24}
+              color="black"
+              downTo={0.9}
+            />
           </View>
 
-          <View style={styles.footer}>
-            <View style={g.rowCenter}>
-              <FontAwesome6
-                name="location-dot"
-                size={20}
-                color={colors.gray600}
-              />
+          {shrine.name_jp ? (
+            <Text style={[t.title, { fontFamily: font.strong }, styles.jpName]}>
+              {shrine.name_jp}
+            </Text>
+          ) : null}
+        </View>
+
+        <View style={styles.footer}>
+          <View style={g.rowCenter}>
+            <FontAwesome6
+              name="location-dot"
+              size={20}
+              color={colors.gray600}
+            />
+            <Text
+              style={[t.body, { fontFamily: font.title }, styles.locationText]}
+            >
+              {/* {distanceLabel ?? "—"} */} —
+            </Text>
+          </View>
+
+          <AnimatedPressable
+            {...viewPress.handlers}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            onPress={goToShrine}
+            style={{ transform: [{ scale: viewPress.scale }] }}
+          >
+            <View style={[g.btnOutline, styles.viewButton]}>
               <Text
                 style={[
                   t.body,
-                  { fontFamily: font.title },
-                  styles.locationText,
+                  { fontFamily: font.strong },
+                  styles.viewButtonText,
                 ]}
               >
-                {distanceLabel ?? "—"}
+                View Shrine
               </Text>
             </View>
-
-            <Pressable
-              {...viewHandlers}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              onPress={goToShrine}
-            >
-              <Animated.View style={{ transform: [{ scale: viewScale }] }}>
-                <View style={[g.btnOutline, styles.viewButton]}>
-                  <Text
-                    style={[
-                      t.body,
-                      { fontFamily: font.strong },
-                      styles.viewButtonText,
-                    ]}
-                  >
-                    View Shrine
-                  </Text>
-                </View>
-              </Animated.View>
-            </Pressable>
-          </View>
+          </AnimatedPressable>
         </View>
-      </Animated.View>
-    </Pressable>
+      </View>
+    </AnimatedPressable>
   );
 };
 
-export default ShrineCard;
+export default React.memo(
+  ShrineCard,
+  (prev, next) =>
+    prev.shrine.shrine_id === next.shrine.shrine_id &&
+    prev.shrine.slug === next.shrine.slug &&
+    prev.shrine.name_en === next.shrine.name_en &&
+    prev.shrine.name_jp === next.shrine.name_jp &&
+    prev.shrine.imageUrl === next.shrine.imageUrl &&
+    prev.userLocation?.lat === next.userLocation?.lat &&
+    prev.userLocation?.lon === next.userLocation?.lon
+);
 
 const styles = StyleSheet.create({
   card: {

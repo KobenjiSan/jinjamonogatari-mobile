@@ -135,13 +135,22 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        <Pressable style={styles.collectionBtn} onPress={() => {}}>
-          <View style={styles.collectionInner}>
-            <Feather name="bookmark" size={18} color={colors.white} />
-            <Text style={[t.body, styles.collectionText]}>
-              Shrine Collection
-            </Text>
-          </View>
+        <Pressable
+          onPress={() => router.push("/collection")}
+          {...ctaHandlers}
+          hitSlop={10}
+          style={{ alignSelf: "stretch" }}
+        >
+          <Animated.View
+            style={[styles.collectionBtn, { transform: [{ scale: ctaScale }] }]}
+          >
+            <View style={styles.collectionInner}>
+              <Feather name="bookmark" size={18} color={colors.white} />
+              <Text style={[t.body, styles.collectionText]}>
+                Shrine Collection
+              </Text>
+            </View>
+          </Animated.View>
         </Pressable>
 
         <View style={g.cardNoPadding}>
@@ -149,19 +158,11 @@ export default function ProfileScreen() {
 
           <Pressable style={styles.settingsRow} onPress={logout}>
             <View style={styles.settingsLeft}>
-              <MaterialIcons
-                name="logout"
-                size={18}
-                color={colors.gray500}
-              />
+              <MaterialIcons name="logout" size={18} color={colors.gray500} />
               <Text style={[t.body, styles.settingsText]}>Logout</Text>
             </View>
 
-            <Ionicons
-              name="chevron-forward"
-              size={18}
-              color={colors.gray500}
-            />
+            <Ionicons name="chevron-forward" size={18} color={colors.gray500} />
           </Pressable>
         </View>
 

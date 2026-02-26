@@ -9,16 +9,17 @@ import {
   ScrollView,
 } from "react-native";
 import type { ShrinePreviewModel } from "../../../shrines/shrineScreen/mappers/shrine.mappers";
-import { FontAwesome, FontAwesome6 } from "@expo/vector-icons";
+import { FontAwesome6 } from "@expo/vector-icons";
 import { font } from "../../../../shared/styles/typography";
 import TagPill, { Tag } from "../../../../shared/components/TagPill";
-import { usePressScale } from "../gestures/usePressScale";
+import { usePressScale } from "../../../../shared/gestures/usePressScale";
 import type { LatLon } from "../../../../shared/distance";
 import { getDistanceLabel } from "../../../../shared/distance";
 import { useRouter } from "expo-router";
 import { g } from "../../../../shared/styles/global";
 import { t } from "../../../../shared/styles/text";
 import { colors, spacing, radius } from "../../../../shared/styles/tokens";
+import BookmarkButton from "../../../../shared/components/BookmarkButton";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -39,7 +40,6 @@ export default function MapPopupCardContent({
 
   const router = useRouter();
 
-  const bookmarkPress = usePressScale(0.9);
   const viewPress = usePressScale(0.95);
   const directionPress = usePressScale(0.95);
   const closePress = usePressScale(0.9);
@@ -83,14 +83,7 @@ export default function MapPopupCardContent({
             {shrine.name_en ?? "Unnamed Shrine"}
           </Text>
 
-          <AnimatedPressable
-            {...bookmarkPress.handlers}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            onPress={() => console.log(`Saved Shrine ${shrine.name_en}`)}
-            style={{ transform: [{ scale: bookmarkPress.scale }] }}
-          >
-            <FontAwesome name="bookmark-o" size={26} color="black" />
-          </AnimatedPressable>
+          <BookmarkButton shrineId={shrine.shrine_id} size={26} color="black" downTo={0.9} />
         </View>
 
         {shrine.name_jp ? (

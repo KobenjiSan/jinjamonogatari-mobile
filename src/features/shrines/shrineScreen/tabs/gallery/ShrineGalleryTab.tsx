@@ -26,7 +26,7 @@ type Props = {
 };
 
 export default function ShrineGalleryTab({ slug, enabled }: Props) {
-  const fallbackImage = require("../../../../../assets/images/placeholder-vertical.jpg");
+  const fallbackImage = require("../../../../../../assets/images/placeholder-vertical.jpg");
 
   const { images: gallery, isLoading, error } = useShrineGalleryApi(
     slug,

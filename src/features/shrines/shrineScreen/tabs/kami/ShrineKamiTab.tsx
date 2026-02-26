@@ -16,7 +16,7 @@ type Props = {
 };
 
 export default function ShrineKamiTab({ slug, enabled }: Props) {
-  const fallbackImage = require("../../../../../assets/images/placeholder-vertical.jpg");
+  const fallbackImage = require("../../../../../../assets/images/placeholder-vertical.jpg");
   const { kami, isLoading, error } = useShrineKamiApi(slug, enabled);
 
   return (
