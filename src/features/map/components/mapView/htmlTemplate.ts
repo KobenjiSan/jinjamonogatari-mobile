@@ -53,6 +53,15 @@ export function buildMapHtml({
       const markerIcons = ${markerIconsJson};
       const userLocation = ${userLocationJson};
 
+      // ---- Japan bounds (Lng/Lat) ----
+      // This clamps the camera so the user cannot pan the view outside Japan.
+      // Users can still zoom out and see nearby countries (e.g., Korea) as long
+      // as the camera center stays within these bounds.
+      const JAPAN_BOUNDS = [
+        [128.0, 28.0],  // [minLng, minLat]
+        [148.0, 45.75],  // [maxLng, maxLat]
+      ];
+
       function sendToRN(payload) {
         if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
           window.ReactNativeWebView.postMessage(JSON.stringify(payload));
@@ -76,7 +85,16 @@ export function buildMapHtml({
         // style: "https://api.maptiler.com/maps/dataviz/style.json?key=${apiKey}",
         style: "https://api.maptiler.com/maps/019c2031-d766-7298-bdc2-c88076ef2f99/style.json?key=${apiKey}",
         center: [${center.lng}, ${center.lat}],
-        zoom: ${zoom}
+        zoom: ${zoom},
+
+        // Allow normal pan/zoom gestures
+        interactive: true,
+
+        // Hard lock within Japan
+        maxBounds: JAPAN_BOUNDS,
+
+        // Prevent world wrap horizontally (keeps bounds behavior intuitive)
+        renderWorldCopies: false
       });
 
       // ---- Selection state ----
@@ -205,6 +223,8 @@ export function buildMapHtml({
       }
 
       map.on("load", () => {
+        // Re-apply bounds on load for safety
+        map.setMaxBounds(JAPAN_BOUNDS);
         sendToRN({ type: "MAP_READY" });
       });
     </script>
