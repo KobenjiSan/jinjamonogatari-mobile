@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { fetchShrineListView } from "./shrineList.client";
 import { toShrineCardModels, type ShrineCardModel } from "./shrineList.mapper";
+import type { LatLon } from "../../../../shared/distance";
 
-export function useShrineList(): {
+export function useShrineList(userLocation: LatLon | null): {
   shrines: ShrineCardModel[];
   isEmpty: boolean;
   isLoading: boolean;
@@ -23,7 +24,7 @@ export function useShrineList(): {
       setIsLoading(true);
       setError(null);
 
-      const api = await fetchShrineListView();
+      const api = await fetchShrineListView(userLocation?.lat ?? null, userLocation?.lon ?? null);
       const mapped = toShrineCardModels(api);
 
       if (mySeq !== reqSeq.current) return;
@@ -47,7 +48,7 @@ export function useShrineList(): {
         setIsLoading(true);
         setError(null);
 
-        const api = await fetchShrineListView();
+        const api = await fetchShrineListView(userLocation?.lat ?? null, userLocation?.lon ?? null);
         const mapped = toShrineCardModels(api);
 
         if (!cancelled) setShrines(mapped);
@@ -65,7 +66,7 @@ export function useShrineList(): {
       cancelled = true;
       reqSeq.current++; // invalidate any in-flight refresh
     };
-  }, []);
+  }, [userLocation?.lat, userLocation?.lon]);
 
   return {
     shrines,

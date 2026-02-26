@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { fetchShrinePreviewBySlug } from "../clients/shrinePreview.client";
 import { toShrinePreviewModel, type ShrinePreviewModel } from "../mappers/previewPopup.mapper";
 import { getPreviewFromCache, setPreviewInCache } from "../state/previewCache";
+import type { LatLon } from "../../../../shared/distance"; 
 
-export function useShrinePreviewApi(slug: string | null): {
+export function useShrinePreview(slug: string | null, userLocation: LatLon | null): {
   preview: ShrinePreviewModel | null;
   isLoading: boolean;
   error: string | null;
@@ -22,7 +23,12 @@ export function useShrinePreviewApi(slug: string | null): {
       return;
     }
 
-    const cached = getPreviewFromCache(slug);
+    const cacheKey =
+      typeof userLocation?.lat === "number" && typeof userLocation?.lon === "number"
+        ? `${slug}@${userLocation.lat.toFixed(5)},${userLocation.lon.toFixed(5)}`
+        : slug;
+
+    const cached = getPreviewFromCache(cacheKey);
     if (cached) {
       setPreview(cached);
       setIsLoading(false);
@@ -35,10 +41,15 @@ export function useShrinePreviewApi(slug: string | null): {
         setIsLoading(true);
         setError(null);
 
-        const api = await fetchShrinePreviewBySlug(slug);
+        const api = await fetchShrinePreviewBySlug(
+          slug,
+          userLocation?.lat ?? null,
+          userLocation?.lon ?? null
+        );
+
         const mapped = toShrinePreviewModel(api);
 
-        setPreviewInCache(slug, mapped);
+        setPreviewInCache(cacheKey, mapped);
 
         if (!cancelled) setPreview(mapped);
       } catch (e: any) {
@@ -54,7 +65,7 @@ export function useShrinePreviewApi(slug: string | null): {
     return () => {
       cancelled = true;
     };
-  }, [slug]);
+  }, [slug, userLocation?.lat, userLocation?.lon]);
 
   return { preview, isLoading, error };
 }

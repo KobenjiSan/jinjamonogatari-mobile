@@ -20,6 +20,7 @@ export type ShrinePreviewDto = {
   nameJp?: string | null;
   imageUrl?: string | null;
   shrineDesc?: string | null;
+  distanceMeters?: number | null;
   tags: TagDto[];
 };
 
@@ -43,8 +44,16 @@ export async function getShrineCollectionIds() {
 }
 
 // GET /api/users/me/collection/cards
-export async function getShrineCollectionCards() {
-  const res = await apiFetch(`${BASE}/cards`);
+export async function getShrineCollectionCards(
+  lat?: number | null,
+  lon?: number | null
+) {
+  const qs =
+    typeof lat === "number" && typeof lon === "number"
+      ? `?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`
+      : "";
+
+  const res = await apiFetch(`${BASE}/cards${qs}`);
   return res as GetShrineCollectionCardsResult;
 }
 

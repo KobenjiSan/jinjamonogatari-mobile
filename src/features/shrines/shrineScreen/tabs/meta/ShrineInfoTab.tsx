@@ -3,12 +3,11 @@ import { View, Text, StyleSheet, Pressable, Animated } from "react-native";
 import { font } from "../../../../../shared/styles/typography";
 import type { ShrineDetailModel } from "../../mappers/shrine.mappers";
 import { FontAwesome6 } from "@expo/vector-icons";
-import { getDistanceLabel } from "../../../../../shared/distance";
-import { useUserLocation } from "../../../../../shared/useUserLocation";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { g } from "../../../../../shared/styles/global";
 import { t } from "../../../../../shared/styles/text";
 import { colors, spacing, radius } from "../../../../../shared/styles/tokens";
+import { formatDistance } from "../../../../../shared/distance";
 
 type Props = {
   shrine: ShrineDetailModel;
@@ -47,8 +46,10 @@ export default function ShrineInfoTab({ shrine }: Props) {
 
   const directionHandlers = makePressHandlers(directionScale, 0.95);
 
-  const { location: userLocation } = useUserLocation();
-  const distanceLabel = getDistanceLabel(userLocation, shrine.lat, shrine.lon);
+  const distanceLabel =
+  typeof shrine.distance_meters === "number"
+    ? formatDistance(shrine.distance_meters)
+    : null;
 
   const address = useMemo(() => {
     if (shrine.address_raw) return shrine.address_raw;

@@ -32,6 +32,8 @@ export type ShrineMetaModel = {
 
   imageUrl: string | null;
 
+  distance_meters: number | null;
+
   tags: TagModel[];
 };
 
@@ -73,6 +75,8 @@ export function toShrineMetaModel(api: ShrineMetaApi): ShrineMetaModel {
     website: api.website ?? null,
 
     imageUrl: api.imageUrl ?? null,
+
+    distance_meters: api.distanceMeters ?? null,
 
     tags: (api.tags ?? []).map(toTagModel),
   };

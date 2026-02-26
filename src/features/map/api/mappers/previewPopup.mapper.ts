@@ -1,4 +1,4 @@
-import type { ShrinePreviewApi, TagApi } from "../clients/shrinePreview.client";
+import type { ShrinePreview, TagApi } from "../clients/shrinePreview.client";
 
 export type TagModel = {
   tag_id: number;
@@ -13,6 +13,7 @@ export type ShrinePreviewModel = {
   name_jp: string | null;
   imageUrl: string | null;
   shrine_desc: string | null;
+  distance_meters: number | null;
   tags: TagModel[];
 };
 
@@ -24,7 +25,7 @@ function toTagModel(t: TagApi): TagModel {
   };
 }
 
-export function toShrinePreviewModel(p: ShrinePreviewApi): ShrinePreviewModel {
+export function toShrinePreviewModel(p: ShrinePreview): ShrinePreviewModel {
   return {
     shrine_id: p.shrineId,
     slug: p.slug,
@@ -32,6 +33,7 @@ export function toShrinePreviewModel(p: ShrinePreviewApi): ShrinePreviewModel {
     name_jp: p.nameJp ?? null,
     imageUrl: p.imageUrl ?? null,
     shrine_desc: p.shrineDesc ?? null,
+    distance_meters: p.distanceMeters ?? null,
     tags: (p.tags ?? []).map(toTagModel),
   };
 }

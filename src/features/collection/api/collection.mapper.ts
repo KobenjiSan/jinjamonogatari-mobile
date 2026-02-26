@@ -16,6 +16,7 @@ export type CollectionShrineCardModel = {
   name_jp?: string | null;
   image_url?: string | null;
   shrine_desc?: string | null;
+  distance_meters: number | null; 
   tags: CollectionTagModel[];
 };
 
@@ -37,6 +38,7 @@ export function mapShrinePreviewDtoToCollectionCardModel(
     name_jp: dto.nameJp ?? null,
     image_url: dto.imageUrl ?? null,
     shrine_desc: dto.shrineDesc ?? null,
+    distance_meters: dto.distanceMeters ?? null,
     tags: Array.isArray(dto.tags) ? dto.tags.map(mapTagDtoToModel) : [],
   };
 }

@@ -4,10 +4,11 @@ import {
   CollectionShrineCardModel,
   mapShrinePreviewDtoToCollectionCardModel,
 } from "./collection.mapper";
+import type { LatLon } from "../../../shared/distance";
 
 type Status = "idle" | "loading" | "error";
 
-export function useCollectionCards() {
+export function useCollectionCards(userLocation: LatLon | null) {
   const [cards, setCards] = useState<CollectionShrineCardModel[]>([]);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +22,10 @@ export function useCollectionCards() {
     setError(null);
 
     try {
-      const res = await getShrineCollectionCards();
+      const res = await getShrineCollectionCards(
+        userLocation?.lat ?? null,
+        userLocation?.lon ?? null
+      );
       if (mySeq !== reqSeq.current) return;
 
       const mapped =
@@ -36,7 +40,7 @@ export function useCollectionCards() {
       setError(e?.message ?? "Failed to load saved shrines");
       setCards([]);
     }
-  }, []);
+  }, [userLocation?.lat, userLocation?.lon]);
 
   useEffect(() => {
     refresh();

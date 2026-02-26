@@ -14,6 +14,7 @@ import BookmarkButton from "../../../shared/components/BookmarkButton";
 import TagPill, { Tag } from "../../../shared/components/TagPill";
 import type { CollectionShrineCardModel } from "../api/collection.mapper";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { formatDistance } from "../../../shared/distance";
 
 type Props = {
   shrine: CollectionShrineCardModel;
@@ -24,6 +25,11 @@ export default function CollectionCard({ shrine, onPress }: Props) {
   const fallbackImage = require("../../../../assets/images/placeholder.png");
 
   const title = shrine.name_en ?? "Unnamed Shrine";
+
+  const distanceLabel =
+  typeof shrine.distance_meters === "number"
+    ? formatDistance(shrine.distance_meters)
+    : "—";
 
   const tags = Array.isArray(shrine.tags)
     ? (shrine.tags as unknown as Tag[])
@@ -49,7 +55,7 @@ export default function CollectionCard({ shrine, onPress }: Props) {
             <Text
               style={[t.body, { fontFamily: font.title }, styles.locationText]}
             >
-              {/* {distanceLabel ?? "—"} */} —
+              {distanceLabel}
             </Text>
           </View>
         </View>

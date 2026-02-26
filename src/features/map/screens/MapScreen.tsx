@@ -6,7 +6,7 @@ import type { WebViewMessageEvent } from "react-native-webview";
 import { buildMapHtml } from "../components/mapView/htmlTemplate";
 import MapPopupCard from "../components/previewPopup/MapPopupCard";
 import { useMapShrinePointsApi } from "../api/hooks/useMapShrinePoints";
-import { useShrinePreviewApi } from "../api/hooks/useShrinePreview";
+import { useShrinePreview } from "../api/hooks/useShrinePreview";
 import { useUserLocation } from "../../../shared/useUserLocation";
 import { useMarkerIcons } from "../api/hooks/useMarkerIcons";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -38,7 +38,7 @@ export default function MapScreen() {
   const [isOpen, setIsOpen] = useState(false);
 
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
-  const { preview: selectedShrine } = useShrinePreviewApi(selectedSlug);
+  const { preview: selectedShrine } = useShrinePreview(selectedSlug, userLocation);
 
   // Anim values (must always run, no early returns above this)
   const slideY = useRef(new Animated.Value(80)).current;
@@ -154,7 +154,6 @@ export default function MapScreen() {
           slideYAnim={slideY}
           backdropAnim={backdrop}
           shrine={selectedShrine}
-          userLocation={userLocation}
           onClose={closePopup}
           bottomOffset={tabBarHeight}
         />

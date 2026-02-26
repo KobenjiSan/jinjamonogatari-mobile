@@ -13,26 +13,23 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import { font } from "../../../../shared/styles/typography";
 import TagPill, { Tag } from "../../../../shared/components/TagPill";
 import { usePressScale } from "../../../../shared/gestures/usePressScale";
-import type { LatLon } from "../../../../shared/distance";
-import { getDistanceLabel } from "../../../../shared/distance";
 import { useRouter } from "expo-router";
 import { g } from "../../../../shared/styles/global";
 import { t } from "../../../../shared/styles/text";
 import { colors, spacing, radius } from "../../../../shared/styles/tokens";
 import BookmarkButton from "../../../../shared/components/BookmarkButton";
+import { formatDistance } from "../../../../shared/distance";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 type Props = {
   shrine: ShrinePreviewModel;
-  userLocation: LatLon | null;
   onClose: () => void;
   children?: ReactNode;
 };
 
 export default function MapPopupCardContent({
   shrine,
-  userLocation,
   onClose,
   children,
 }: Props) {
@@ -44,7 +41,10 @@ export default function MapPopupCardContent({
   const directionPress = usePressScale(0.95);
   const closePress = usePressScale(0.9);
 
-  const distanceLabel = getDistanceLabel(userLocation, shrine.lat, shrine.lon);
+  const distanceLabel =
+  typeof (shrine as any).distance_meters === "number"
+    ? formatDistance((shrine as any).distance_meters)
+    : null;
 
   return (
     <View>

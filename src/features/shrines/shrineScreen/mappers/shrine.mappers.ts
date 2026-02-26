@@ -52,7 +52,7 @@ export type ShrinePreviewModel = ShrineCardModel & {
  * ========================================================================== */
 
 export type ShrineDetailModel = ShrinePreviewModel & {
-  // Address (flattened because your Info tab builds from these)
+  // Address
   address_raw?: string | null;
   prefecture?: string | null;
   city?: string | null;
@@ -60,6 +60,8 @@ export type ShrineDetailModel = ShrinePreviewModel & {
   locality?: string | null;
   postal_code?: string | null;
   country?: string | null;
+
+  distance_meters: number | null;
 
   // Contact
   phone_number?: string | null;

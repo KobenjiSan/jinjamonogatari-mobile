@@ -26,13 +26,22 @@ export type ShrineCard = {
   nameEn?: string | null;
   nameJp?: string | null;
   imageUrl?: string | null;
+  distanceMeters?: number | null;
 };
 
 /* =========================
  * Requests
  * ========================= */
 
-// GET /api/shrines/list-view
-export async function fetchShrineListView(): Promise<ShrineCard[]> {
-  return getJson<ShrineCard[]>("/api/shrines/list-view");
+// GET /api/shrines/list-view?lat=...&lon=...
+export async function fetchShrineListView(
+  lat?: number | null,
+  lon?: number | null
+): Promise<ShrineCard[]> {
+  const qs =
+    typeof lat === "number" && typeof lon === "number"
+      ? `?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`
+      : "";
+
+  return getJson<ShrineCard[]>(`/api/shrines/list-view${qs}`);
 }

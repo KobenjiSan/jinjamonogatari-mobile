@@ -10,24 +10,17 @@ import React, { useRef } from "react";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { font } from "../../../../shared/styles/typography";
 import { ShrineCardModel } from "../api/shrineList.mapper";
-import type { LatLon } from "../../../../shared/distance";
-import { getDistanceLabel } from "../../../../shared/distance";
 import { useRouter } from "expo-router";
 import { g } from "../../../../shared/styles/global";
 import { t } from "../../../../shared/styles/text";
 import { colors, spacing, radius } from "../../../../shared/styles/tokens";
 import BookmarkButton from "../../../../shared/components/BookmarkButton";
 import { usePressScale } from "../../../../shared/gestures/usePressScale";
+import { formatDistance } from "../../../../shared/distance";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-const ShrineCard = ({
-  shrine,
-  userLocation,
-}: {
-  shrine: ShrineCardModel;
-  userLocation: LatLon | null;
-}) => {
+const ShrineCard = ({ shrine }: { shrine: ShrineCardModel }) => {
   const fallbackImage = require("../../../../../assets/images/placeholder.png");
 
   const router = useRouter();
@@ -35,7 +28,10 @@ const ShrineCard = ({
   const cardPress = usePressScale(0.97);
   const viewPress = usePressScale(0.95);
 
-  // const distanceLabel = getDistanceLabel(userLocation, shrine.lat, shrine.lon); // issue
+  const distanceLabel =
+  typeof shrine.distance_meters === "number"
+    ? formatDistance(shrine.distance_meters)
+    : "—";
 
   const goToShrine = () =>
     router.push({
@@ -91,7 +87,7 @@ const ShrineCard = ({
             <Text
               style={[t.body, { fontFamily: font.title }, styles.locationText]}
             >
-              {/* {distanceLabel ?? "—"} */} —
+              {distanceLabel}
             </Text>
           </View>
 
@@ -126,9 +122,7 @@ export default React.memo(
     prev.shrine.slug === next.shrine.slug &&
     prev.shrine.name_en === next.shrine.name_en &&
     prev.shrine.name_jp === next.shrine.name_jp &&
-    prev.shrine.imageUrl === next.shrine.imageUrl &&
-    prev.userLocation?.lat === next.userLocation?.lat &&
-    prev.userLocation?.lon === next.userLocation?.lon
+    prev.shrine.imageUrl === next.shrine.imageUrl
 );
 
 const styles = StyleSheet.create({

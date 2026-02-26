@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { fetchShrineMetaBySlug } from "./shrineMeta.client";
 import { toShrineMetaModel, type ShrineMetaModel } from "./shrineMeta.mapper";
+import type { LatLon } from "../../../../../../shared/distance";
 
-export function useShrineMetaApi(slug: string | null): {
+export function useShrineMetaApi(
+  slug: string | null,
+  userLocation: LatLon | null
+) : {
   meta: ShrineMetaModel | null;
   isLoading: boolean;
   error: string | null;
@@ -26,7 +30,11 @@ export function useShrineMetaApi(slug: string | null): {
         setIsLoading(true);
         setError(null);
 
-        const api = await fetchShrineMetaBySlug(slug);
+        const api = await fetchShrineMetaBySlug(
+          slug,
+          userLocation?.lat ?? null,
+          userLocation?.lon ?? null
+        );
         const mapped = toShrineMetaModel(api);
 
         if (!cancelled) setMeta(mapped);
@@ -43,7 +51,7 @@ export function useShrineMetaApi(slug: string | null): {
     return () => {
       cancelled = true;
     };
-  }, [slug]);
+  }, [slug, userLocation?.lat, userLocation?.lon]);
 
   return { meta, isLoading, error };
 }

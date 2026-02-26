@@ -21,6 +21,7 @@ import { useCollectionCards } from "./api/useCollectionCards";
 import CollectionCard from "./components/CollectionCard";
 import { font } from "../../shared/styles/typography";
 import { useCollectionIdsStore } from "./api/collectionIds.store";
+import { useUserLocation } from "../../shared/useUserLocation";
 
 const TOP_PADDING =
   Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
@@ -33,7 +34,8 @@ const LIST_BOTTOM_SPACER = 96;
 export default function CollectionScreen() {
   const router = useRouter();
 
-  const { cards, isLoading, error, refresh: refreshCards } = useCollectionCards();
+  const { location: userLocation } = useUserLocation();
+  const { cards, isLoading, error, refresh: refreshCards } = useCollectionCards(userLocation);
   const { ids, refresh: refreshIds, status: idsStatus } = useCollectionIdsStore();
 
   const refreshing = isLoading || idsStatus === "loading";

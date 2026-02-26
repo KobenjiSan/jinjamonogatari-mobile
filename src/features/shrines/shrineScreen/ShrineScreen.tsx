@@ -18,13 +18,15 @@ import ShrineSheet, { Tab } from "./bottomSheet/ShrineSheet";
 import { g } from "../../../shared/styles/global";
 import { colors } from "../../../shared/styles/tokens";
 import { useShrineGalleryApi } from "./tabs/gallery/api/gallery/useShrineGallery";
+import { useUserLocation } from "../../../shared/useUserLocation";
 
 type Props = {
   slug: string;
 };
 
 export default function ShrineScreen({ slug }: Props) {
-  const { meta, isLoading, error } = useShrineMetaApi(slug);
+  const { location: userLocation } = useUserLocation();
+  const { meta, isLoading, error } = useShrineMetaApi(slug, userLocation);
   // Prefetch kami as soon as meta exists (fills cache, UI can ignore result)
   useShrineKamiApi(slug, !!meta);
   const insets = useSafeAreaInsets();
@@ -134,9 +136,7 @@ export default function ShrineScreen({ slug }: Props) {
         postal_code: meta.address?.postal_code ?? null,
         country: meta.address?.country ?? null,
 
-        // Distance calc needs lat/lon — not in meta DTO, so null for now
-        lat: null,
-        lon: null,
+        distance_meters: meta.distance_meters,
 
         // Other tabs not wired yet
         kami: [],

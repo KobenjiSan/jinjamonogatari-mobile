@@ -25,8 +25,9 @@ const H_PADDING = Math.min(24, width * 0.05);
 const LIST_BOTTOM_SPACER = 96;
 
 export default function ShrineListScreen() {
-  const { shrines, isEmpty, isLoading, error } = useShrineList();
   const { location: userLocation } = useUserLocation();
+  const { shrines, isEmpty, isLoading, error } = useShrineList(userLocation);
+  
 
   if (isLoading) {
     return (
@@ -56,7 +57,7 @@ export default function ShrineListScreen() {
         data={shrines}
         keyExtractor={(item) => String(item.shrine_id)}
         renderItem={({ item }) => (
-          <ShrineCard shrine={item} userLocation={userLocation} />
+          <ShrineCard shrine={item} />
         )}
         contentContainerStyle={styles.listContent}
         scrollIndicatorInsets={{

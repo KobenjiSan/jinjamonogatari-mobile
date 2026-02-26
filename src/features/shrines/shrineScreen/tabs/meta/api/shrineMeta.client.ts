@@ -49,6 +49,8 @@ export type ShrineMetaApi = {
 
   imageUrl?: string | null;
 
+  distanceMeters?: number | null;
+
   tags: TagApi[];
 };
 
@@ -56,7 +58,18 @@ export type ShrineMetaApi = {
  * Request
  * ========================= */
 
-// GET /api/shrines/{slug}/meta
-export async function fetchShrineMetaBySlug(slug: string): Promise<ShrineMetaApi> {
-  return getJson<ShrineMetaApi>(`/api/shrines/${encodeURIComponent(slug)}/meta`);
+// GET /api/shrines/{slug}/meta?lat=...&lon=...
+export async function fetchShrineMetaBySlug(
+  slug: string,
+  lat?: number | null,
+  lon?: number | null
+): Promise<ShrineMetaApi> {
+  const qs =
+    typeof lat === "number" && typeof lon === "number"
+      ? `?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`
+      : "";
+
+  return getJson<ShrineMetaApi>(
+    `/api/shrines/${encodeURIComponent(slug)}/meta${qs}`
+  );
 }

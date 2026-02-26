@@ -25,13 +25,14 @@ export type TagApi = {
   titleJp?: string | null;
 };
 
-export type ShrinePreviewApi = {
+export type ShrinePreview = {
   shrineId: number;
   slug: string;
   nameEn?: string | null;
   nameJp?: string | null;
   imageUrl?: string | null;
   shrineDesc?: string | null;
+  distanceMeters?: number | null;
   tags: TagApi[];
 };
 
@@ -39,9 +40,18 @@ export type ShrinePreviewApi = {
  * Requests
  * ========================= */
 
-// GET /api/shrines/map/{slug}
+// GET /api/shrines/map/{slug}?lat=...&lon=...
 export async function fetchShrinePreviewBySlug(
   slug: string,
-): Promise<ShrinePreviewApi> {
-  return getJson<ShrinePreviewApi>(`/api/shrines/map/${encodeURIComponent(slug)}`);
+  lat?: number | null,
+  lon?: number | null
+): Promise<ShrinePreview> {
+  const qs =
+    typeof lat === "number" && typeof lon === "number"
+      ? `?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`
+      : "";
+
+  return getJson<ShrinePreview>(
+    `/api/shrines/map/${encodeURIComponent(slug)}${qs}`
+  );
 }

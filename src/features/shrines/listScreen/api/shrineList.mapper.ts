@@ -6,6 +6,7 @@ export type ShrineCardModel = {
   name_en: string | null;
   name_jp: string | null;
   imageUrl: string | null;
+  distance_meters: number | null;
 };
 
 export function toShrineCardModels(api: ShrineCard[]): ShrineCardModel[] {
@@ -15,5 +16,6 @@ export function toShrineCardModels(api: ShrineCard[]): ShrineCardModel[] {
     name_en: s.nameEn ?? null,
     name_jp: s.nameJp ?? null,
     imageUrl: s.imageUrl ?? null,
+    distance_meters: s.distanceMeters ?? null,
   }));
 }
