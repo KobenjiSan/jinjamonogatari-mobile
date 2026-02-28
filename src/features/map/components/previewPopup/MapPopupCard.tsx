@@ -4,6 +4,7 @@ import type { ShrinePreviewModel } from "../../../shrines/shrineScreen/mappers/s
 import MapPopupCardContent from "./MapPopupCardContent";
 import { g } from "../../../../shared/styles/global";
 import { colors, spacing, radius } from "../../../../shared/styles/tokens";
+import type { LatLon } from "../../../../shared/location/distance";
 
 type MapPopupCardProps = {
   isOpen: boolean;
@@ -15,8 +16,9 @@ type MapPopupCardProps = {
   shrine: ShrinePreviewModel;
   onClose: () => void;
 
-  bottomOffset?: number;
+  origin: LatLon | null;
 
+  bottomOffset?: number;
   children?: ReactNode;
 };
 
@@ -27,6 +29,7 @@ export default function MapPopupCard({
   backdropAnim,
   shrine,
   onClose,
+  origin, 
   bottomOffset = 0,
   children,
 }: MapPopupCardProps) {
@@ -60,6 +63,7 @@ export default function MapPopupCard({
         <MapPopupCardContent
           shrine={shrine}
           onClose={onClose}
+          origin={origin}
         >
           {children}
         </MapPopupCardContent>

@@ -9,6 +9,8 @@ export type TagModel = {
 export type ShrinePreviewModel = {
   shrine_id: number;
   slug: string;
+  lat: number | null;
+  lon: number | null; 
   name_en: string | null;
   name_jp: string | null;
   imageUrl: string | null;
@@ -29,6 +31,8 @@ export function toShrinePreviewModel(p: ShrinePreview): ShrinePreviewModel {
   return {
     shrine_id: p.shrineId,
     slug: p.slug,
+    lat: p.lat ?? null,
+    lon: p.lon ?? null,
     name_en: p.nameEn ?? null,
     name_jp: p.nameJp ?? null,
     imageUrl: p.imageUrl ?? null,

@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import {
   View,
   Image,
@@ -18,19 +18,22 @@ import { g } from "../../../../shared/styles/global";
 import { t } from "../../../../shared/styles/text";
 import { colors, spacing, radius } from "../../../../shared/styles/tokens";
 import BookmarkButton from "../../../../shared/components/BookmarkButton";
-import { formatDistance } from "../../../../shared/location/distance";
+import { formatDistance, LatLon } from "../../../../shared/location/distance";
+import { openDirectionsToShrine } from "../../../../shared/location/openDirections";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 type Props = {
   shrine: ShrinePreviewModel;
   onClose: () => void;
+  origin: LatLon | null;
   children?: ReactNode;
 };
 
 export default function MapPopupCardContent({
   shrine,
   onClose,
+  origin,
   children,
 }: Props) {
   const fallbackImage = require("../../../../../assets/images/placeholder.png");
@@ -41,10 +44,41 @@ export default function MapPopupCardContent({
   const directionPress = usePressScale(0.95);
   const closePress = usePressScale(0.9);
 
+  const [isDirectionsLoading, setIsDirectionsLoading] = useState(false);
+
   const distanceLabel =
   typeof (shrine as any).distance_meters === "number"
     ? formatDistance((shrine as any).distance_meters)
     : null;
+
+  const onDirections = async () => {
+  if (isDirectionsLoading) return;
+
+  const { lat, lon } = shrine;
+
+  if (typeof lat !== "number" || typeof lon !== "number") {
+    console.warn("MapPopupCardContent: shrine missing lat/lon", {
+      shrine_id: shrine.shrine_id,
+      slug: shrine.slug,
+      lat,
+      lon,
+    });
+    return;
+  }
+
+  try {
+    setIsDirectionsLoading(true);
+
+    await openDirectionsToShrine({
+      lat,
+      lon,
+      label: shrine.name_en ?? shrine.name_jp ?? "Shrine",
+      origin,
+    });
+  } finally {
+    setTimeout(() => setIsDirectionsLoading(false), 600);
+  }
+};
 
   return (
     <View>
@@ -124,11 +158,11 @@ export default function MapPopupCardContent({
         <AnimatedPressable
           {...directionPress.handlers}
           hitSlop={8}
-          onPress={() =>
-            console.log(`distance button clicked (${shrine.name_en})`)
-          }
+          onPress={onDirections}
+          disabled={isDirectionsLoading}
           style={[
             styles.distanceButton,
+            isDirectionsLoading && { opacity: 0.6 },
             { transform: [{ scale: directionPress.scale }] },
           ]}
         >
@@ -138,7 +172,11 @@ export default function MapPopupCardContent({
             color={colors.textPrimary}
           />
           <Text style={[t.body, t.primary, styles.distanceButtonText]}>
-            {distanceLabel ? `${distanceLabel} • Directions` : "Directions"}
+            {isDirectionsLoading
+              ? "Opening…"
+              : distanceLabel
+                ? `${distanceLabel} • Directions`
+                : "Directions"}
           </Text>
         </AnimatedPressable>
 

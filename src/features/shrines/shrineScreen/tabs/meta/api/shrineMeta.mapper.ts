@@ -20,6 +20,9 @@ export type ShrineMetaModel = {
   shrine_id: number;
   slug: string;
 
+  lat: number | null;
+  lon: number | null; 
+
   name_en: string | null;
   name_jp: string | null;
   shrine_desc: string | null;
@@ -63,6 +66,9 @@ export function toShrineMetaModel(api: ShrineMetaApi): ShrineMetaModel {
   return {
     shrine_id: api.shrineId,
     slug: api.slug,
+
+    lat: api.lat ?? null,
+    lon: api.lon ?? null,
 
     name_en: api.nameEn ?? null,
     name_jp: api.nameJp ?? null,

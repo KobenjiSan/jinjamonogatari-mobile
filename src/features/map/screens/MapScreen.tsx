@@ -15,6 +15,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import SearchBar from "../../../shared/components/SearchBar";
 import { radius, spacing } from "../../../shared/styles/tokens";
 
+
 const TOP_PADDING =
   Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
 
@@ -266,6 +267,7 @@ export default function MapScreen() {
           backdropAnim={backdrop}
           shrine={selectedShrine}
           onClose={closePopup}
+          origin={userLocation} 
           bottomOffset={tabBarHeight}
         />
       )}

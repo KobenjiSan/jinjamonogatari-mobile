@@ -37,6 +37,9 @@ export type ShrineMetaApi = {
   shrineId: number;
   slug: string;
 
+  lat?: number | null;
+  lon?: number | null; 
+
   nameEn?: string | null;
   nameJp?: string | null;
   shrineDesc?: string | null;

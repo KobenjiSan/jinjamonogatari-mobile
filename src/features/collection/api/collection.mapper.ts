@@ -12,6 +12,8 @@ export type CollectionTagModel = {
 export type CollectionShrineCardModel = {
   shrine_id: number;
   slug: string;
+  lat?: number | null;
+  lon?: number | null;
   name_en?: string | null;
   name_jp?: string | null;
   image_url?: string | null;
@@ -34,6 +36,8 @@ export function mapShrinePreviewDtoToCollectionCardModel(
   return {
     shrine_id: dto.shrineId,
     slug: dto.slug,
+    lat: dto.lat ?? null,
+    lon: dto.lon ?? null,
     name_en: dto.nameEn ?? null,
     name_jp: dto.nameJp ?? null,
     image_url: dto.imageUrl ?? null,

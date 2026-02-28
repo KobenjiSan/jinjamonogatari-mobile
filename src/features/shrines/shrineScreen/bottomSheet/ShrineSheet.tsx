@@ -12,11 +12,14 @@ import ShrineGalleryTab from "../tabs/gallery/ShrineGalleryTab";
 import type { ShrineDetailModel } from "../mappers/shrine.mappers";
 import { colors, spacing, radius } from "../../../../shared/styles/tokens";
 
+import type { LatLon } from "../../../../shared/location/distance";
+
 const TABS = ["Info", "Kami", "History", "Folklore", "Gallery"] as const;
 export type Tab = (typeof TABS)[number];
 
 type Props = {
   shrine: ShrineDetailModel;
+  userLocation: LatLon | null;
   sheetRef: React.RefObject<BottomSheet | null>;
   snapPoints: (string | number)[];
   activeTab: Tab;
@@ -31,6 +34,7 @@ function clampIndex(i: number) {
 
 export default function ShrineSheet({
   shrine,
+  userLocation,
   sheetRef,
   snapPoints,
   activeTab,
@@ -66,11 +70,11 @@ export default function ShrineSheet({
             onChange={onChangeTab}
           />
 
-          {activeTab === "Info" && <ShrineInfoTab shrine={shrine} />}
+          {activeTab === "Info" && <ShrineInfoTab shrine={shrine} origin={userLocation} />}
           {activeTab === "Kami" && (
             <ShrineKamiTab
               slug={shrine.slug}
-              enabled={activeTab === "Kami"} // we'll add prefetch next
+              enabled={activeTab === "Kami"}
             />
           )}
           {activeTab === "History" && (

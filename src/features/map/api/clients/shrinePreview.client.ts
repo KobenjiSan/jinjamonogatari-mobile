@@ -28,6 +28,8 @@ export type TagApi = {
 export type ShrinePreview = {
   shrineId: number;
   slug: string;
+  lat?: number | null;
+  lon?: number | null;
   nameEn?: string | null;
   nameJp?: string | null;
   imageUrl?: string | null;

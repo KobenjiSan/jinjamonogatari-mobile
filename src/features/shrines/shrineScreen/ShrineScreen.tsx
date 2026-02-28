@@ -116,6 +116,10 @@ export default function ShrineScreen({ slug }: Props) {
         // Header needs these
         shrine_id: meta.shrine_id,
         slug: meta.slug,
+
+        lat: meta.lat,
+        lon: meta.lon,
+
         name_en: meta.name_en,
         name_jp: meta.name_jp,
         imageUrl: meta.imageUrl,
@@ -165,6 +169,7 @@ export default function ShrineScreen({ slug }: Props) {
 
       <ShrineSheet
         shrine={shrine}
+        userLocation={userLocation}
         sheetRef={sheetRef}
         snapPoints={snapPoints}
         activeTab={activeTab}
