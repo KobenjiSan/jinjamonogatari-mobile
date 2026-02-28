@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchShrinePreviewBySlug } from "../clients/shrinePreview.client";
 import { toShrinePreviewModel, type ShrinePreviewModel } from "../mappers/previewPopup.mapper";
 import { getPreviewFromCache, setPreviewInCache } from "../state/previewCache";
-import type { LatLon } from "../../../../shared/distance"; 
+import type { LatLon } from "../../../../shared/location/distance"; 
 
 export function useShrinePreview(slug: string | null, userLocation: LatLon | null): {
   preview: ShrinePreviewModel | null;

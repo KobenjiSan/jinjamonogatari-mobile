@@ -4,7 +4,7 @@ import {
   CollectionShrineCardModel,
   mapShrinePreviewDtoToCollectionCardModel,
 } from "./collection.mapper";
-import type { LatLon } from "../../../shared/distance";
+import type { LatLon } from "../../../shared/location/distance";
 
 type Status = "idle" | "loading" | "error";
 

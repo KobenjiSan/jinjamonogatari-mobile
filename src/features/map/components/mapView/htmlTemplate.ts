@@ -51,15 +51,11 @@ export function buildMapHtml({
     <script>
       const markers = ${markersJson};
       const markerIcons = ${markerIconsJson};
-      const userLocation = ${userLocationJson};
+      const initialUserLocation = ${userLocationJson};
 
-      // ---- Japan bounds (Lng/Lat) ----
-      // This clamps the camera so the user cannot pan the view outside Japan.
-      // Users can still zoom out and see nearby countries (e.g., Korea) as long
-      // as the camera center stays within these bounds.
       const JAPAN_BOUNDS = [
-        [128.0, 28.0],  // [minLng, minLat]
-        [148.0, 45.75],  // [maxLng, maxLat]
+        [128.0, 28.0],
+        [148.0, 45.75],
       ];
 
       function sendToRN(payload) {
@@ -68,7 +64,6 @@ export function buildMapHtml({
         }
       }
 
-      // Debug errors back to RN
       window.onerror = function (message, source, lineno, colno, error) {
         sendToRN({
           type: "WEB_ERROR",
@@ -82,29 +77,54 @@ export function buildMapHtml({
 
       const map = new maplibregl.Map({
         container: "map",
-        // style: "https://api.maptiler.com/maps/dataviz/style.json?key=${apiKey}",
         style: "https://api.maptiler.com/maps/019c2031-d766-7298-bdc2-c88076ef2f99/style.json?key=${apiKey}",
         center: [${center.lng}, ${center.lat}],
         zoom: ${zoom},
-
-        // Allow normal pan/zoom gestures
         interactive: true,
-
-        // Hard lock within Japan
         maxBounds: JAPAN_BOUNDS,
-
-        // Prevent world wrap horizontally (keeps bounds behavior intuitive)
         renderWorldCopies: false
       });
 
-      // ---- Selection state ----
-      let selectedShrineId = null;
+      let mapLoaded = false;
 
-      // Store the INNER img so we can scale safely without breaking MapLibre positioning
+      let followUser = true;           
+      let userIsGesturing = false;     
+      let cameraIntervalId = null;
+
+      function disableFollow() {
+        followUser = false;
+      }
+      function enableFollow() {
+        followUser = true;
+      }
+
+      map.on("movestart", (e) => {
+        if (e && e.originalEvent) {
+          userIsGesturing = true;
+          disableFollow();
+        }
+      });
+      map.on("moveend", (e) => {
+        if (e && e.originalEvent) {
+          userIsGesturing = false;
+        }
+      });
+      map.on("zoomstart", (e) => {
+        if (e && e.originalEvent) {
+          userIsGesturing = true;
+          disableFollow();
+        }
+      });
+      map.on("zoomend", (e) => {
+        if (e && e.originalEvent) {
+          userIsGesturing = false;
+        }
+      });
+
+      let selectedShrineId = null;
       const markerImgById = new Map();
 
       function setSelectedMarker(id) {
-        // revert previous
         if (selectedShrineId != null) {
           const prevImg = markerImgById.get(selectedShrineId);
           if (prevImg) {
@@ -115,7 +135,6 @@ export function buildMapHtml({
 
         selectedShrineId = (typeof id === "number") ? id : null;
 
-        // apply new
         if (selectedShrineId != null) {
           const nextImg = markerImgById.get(selectedShrineId);
           if (nextImg) {
@@ -125,22 +144,13 @@ export function buildMapHtml({
         }
       }
 
-      // ---- Press scale (applied to INNER img, not wrapper) ----
       function addPressScale(img, markerId) {
         img.style.transition = "transform 0.12s ease";
         img.style.transformOrigin = "center center";
 
-        function isSelected() {
-          return selectedShrineId === markerId;
-        }
-
-        function down() {
-          if (!isSelected()) img.style.transform = "scale(0.92)";
-        }
-
-        function up() {
-          if (!isSelected()) img.style.transform = "scale(1)";
-        }
+        function isSelected() { return selectedShrineId === markerId; }
+        function down() { if (!isSelected()) img.style.transform = "scale(0.92)"; }
+        function up() { if (!isSelected()) img.style.transform = "scale(1)"; }
 
         img.addEventListener("mousedown", down);
         img.addEventListener("mouseup", up);
@@ -151,7 +161,97 @@ export function buildMapHtml({
         img.addEventListener("touchcancel", up);
       }
 
-      // ---- RN → WebView messages ----
+      let userMarker = null;
+      let pendingUserLoc = null;
+
+      let targetUserLoc = null;   
+      let renderedUserLoc = null; 
+
+      const DOT_SMOOTHING = 0.18; 
+      const SNAP_METERS = 20;
+
+      function ensureUserMarker() {
+        if (userMarker) return userMarker;
+
+        const dot = document.createElement("div");
+        dot.style.width = "12px";
+        dot.style.height = "12px";
+        dot.style.borderRadius = "999px";
+        dot.style.backgroundColor = "#2563EB";
+        dot.style.border = "2px solid #FFFFFF";
+        dot.style.boxShadow = "0 0 0 6px rgba(37,99,235,0.25)";
+
+        userMarker = new maplibregl.Marker({ element: dot });
+        return userMarker;
+      }
+
+      function metersBetween(a, b) {
+        const dLat = (a.lat - b.lat);
+        const dLon = (a.lon - b.lon);
+        return Math.sqrt(dLat * dLat + dLon * dLon) * 111000;
+      }
+
+      function setUserLocationTarget(lat, lon) {
+        if (typeof lat !== "number" || typeof lon !== "number") return;
+
+        if (!mapLoaded) {
+          pendingUserLoc = { lat, lon };
+          return;
+        }
+
+        targetUserLoc = { lat, lon };
+
+        if (!renderedUserLoc) {
+          renderedUserLoc = { lat, lon };
+          ensureUserMarker().setLngLat([lon, lat]).addTo(map);
+
+          map.jumpTo({ center: [lon, lat], zoom: Math.max(map.getZoom(), 20) });
+          return;
+        }
+
+        const jumpMeters = metersBetween(targetUserLoc, renderedUserLoc);
+        if (jumpMeters > SNAP_METERS) {
+          renderedUserLoc = { lat, lon };
+          ensureUserMarker().setLngLat([lon, lat]).addTo(map);
+        }
+      }
+
+      function tickDot() {
+        if (!mapLoaded) return;
+
+        if (targetUserLoc && renderedUserLoc) {
+          const rl = renderedUserLoc;
+          const tl = targetUserLoc;
+
+          renderedUserLoc = {
+            lat: rl.lat + (tl.lat - rl.lat) * DOT_SMOOTHING,
+            lon: rl.lon + (tl.lon - rl.lon) * DOT_SMOOTHING,
+          };
+
+          ensureUserMarker()
+            .setLngLat([renderedUserLoc.lon, renderedUserLoc.lat])
+            .addTo(map);
+        }
+
+        requestAnimationFrame(tickDot);
+      }
+
+      function startCameraFollowLoop() {
+        if (cameraIntervalId) clearInterval(cameraIntervalId);
+
+        cameraIntervalId = setInterval(() => {
+          if (!mapLoaded) return;
+          if (!followUser) return;
+          if (userIsGesturing) return;
+          if (!renderedUserLoc) return;
+
+          map.easeTo({
+            center: [renderedUserLoc.lon, renderedUserLoc.lat],
+            duration: 300
+          });
+        }, 150); 
+      }
+
       function handleRNMessage(event) {
         try {
           const raw = (typeof event.data === "string") ? event.data : "";
@@ -159,10 +259,39 @@ export function buildMapHtml({
 
           if (msg.type === "CLEAR_SELECTED_SHRINE") {
             setSelectedMarker(null);
+            return;
           }
 
           if (msg.type === "SET_SELECTED_SHRINE") {
             setSelectedMarker(msg.shrineId);
+            return;
+          }
+
+          if (msg.type === "USER_LOCATION_UPDATE") {
+            setUserLocationTarget(msg.lat, msg.lon);
+            return;
+          }
+
+          if (msg.type === "RECENTER_USER") {
+            enableFollow();
+            userIsGesturing = false;
+            setUserLocationTarget(msg.lat, msg.lon);
+
+            if (typeof msg.lat === "number" && typeof msg.lon === "number") {
+              map.easeTo({ center: [msg.lon, msg.lat], duration: 450 });
+            }
+            return;
+          }
+
+          if (msg.type === "FOLLOW_ON") {
+            enableFollow();
+            userIsGesturing = false;
+            return;
+          }
+
+          if (msg.type === "FOLLOW_OFF") {
+            disableFollow();
+            return;
           }
         } catch (e) {}
       }
@@ -170,15 +299,12 @@ export function buildMapHtml({
       window.addEventListener("message", handleRNMessage);
       document.addEventListener("message", handleRNMessage);
 
-      // ---- Create markers ----
       markers.forEach((m) => {
-        // Wrapper: MapLibre owns this element's transform (positioning)
         const wrapper = document.createElement("div");
         wrapper.style.width = "42px";
         wrapper.style.height = "42px";
         wrapper.style.cursor = "pointer";
 
-        // Inner image: WE own transform here (scale animations)
         const img = document.createElement("img");
         img.src = markerIcons.defaultUri;
         img.style.width = "42px";
@@ -203,28 +329,26 @@ export function buildMapHtml({
         });
       });
 
-      // ---- User location dot ----
-      if (
-        userLocation &&
-        typeof userLocation.lat === "number" &&
-        typeof userLocation.lon === "number"
-      ) {
-        const dot = document.createElement("div");
-        dot.style.width = "12px";
-        dot.style.height = "12px";
-        dot.style.borderRadius = "999px";
-        dot.style.backgroundColor = "#2563EB";
-        dot.style.border = "2px solid #FFFFFF";
-        dot.style.boxShadow = "0 0 0 6px rgba(37,99,235,0.25)";
-
-        new maplibregl.Marker({ element: dot })
-          .setLngLat([userLocation.lon, userLocation.lat])
-          .addTo(map);
-      }
-
       map.on("load", () => {
-        // Re-apply bounds on load for safety
+        mapLoaded = true;
         map.setMaxBounds(JAPAN_BOUNDS);
+
+        if (pendingUserLoc) {
+          setUserLocationTarget(pendingUserLoc.lat, pendingUserLoc.lon);
+          pendingUserLoc = null;
+        }
+
+        if (
+          initialUserLocation &&
+          typeof initialUserLocation.lat === "number" &&
+          typeof initialUserLocation.lon === "number"
+        ) {
+          setUserLocationTarget(initialUserLocation.lat, initialUserLocation.lon);
+        }
+
+        requestAnimationFrame(tickDot);
+        startCameraFollowLoop();
+
         sendToRN({ type: "MAP_READY" });
       });
     </script>

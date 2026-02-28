@@ -18,7 +18,7 @@ import ShrineSheet, { Tab } from "./bottomSheet/ShrineSheet";
 import { g } from "../../../shared/styles/global";
 import { colors } from "../../../shared/styles/tokens";
 import { useShrineGalleryApi } from "./tabs/gallery/api/gallery/useShrineGallery";
-import { useUserLocation } from "../../../shared/useUserLocation";
+import { useUserLocation } from "../../../shared/location/useUserLocation";
 
 type Props = {
   slug: string;

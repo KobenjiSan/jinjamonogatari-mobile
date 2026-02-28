@@ -14,7 +14,7 @@ import BookmarkButton from "../../../shared/components/BookmarkButton";
 import TagPill, { Tag } from "../../../shared/components/TagPill";
 import type { CollectionShrineCardModel } from "../api/collection.mapper";
 import { FontAwesome6 } from "@expo/vector-icons";
-import { formatDistance } from "../../../shared/distance";
+import { formatDistance } from "../../../shared/location/distance";
 
 type Props = {
   shrine: CollectionShrineCardModel;

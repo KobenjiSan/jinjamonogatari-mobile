@@ -11,7 +11,7 @@ import {
 
 import ShrineCard from "./components/ShrineCard";
 import { useShrineList } from "./api/useShrineList";
-import { useUserLocation } from "../../../shared/useUserLocation";
+import { useUserLocation } from "../../../shared/location/useUserLocation";
 import { g } from "../../../shared/styles/global";
 import { spacing } from "../../../shared/styles/tokens";
 

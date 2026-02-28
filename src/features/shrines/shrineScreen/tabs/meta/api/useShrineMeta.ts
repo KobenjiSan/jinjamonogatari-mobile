@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchShrineMetaBySlug } from "./shrineMeta.client";
 import { toShrineMetaModel, type ShrineMetaModel } from "./shrineMeta.mapper";
-import type { LatLon } from "../../../../../../shared/distance";
+import type { LatLon } from "../../../../../../shared/location/distance";
 
 export function useShrineMetaApi(
   slug: string | null,

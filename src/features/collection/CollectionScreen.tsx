@@ -21,7 +21,7 @@ import { useCollectionCards } from "./api/useCollectionCards";
 import CollectionCard from "./components/CollectionCard";
 import { font } from "../../shared/styles/typography";
 import { useCollectionIdsStore } from "./api/collectionIds.store";
-import { useUserLocation } from "../../shared/useUserLocation";
+import { useUserLocation } from "../../shared/location/useUserLocation";
 
 const TOP_PADDING =
   Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;

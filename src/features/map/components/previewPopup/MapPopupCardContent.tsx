@@ -18,7 +18,7 @@ import { g } from "../../../../shared/styles/global";
 import { t } from "../../../../shared/styles/text";
 import { colors, spacing, radius } from "../../../../shared/styles/tokens";
 import BookmarkButton from "../../../../shared/components/BookmarkButton";
-import { formatDistance } from "../../../../shared/distance";
+import { formatDistance } from "../../../../shared/location/distance";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 

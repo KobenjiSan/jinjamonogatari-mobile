@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { fetchShrineListView } from "./shrineList.client";
 import { toShrineCardModels, type ShrineCardModel } from "./shrineList.mapper";
-import type { LatLon } from "../../../../shared/distance";
+import type { LatLon } from "../../../../shared/location/distance";
 
 export function useShrineList(userLocation: LatLon | null): {
   shrines: ShrineCardModel[];
