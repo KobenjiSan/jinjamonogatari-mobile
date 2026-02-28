@@ -22,6 +22,7 @@ import CollectionCard from "./components/CollectionCard";
 import { font } from "../../shared/styles/typography";
 import { useCollectionIdsStore } from "./api/collectionIds.store";
 import { useUserLocation } from "../../shared/location/useUserLocation";
+import SearchBar from "../../shared/components/SearchBar";
 
 const TOP_PADDING =
   Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
@@ -35,8 +36,11 @@ export default function CollectionScreen() {
   const router = useRouter();
 
   const { location: userLocation } = useUserLocation();
-  const { cards, isLoading, error, refresh: refreshCards } = useCollectionCards(userLocation);
   const { ids, refresh: refreshIds, status: idsStatus } = useCollectionIdsStore();
+
+  const [query, setQuery] = React.useState("");
+
+  const { cards, isLoading, error, refresh: refreshCards } = useCollectionCards(userLocation, query);
 
   const refreshing = isLoading || idsStatus === "loading";
 
@@ -45,6 +49,8 @@ export default function CollectionScreen() {
   }, [cards, ids]);
 
   const isEmpty = !refreshing && !error && visibleCards.length === 0;
+  const isSearchEmpty =
+    !refreshing && !error && query.trim().length > 0 && visibleCards.length === 0;
 
   const refreshAll = useCallback(async () => {
     await refreshIds();
@@ -64,6 +70,7 @@ export default function CollectionScreen() {
   }
 
   const showEmptyState = isEmpty;
+  const showSearchEmptyState = isSearchEmpty;
   const showLoadingState = refreshing && visibleCards.length === 0;
   const showErrorState = !!error && visibleCards.length === 0;
 
@@ -81,6 +88,15 @@ export default function CollectionScreen() {
         <View style={styles.headerRightSpacer} />
       </View>
 
+      <View style={styles.searchWrapper}>
+        <SearchBar
+          value={query}
+          onChangeText={setQuery}
+          placeholder="Search saved shrines..."
+          onClear={() => setQuery("")}
+        />
+      </View>
+
       {/* Body */}
       {showLoadingState ? (
         <View style={[g.fill, g.center, styles.emptyContainer]}>
@@ -91,8 +107,13 @@ export default function CollectionScreen() {
           <Text style={t.body}>{error}</Text>
           <Text style={[t.muted, styles.subText]}>Pull to retry.</Text>
         </View>
+      ) : showSearchEmptyState ? (
+        <View style={[g.fill, styles.emptyContainer]}>
+          <Text style={[t.body, {textAlign: "center"}]}>No matches for “{query.trim()}”.</Text>
+          <Text style={[t.muted, styles.subText]}>Try a different search.</Text>
+        </View>
       ) : showEmptyState ? (
-        <View style={[g.fill, g.center, styles.emptyContainer]}>
+        <View style={[g.fill, g.center, styles.emptyContainer, {paddingBottom: 92}]}>
           <Text style={t.body}>No saved shrines yet.</Text>
           <Text style={[t.muted, styles.subText]}>
             Save a shrine to see it here.
@@ -124,7 +145,7 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: TOP_PADDING + spacing.md,
     paddingHorizontal: H_PADDING,
-    paddingBottom: spacing.sm,
+    paddingBottom: spacing.md,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -136,6 +157,11 @@ const styles = StyleSheet.create({
 
   headerRightSpacer: {
     width: 40,
+  },
+
+  searchWrapper: {
+    paddingHorizontal: H_PADDING,
+    paddingBottom: spacing.xl,
   },
 
   listContent: {

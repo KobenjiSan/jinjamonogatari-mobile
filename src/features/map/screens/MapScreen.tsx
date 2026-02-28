@@ -1,6 +1,7 @@
 // MapScreen.tsx
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Animated, Pressable, Text } from "react-native";
+import { View, StyleSheet, Animated, Pressable, Text, StatusBar, Platform } from "react-native";
+import { useRouter } from "expo-router";
 import { WebView } from "react-native-webview";
 import type { WebViewMessageEvent } from "react-native-webview";
 
@@ -11,6 +12,11 @@ import { useShrinePreview } from "../api/hooks/useShrinePreview";
 import { useUserLocation } from "../../../shared/location/useUserLocation";
 import { useMarkerIcons } from "../api/hooks/useMarkerIcons";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import SearchBar from "../../../shared/components/SearchBar";
+import { radius, spacing } from "../../../shared/styles/tokens";
+
+const TOP_PADDING =
+  Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
 
 const DEFAULT_CENTER = { lat: 35.0116, lng: 135.7681 }; // Kyoto
 
@@ -24,6 +30,9 @@ type MapWebViewEvent =
   | { type: string; [key: string]: any };
 
 export default function MapScreen() {
+  const router = useRouter();
+  const [mapQuery, setMapQuery] = useState("");
+
   const tabBarHeight = useBottomTabBarHeight();
 
   // Data hooks
@@ -219,6 +228,23 @@ export default function MapScreen() {
         <View style={styles.container} />
       )}
 
+      <View style={styles.searchOverlay} pointerEvents="box-none">
+        <View style={styles.searchInner}>
+          <SearchBar
+            value={mapQuery}
+            onChangeText={setMapQuery}
+            placeholder="Search shrines..."
+            onPress={() =>
+              router.push({
+                pathname: "/(tabs)/list",
+                params: { q: mapQuery },
+              })
+            }
+            onClear={() => setMapQuery("")}
+          />
+        </View>
+      </View>
+
       {/* Track / Follow button (big circle, bottom-right, above tab bar) */}
       <Pressable
         onPress={toggleFollow}
@@ -266,7 +292,7 @@ const styles = StyleSheet.create({
   },
 
   trackBtnOn: {
-    backgroundColor: "rgba(0, 0, 0, 0.95)",
+    backgroundColor: "rgba(0, 0, 0, 0.71)",
     borderWidth: 2,
     borderColor: "rgba(255,255,255,0.9)",
   },
@@ -282,5 +308,17 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: "800",
     lineHeight: 28,
+  },
+
+  searchOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+  },
+
+  searchInner: {
+    paddingTop: TOP_PADDING + spacing.md,
+    paddingHorizontal: 20,
   },
 });

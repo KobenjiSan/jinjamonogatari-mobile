@@ -43,17 +43,26 @@ export async function getShrineCollectionIds() {
   return res as GetShrineCollectionIdsResult;
 }
 
-// GET /api/users/me/collection/cards
+// GET /api/users/me/collection/cards?lat=...&lon=...&q=...
 export async function getShrineCollectionCards(
   lat?: number | null,
-  lon?: number | null
+  lon?: number | null,
+  q?: string | null
 ) {
-  const qs =
-    typeof lat === "number" && typeof lon === "number"
-      ? `?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`
-      : "";
+  const params = new URLSearchParams();
 
-  const res = await apiFetch(`${BASE}/cards${qs}`);
+  if (typeof lat === "number" && typeof lon === "number") {
+    params.set("lat", String(lat));
+    params.set("lon", String(lon));
+  }
+
+  const trimmed = (q ?? "").trim();
+  if (trimmed.length > 0) {
+    params.set("q", trimmed);
+  }
+
+  const qs = params.toString();
+  const res = await apiFetch(`${BASE}/cards${qs ? `?${qs}` : ""}`);
   return res as GetShrineCollectionCardsResult;
 }
 

@@ -33,15 +33,24 @@ export type ShrineCard = {
  * Requests
  * ========================= */
 
-// GET /api/shrines/list-view?lat=...&lon=...
+// GET /api/shrines/list-view?lat=...&lon=...&q=...
 export async function fetchShrineListView(
   lat?: number | null,
-  lon?: number | null
+  lon?: number | null,
+  q?: string | null
 ): Promise<ShrineCard[]> {
-  const qs =
-    typeof lat === "number" && typeof lon === "number"
-      ? `?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`
-      : "";
+  const params = new URLSearchParams();
 
-  return getJson<ShrineCard[]>(`/api/shrines/list-view${qs}`);
+  if (typeof lat === "number" && typeof lon === "number") {
+    params.set("lat", String(lat));
+    params.set("lon", String(lon));
+  }
+
+  const trimmed = (q ?? "").trim();
+  if (trimmed.length > 0) {
+    params.set("q", trimmed);
+  }
+
+  const qs = params.toString();
+  return getJson<ShrineCard[]>(`/api/shrines/list-view${qs ? `?${qs}` : ""}`);
 }

@@ -3,7 +3,10 @@ import { fetchShrineListView } from "./shrineList.client";
 import { toShrineCardModels, type ShrineCardModel } from "./shrineList.mapper";
 import type { LatLon } from "../../../../shared/location/distance";
 
-export function useShrineList(userLocation: LatLon | null): {
+export function useShrineList(
+  userLocation: LatLon | null,
+  q: string
+): {
   shrines: ShrineCardModel[];
   isEmpty: boolean;
   isLoading: boolean;
@@ -24,7 +27,11 @@ export function useShrineList(userLocation: LatLon | null): {
       setIsLoading(true);
       setError(null);
 
-      const api = await fetchShrineListView(userLocation?.lat ?? null, userLocation?.lon ?? null);
+      const api = await fetchShrineListView(
+        userLocation?.lat ?? null,
+        userLocation?.lon ?? null,
+        q
+      );
       const mapped = toShrineCardModels(api);
 
       if (mySeq !== reqSeq.current) return;
@@ -38,35 +45,48 @@ export function useShrineList(userLocation: LatLon | null): {
       if (mySeq !== reqSeq.current) return;
       setIsLoading(false);
     }
-  }, []);
+  }, [userLocation?.lat, userLocation?.lon, q]);
 
   useEffect(() => {
     let cancelled = false;
+    const mySeq = ++reqSeq.current;
 
-    (async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
+    // debounce search
+    const t = setTimeout(() => {
+      (async () => {
+        try {
+          setIsLoading(true);
+          setError(null);
 
-        const api = await fetchShrineListView(userLocation?.lat ?? null, userLocation?.lon ?? null);
-        const mapped = toShrineCardModels(api);
+          const api = await fetchShrineListView(
+            userLocation?.lat ?? null,
+            userLocation?.lon ?? null,
+            q
+          );
+          const mapped = toShrineCardModels(api);
 
-        if (!cancelled) setShrines(mapped);
-      } catch (e: any) {
-        if (!cancelled) {
+          if (cancelled) return;
+          if (mySeq !== reqSeq.current) return;
+          setShrines(mapped);
+        } catch (e: any) {
+          if (cancelled) return;
+          if (mySeq !== reqSeq.current) return;
+
           setShrines([]);
           setError(e?.message ?? "Failed to load shrines");
+        } finally {
+          if (cancelled) return;
+          if (mySeq !== reqSeq.current) return;
+          setIsLoading(false);
         }
-      } finally {
-        if (!cancelled) setIsLoading(false);
-      }
-    })();
+      })();
+    }, 250);
 
     return () => {
       cancelled = true;
-      reqSeq.current++; // invalidate any in-flight refresh
+      clearTimeout(t);
     };
-  }, [userLocation?.lat, userLocation?.lon]);
+  }, [userLocation?.lat, userLocation?.lon, q]);
 
   return {
     shrines,
