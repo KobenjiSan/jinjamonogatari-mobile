@@ -3,8 +3,9 @@ import { View, StyleSheet, Pressable, Animated } from "react-native";
 import type { ShrinePreviewModel } from "../../../shrines/shrineScreen/mappers/shrine.mappers";
 import MapPopupCardContent from "./MapPopupCardContent";
 import { g } from "../../../../shared/styles/global";
-import { colors, spacing, radius } from "../../../../shared/styles/tokens";
+import { spacing, radius } from "../../../../shared/styles/tokens";
 import type { LatLon } from "../../../../shared/location/distance";
+import { useTheme } from "../../../../shared/theme/useTheme";
 
 type MapPopupCardProps = {
   isOpen: boolean;
@@ -29,10 +30,12 @@ export default function MapPopupCard({
   backdropAnim,
   shrine,
   onClose,
-  origin, 
+  origin,
   bottomOffset = 0,
   children,
 }: MapPopupCardProps) {
+  const theme = useTheme();
+
   if (!isOpen) return null;
 
   return (
@@ -54,17 +57,14 @@ export default function MapPopupCard({
           g.cardNoPadding,
           styles.card,
           {
+            backgroundColor: theme.colors.bgCard,
             opacity: fadeAnim,
             transform: [{ translateY: slideYAnim }],
             bottom: spacing.lg + bottomOffset,
           },
         ]}
       >
-        <MapPopupCardContent
-          shrine={shrine}
-          onClose={onClose}
-          origin={origin}
-        >
+        <MapPopupCardContent shrine={shrine} onClose={onClose} origin={origin}>
           {children}
         </MapPopupCardContent>
       </Animated.View>
@@ -82,7 +82,6 @@ const styles = StyleSheet.create({
     left: spacing.lg,
     right: spacing.lg,
 
-    backgroundColor: colors.white,
     borderRadius: radius.lg,
 
     shadowOpacity: 0.2,

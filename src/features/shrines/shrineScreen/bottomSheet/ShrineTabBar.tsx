@@ -9,12 +9,8 @@ import {
 } from "react-native";
 import { g } from "../../../../shared/styles/global";
 import { t } from "../../../../shared/styles/text";
-import {
-  colors,
-  spacing,
-  radius,
-  fontSize,
-} from "../../../../shared/styles/tokens";
+import { spacing, radius, fontSize } from "../../../../shared/styles/tokens";
+import { useTheme } from "../../../../shared/theme/useTheme";
 
 type Props<T extends readonly string[]> = {
   tabs: T;
@@ -29,6 +25,7 @@ export default function ShrineTabBar<T extends readonly string[]>({
   activeTab,
   onChange,
 }: Props<T>) {
+  const theme = useTheme();
   const [layouts, setLayouts] = useState<Record<string, TabLayout>>({});
 
   const translateX = useRef(new Animated.Value(0)).current;
@@ -88,7 +85,7 @@ export default function ShrineTabBar<T extends readonly string[]>({
                 style={[
                   t.title,
                   styles.tabText,
-                  active && styles.tabTextActive,
+                  { color: active ? theme.colors.textPrimary : theme.colors.textMuted },
                 ]}
               >
                 {tab}
@@ -99,7 +96,7 @@ export default function ShrineTabBar<T extends readonly string[]>({
       </View>
 
       {/* Baseline */}
-      <View style={styles.track} />
+      <View style={[styles.track, { backgroundColor: theme.colors.border }]} />
 
       {/* Indicator */}
       <Animated.View
@@ -108,6 +105,7 @@ export default function ShrineTabBar<T extends readonly string[]>({
           {
             width: indicatorW,
             transform: [{ translateX }],
+            backgroundColor: theme.colors.textPrimary,
           },
         ]}
       />
@@ -132,16 +130,10 @@ const styles = StyleSheet.create({
 
   tabText: {
     fontSize: fontSize.xxl,
-    color: colors.gray500,
-  },
-
-  tabTextActive: {
-    color: colors.black,
   },
 
   track: {
     height: 1,
-    backgroundColor: colors.gray300,
     width: "100%",
   },
 
@@ -150,7 +142,6 @@ const styles = StyleSheet.create({
     left: spacing.xs,
     bottom: 0,
     height: 2,
-    backgroundColor: colors.black,
     borderRadius: radius.sm,
   },
 });

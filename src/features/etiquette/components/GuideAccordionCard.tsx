@@ -1,4 +1,3 @@
-// GuideAccordionCard.tsx
 import React, { useEffect, useRef, useState } from "react";
 import {
   View,
@@ -13,10 +12,11 @@ import {
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 import { t } from "../../../shared/styles/text";
-import { colors, spacing, radius } from "../../../shared/styles/tokens";
+import { spacing, radius } from "../../../shared/styles/tokens";
 import { font } from "../../../shared/styles/typography";
 
 import GuideAccordionContent, { type GuideItem } from "./GuideAccordionContent";
+import { useTheme } from "../../../shared/theme/useTheme";
 
 if (Platform.OS === "android") {
   UIManager.setLayoutAnimationEnabledExperimental?.(true);
@@ -33,6 +33,7 @@ export default function GuideAccordionCard({
   defaultOpen = false,
   durationMs = 360,
 }: GuideAccordionCardProps) {
+  const theme = useTheme();
   const [open, setOpen] = useState(defaultOpen);
 
   const progress = useRef(new Animated.Value(defaultOpen ? 1 : 0)).current;
@@ -42,7 +43,6 @@ export default function GuideAccordionCard({
   });
 
   useEffect(() => {
-    // keep in sync if defaultOpen changes
     setOpen(defaultOpen);
     progress.setValue(defaultOpen ? 1 : 0);
   }, [defaultOpen, progress]);
@@ -65,11 +65,14 @@ export default function GuideAccordionCard({
       <Pressable
         onPress={toggle}
         style={[styles.header, { backgroundColor: "transparent" }]}
-        android_ripple={{ color: colors.gray100 }}
+        android_ripple={{ color: theme.colors.overlayLight }}
       >
         <View style={styles.headerLeft}>
           <Text
-            style={[t.title, { fontFamily: font.strong }]}
+            style={[
+              t.title,
+              { fontFamily: font.strong, color: theme.colors.textPrimary },
+            ]}
             numberOfLines={1}
           >
             {item.title_long ?? "Untitled"}
@@ -77,7 +80,11 @@ export default function GuideAccordionCard({
         </View>
 
         <Animated.View style={{ transform: [{ rotate }] }}>
-          <FontAwesome5 name="chevron-down" size={16} color={colors.gray600} />
+          <FontAwesome5
+            name="chevron-down"
+            size={16}
+            color={theme.colors.textSecondary}
+          />
         </Animated.View>
       </Pressable>
 
@@ -103,7 +110,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: colors.white,
   },
 
   headerLeft: {

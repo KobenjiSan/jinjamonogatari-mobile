@@ -4,6 +4,7 @@ import { Tabs } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { useTheme } from "../../src/shared/theme/useTheme";
 
 const ICON_SIZE = 32;
 const BOX = 48;
@@ -25,6 +26,7 @@ function TabIcon({ children }: { children: React.ReactNode }) {
 }
 
 export default function TabLayout() {
+  const theme = useTheme();
   return (
     <Tabs
       screenOptions={{
@@ -41,7 +43,7 @@ export default function TabLayout() {
           paddingTop: 12,
           paddingBottom: 18,
 
-          backgroundColor: "white",
+          backgroundColor: theme.colors.bgCard,
 
           // rounded top corners
           borderTopLeftRadius: 22,
@@ -50,7 +52,7 @@ export default function TabLayout() {
           borderTopWidth: 0,
 
           // shadow (iOS)
-          shadowColor: "#000",
+          shadowColor: theme.colors.overlayDark,
           shadowOffset: { width: 0, height: -6 },
           shadowOpacity: 0.25,
           shadowRadius: 10,
@@ -74,7 +76,9 @@ export default function TabLayout() {
               <Feather
                 name="map"
                 size={ICON_SIZE}
-                color={focused ? "black" : "#00000050"}
+                color={
+                  focused ? theme.colors.textPrimary : theme.colors.textMuted
+                }
               />
             </TabIcon>
           ),
@@ -89,7 +93,9 @@ export default function TabLayout() {
               <FontAwesome5
                 name="list-alt"
                 size={ICON_SIZE}
-                color={focused ? "black" : "#00000050"}
+                color={
+                  focused ? theme.colors.textPrimary : theme.colors.textMuted
+                }
               />
             </TabIcon>
           ),
@@ -104,7 +110,9 @@ export default function TabLayout() {
               <FontAwesome6
                 name="hands-praying"
                 size={ICON_SIZE}
-                color={focused ? "black" : "#00000050"}
+                color={
+                  focused ? theme.colors.textPrimary : theme.colors.textMuted
+                }
               />
             </TabIcon>
           ),
@@ -119,7 +127,9 @@ export default function TabLayout() {
               <FontAwesome5
                 name="user-circle"
                 size={ICON_SIZE}
-                color={focused ? "black" : "#00000050"}
+                color={
+                  focused ? theme.colors.textPrimary : theme.colors.textMuted
+                }
               />
             </TabIcon>
           ),

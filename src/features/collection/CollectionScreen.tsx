@@ -15,7 +15,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { g } from "../../shared/styles/global";
 import { t } from "../../shared/styles/text";
-import { colors, spacing } from "../../shared/styles/tokens";
+import { spacing } from "../../shared/styles/tokens";
 
 import { useCollectionCards } from "./api/useCollectionCards";
 import CollectionCard from "./components/CollectionCard";
@@ -23,6 +23,7 @@ import { font } from "../../shared/styles/typography";
 import { useCollectionIdsStore } from "./api/collectionIds.store";
 import { useUserLocation } from "../../shared/location/useUserLocation";
 import SearchBar from "../../shared/components/SearchBar";
+import { useTheme } from "../../shared/theme/useTheme";
 
 const TOP_PADDING =
   Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
@@ -33,6 +34,7 @@ const H_PADDING = Math.min(24, width * 0.05);
 const LIST_BOTTOM_SPACER = 96;
 
 export default function CollectionScreen() {
+  const theme = useTheme();
   const router = useRouter();
 
   const { location: userLocation } = useUserLocation();
@@ -40,7 +42,10 @@ export default function CollectionScreen() {
 
   const [query, setQuery] = React.useState("");
 
-  const { cards, isLoading, error, refresh: refreshCards } = useCollectionCards(userLocation, query);
+  const { cards, isLoading, error, refresh: refreshCards } = useCollectionCards(
+    userLocation,
+    query
+  );
 
   const refreshing = isLoading || idsStatus === "loading";
 
@@ -50,7 +55,10 @@ export default function CollectionScreen() {
 
   const isEmpty = !refreshing && !error && visibleCards.length === 0;
   const isSearchEmpty =
-    !refreshing && !error && query.trim().length > 0 && visibleCards.length === 0;
+    !refreshing &&
+    !error &&
+    query.trim().length > 0 &&
+    visibleCards.length === 0;
 
   const refreshAll = useCallback(async () => {
     await refreshIds();
@@ -75,16 +83,34 @@ export default function CollectionScreen() {
   const showErrorState = !!error && visibleCards.length === 0;
 
   return (
-    <View style={[g.fill, styles.root]}>
+    <View style={[g.fill, styles.root, { backgroundColor: theme.colors.bgApp }]}>
       {/* Header (always visible) */}
       <View style={styles.header}>
         <Pressable onPress={popBack} hitSlop={10}>
-          <View style={[g.iconBtnCircle, g.iconBtnOverlay]}>
-            <Ionicons name="chevron-back" size={22} color="black" />
+          <View
+            style={[
+              g.iconBtnCircle,
+              g.iconBtnOverlay,
+              { backgroundColor: theme.colors.overlayLight },
+            ]}
+          >
+            <Ionicons
+              name="chevron-back"
+              size={22}
+              color={theme.colors.textPrimary}
+            />
           </View>
         </Pressable>
 
-        <Text style={[t.hero, styles.headerTitle]}>Collection</Text>
+        <Text
+          style={[
+            t.hero,
+            styles.headerTitle,
+            { color: theme.colors.textPrimary },
+          ]}
+        >
+          Collection
+        </Text>
         <View style={styles.headerRightSpacer} />
       </View>
 
@@ -100,22 +126,36 @@ export default function CollectionScreen() {
       {/* Body */}
       {showLoadingState ? (
         <View style={[g.fill, g.center, styles.emptyContainer]}>
-          <Text style={t.body}>Loading saved shrines...</Text>
+          <Text style={[t.body, { color: theme.colors.textPrimary }]}>
+            Loading saved shrines...
+          </Text>
         </View>
       ) : showErrorState ? (
         <View style={[g.fill, g.center, styles.emptyContainer]}>
-          <Text style={t.body}>{error}</Text>
-          <Text style={[t.muted, styles.subText]}>Pull to retry.</Text>
+          <Text style={[t.body, { color: theme.colors.textPrimary }]}>
+            {error}
+          </Text>
+          <Text style={[t.muted, styles.subText, { color: theme.colors.textMuted }]}>
+            Pull to retry.
+          </Text>
         </View>
       ) : showSearchEmptyState ? (
         <View style={[g.fill, styles.emptyContainer]}>
-          <Text style={[t.body, {textAlign: "center"}]}>No matches for “{query.trim()}”.</Text>
-          <Text style={[t.muted, styles.subText]}>Try a different search.</Text>
+          <Text style={[t.body, { textAlign: "center", color: theme.colors.textPrimary }]}>
+            No matches for “{query.trim()}”.
+          </Text>
+          <Text style={[t.muted, styles.subText, { color: theme.colors.textMuted }]}>
+            Try a different search.
+          </Text>
         </View>
       ) : showEmptyState ? (
-        <View style={[g.fill, g.center, styles.emptyContainer, {paddingBottom: 92}]}>
-          <Text style={t.body}>No saved shrines yet.</Text>
-          <Text style={[t.muted, styles.subText]}>
+        <View
+          style={[g.fill, g.center, styles.emptyContainer, { paddingBottom: 92 }]}
+        >
+          <Text style={[t.body, { color: theme.colors.textPrimary }]}>
+            No saved shrines yet.
+          </Text>
+          <Text style={[t.muted, styles.subText, { color: theme.colors.textMuted }]}>
             Save a shrine to see it here.
           </Text>
         </View>
@@ -124,7 +164,10 @@ export default function CollectionScreen() {
           data={visibleCards}
           keyExtractor={(item) => String(item.shrine_id)}
           renderItem={({ item }) => (
-            <CollectionCard shrine={item} onPress={() => goToShrine(item.slug)} />
+            <CollectionCard
+              shrine={item}
+              onPress={() => goToShrine(item.slug)}
+            />
           )}
           contentContainerStyle={styles.listContent}
           scrollIndicatorInsets={{ top: TOP_PADDING, right: 0 }}
@@ -139,9 +182,7 @@ export default function CollectionScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    backgroundColor: colors.gray100,
-  },
+  root: {},
   header: {
     paddingTop: TOP_PADDING + spacing.md,
     paddingHorizontal: H_PADDING,
@@ -181,6 +222,5 @@ const styles = StyleSheet.create({
   subText: {
     marginTop: spacing.xs,
     textAlign: "center",
-    color: colors.gray600,
   },
 });

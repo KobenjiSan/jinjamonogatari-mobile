@@ -16,6 +16,7 @@ import { useUserLocation } from "../../../shared/location/useUserLocation";
 import { g } from "../../../shared/styles/global";
 import { spacing } from "../../../shared/styles/tokens";
 import SearchBar from "../../../shared/components/SearchBar";
+import { useTheme } from "../../../shared/theme/useTheme";
 
 const TOP_PADDING =
   Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
@@ -26,6 +27,7 @@ const H_PADDING = Math.min(24, width * 0.05);
 const LIST_BOTTOM_SPACER = 96;
 
 export default function ShrineListScreen() {
+  const theme = useTheme();
   const { location: userLocation } = useUserLocation();
 
   const params = useLocalSearchParams<{ q?: string }>();
@@ -39,11 +41,10 @@ export default function ShrineListScreen() {
   const { shrines, isLoading, error } = useShrineList(userLocation, query);
 
   const showInitialLoading = isLoading && shrines.length === 0 && !error;
-  const showSearching = isLoading && shrines.length > 0 && !error;
   const showEmpty = !isLoading && !error && shrines.length === 0;
 
   return (
-    <View style={g.fill}>
+    <View style={[g.fill, { backgroundColor: theme.colors.bgApp }]}>
       {/* Search bar ALWAYS visible */}
       <View style={styles.searchWrapper}>
         <SearchBar
@@ -57,15 +58,25 @@ export default function ShrineListScreen() {
       {/* Body */}
       {error ? (
         <View style={[g.fill, g.center, styles.bodyContainer]}>
-          <Text>{error}</Text>
+          <Text style={{ color: theme.colors.textPrimary }}>{error}</Text>
         </View>
       ) : showInitialLoading ? (
         <View style={[g.fill, g.center, styles.bodyContainer]}>
-          <Text>Loading shrines...</Text>
+          <Text style={{ color: theme.colors.textPrimary }}>
+            Loading shrines...
+          </Text>
         </View>
       ) : showEmpty ? (
-        <View style={[g.fill, styles.bodyContainer, {alignItems: "center", paddingTop: spacing.xl}]}>
-          <Text>{query.trim() ? "No matches found." : "No shrines found."}</Text>
+        <View
+          style={[
+            g.fill,
+            styles.bodyContainer,
+            { alignItems: "center", paddingTop: spacing.xl },
+          ]}
+        >
+          <Text style={{ color: theme.colors.textPrimary }}>
+            {query.trim() ? "No matches found." : "No shrines found."}
+          </Text>
         </View>
       ) : (
         <FlatList

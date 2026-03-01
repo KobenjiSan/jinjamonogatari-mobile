@@ -6,21 +6,23 @@ import {
   View,
   Animated,
 } from "react-native";
-import React, { useRef } from "react";
+import React from "react";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { font } from "../../../../shared/styles/typography";
 import { ShrineCardModel } from "../api/shrineList.mapper";
 import { useRouter } from "expo-router";
 import { g } from "../../../../shared/styles/global";
 import { t } from "../../../../shared/styles/text";
-import { colors, spacing, radius } from "../../../../shared/styles/tokens";
+import { spacing, radius } from "../../../../shared/styles/tokens";
 import BookmarkButton from "../../../../shared/components/BookmarkButton";
 import { usePressScale } from "../../../../shared/gestures/usePressScale";
 import { formatDistance } from "../../../../shared/location/distance";
+import { useTheme } from "../../../../shared/theme/useTheme";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const ShrineCard = ({ shrine }: { shrine: ShrineCardModel }) => {
+  const theme = useTheme();
   const fallbackImage = require("../../../../../assets/images/placeholder.png");
 
   const router = useRouter();
@@ -29,9 +31,9 @@ const ShrineCard = ({ shrine }: { shrine: ShrineCardModel }) => {
   const viewPress = usePressScale(0.95);
 
   const distanceLabel =
-  typeof shrine.distance_meters === "number"
-    ? formatDistance(shrine.distance_meters)
-    : "—";
+    typeof shrine.distance_meters === "number"
+      ? formatDistance(shrine.distance_meters)
+      : "—";
 
   const goToShrine = () =>
     router.push({
@@ -45,7 +47,13 @@ const ShrineCard = ({ shrine }: { shrine: ShrineCardModel }) => {
       onPress={goToShrine}
       style={{ transform: [{ scale: cardPress.scale }] }}
     >
-      <View style={[g.cardNoPadding, styles.card]}>
+      <View
+        style={[
+          g.cardNoPadding,
+          styles.card,
+          { backgroundColor: theme.colors.bgCard },
+        ]}
+      >
         <Image
           source={shrine.imageUrl ? { uri: shrine.imageUrl } : fallbackImage}
           style={styles.image}
@@ -55,7 +63,11 @@ const ShrineCard = ({ shrine }: { shrine: ShrineCardModel }) => {
         <View style={styles.body}>
           <View style={styles.headerRow}>
             <Text
-              style={[t.title, { fontFamily: font.title }, styles.title]}
+              style={[
+                t.title,
+                { fontFamily: font.title, color: theme.colors.textPrimary },
+                styles.title,
+              ]}
               numberOfLines={1}
               ellipsizeMode="tail"
             >
@@ -65,13 +77,19 @@ const ShrineCard = ({ shrine }: { shrine: ShrineCardModel }) => {
             <BookmarkButton
               shrineId={shrine.shrine_id}
               size={24}
-              color="black"
+              color={theme.colors.textPrimary}
               downTo={0.9}
             />
           </View>
 
           {shrine.name_jp ? (
-            <Text style={[t.title, { fontFamily: font.strong }, styles.jpName]}>
+            <Text
+              style={[
+                t.title,
+                { fontFamily: font.strong, color: theme.colors.textSecondary },
+                styles.jpName,
+              ]}
+            >
               {shrine.name_jp}
             </Text>
           ) : null}
@@ -82,10 +100,14 @@ const ShrineCard = ({ shrine }: { shrine: ShrineCardModel }) => {
             <FontAwesome6
               name="location-dot"
               size={20}
-              color={colors.gray600}
+              color={theme.colors.textSecondary}
             />
             <Text
-              style={[t.body, { fontFamily: font.title }, styles.locationText]}
+              style={[
+                t.body,
+                { fontFamily: font.title, color: theme.colors.textSecondary },
+                styles.locationText,
+              ]}
             >
               {distanceLabel}
             </Text>
@@ -97,11 +119,17 @@ const ShrineCard = ({ shrine }: { shrine: ShrineCardModel }) => {
             onPress={goToShrine}
             style={{ transform: [{ scale: viewPress.scale }] }}
           >
-            <View style={[g.btnOutline, styles.viewButton]}>
+            <View
+              style={[
+                g.btnOutline,
+                styles.viewButton,
+                { borderColor: theme.colors.border },
+              ]}
+            >
               <Text
                 style={[
                   t.body,
-                  { fontFamily: font.strong },
+                  { fontFamily: font.strong, color: theme.colors.textPrimary },
                   styles.viewButtonText,
                 ]}
               >
@@ -178,6 +206,5 @@ const styles = StyleSheet.create({
 
   locationText: {
     marginLeft: spacing.xs,
-    color: colors.gray600,
   },
 });

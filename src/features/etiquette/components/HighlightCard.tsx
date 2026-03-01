@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { g } from "../../../shared/styles/global";
 import { t } from "../../../shared/styles/text";
-import { colors, spacing, radius } from "../../../shared/styles/tokens";
+import { spacing, radius } from "../../../shared/styles/tokens";
 import { font } from "../../../shared/styles/typography";
+import { useTheme } from "../../../shared/theme/useTheme";
 
 type Step = {
   step_id: string | number;
@@ -18,21 +19,52 @@ type HighlightCardProps = {
 };
 
 const HighlightCard = ({ title, description, steps }: HighlightCardProps) => {
+  const theme = useTheme();
+
   return (
-    <View style={[g.card, styles.card]}>
+    <View
+      style={[
+        g.card,
+        styles.card,
+        {
+          backgroundColor: theme.colors.bgCard,
+          shadowColor: theme.colors.overlayDark,
+        },
+      ]}
+    >
       {/* TITLE */}
-      <Text style={[t.title, { fontFamily: font.strong }]}>{title}</Text>
+      <Text
+        style={[
+          t.title,
+          { fontFamily: font.strong, color: theme.colors.textPrimary },
+        ]}
+      >
+        {title}
+      </Text>
 
       {/* DESCRIPTION */}
       {!!description && (
-        <Text style={[t.body, t.secondary, styles.desc]}>{description}</Text>
+        <Text
+          style={[t.body, styles.desc, { color: theme.colors.textSecondary }]}
+        >
+          {description}
+        </Text>
       )}
 
       {/* STEPS */}
       <View style={styles.stepsWrap}>
         {steps.map((s) => (
-          <View key={s.step_id} style={styles.stepCard}>
-            <Text style={[t.small, styles.stepText]}>
+          <View
+            key={s.step_id}
+            style={[styles.stepCard, { backgroundColor: theme.colors.bgApp }]}
+          >
+            <Text
+              style={[
+                t.small,
+                styles.stepText,
+                { color: theme.colors.textPrimary },
+              ]}
+            >
               {s.step_order}. {s.text}
             </Text>
           </View>
@@ -59,7 +91,6 @@ const styles = StyleSheet.create({
   },
 
   stepCard: {
-    backgroundColor: colors.gray100,
     padding: spacing.sm,
     borderRadius: radius.sm,
     gap: spacing.xs,

@@ -10,9 +10,10 @@ import ShrineFolkloreTab from "../tabs/folklore/ShrineFolkloreTab";
 import ShrineGalleryTab from "../tabs/gallery/ShrineGalleryTab";
 
 import type { ShrineDetailModel } from "../mappers/shrine.mappers";
-import { colors, spacing, radius } from "../../../../shared/styles/tokens";
+import { spacing, radius } from "../../../../shared/styles/tokens";
 
 import type { LatLon } from "../../../../shared/location/distance";
+import { useTheme } from "../../../../shared/theme/useTheme";
 
 const TABS = ["Info", "Kami", "History", "Folklore", "Gallery"] as const;
 export type Tab = (typeof TABS)[number];
@@ -40,6 +41,7 @@ export default function ShrineSheet({
   activeTab,
   onChangeTab,
 }: Props) {
+  const theme = useTheme();
   const activeIndex = TABS.indexOf(activeTab);
 
   function goPrev() {
@@ -58,8 +60,14 @@ export default function ShrineSheet({
       index={0}
       snapPoints={snapPoints}
       enablePanDownToClose={false}
-      backgroundStyle={styles.sheetBackground}
-      handleIndicatorStyle={styles.handleIndicator}
+      backgroundStyle={[
+        styles.sheetBackground,
+        { backgroundColor: theme.colors.bgApp },
+      ]}
+      handleIndicatorStyle={[
+        styles.handleIndicator,
+        { backgroundColor: theme.colors.border },
+      ]}
     >
       {/* Wrap scroll + overlay so edges can sit above content */}
       <View style={styles.wrapper}>
@@ -70,18 +78,23 @@ export default function ShrineSheet({
             onChange={onChangeTab}
           />
 
-          {activeTab === "Info" && <ShrineInfoTab shrine={shrine} origin={userLocation} />}
+          {activeTab === "Info" && (
+            <ShrineInfoTab shrine={shrine} origin={userLocation} />
+          )}
           {activeTab === "Kami" && (
-            <ShrineKamiTab
-              slug={shrine.slug}
-              enabled={activeTab === "Kami"}
-            />
+            <ShrineKamiTab slug={shrine.slug} enabled={activeTab === "Kami"} />
           )}
           {activeTab === "History" && (
-            <ShrineHistoryTab slug={shrine.slug} enabled={activeTab === "History"} />
+            <ShrineHistoryTab
+              slug={shrine.slug}
+              enabled={activeTab === "History"}
+            />
           )}
           {activeTab === "Folklore" && (
-            <ShrineFolkloreTab slug={shrine.slug} enabled={activeTab === "Folklore"} />
+            <ShrineFolkloreTab
+              slug={shrine.slug}
+              enabled={activeTab === "Folklore"}
+            />
           )}
           {activeTab === "Gallery" && (
             <ShrineGalleryTab
@@ -115,13 +128,11 @@ const EDGE_WIDTH = 28;
 
 const styles = StyleSheet.create({
   sheetBackground: {
-    backgroundColor: colors.gray100,
     borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,
   },
-  handleIndicator: {
-    backgroundColor: "#bbb",
-  },
+
+  handleIndicator: {},
 
   wrapper: {
     flex: 1,

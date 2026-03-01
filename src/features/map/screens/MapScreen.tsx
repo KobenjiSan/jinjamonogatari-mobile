@@ -1,6 +1,13 @@
-// MapScreen.tsx
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Animated, Pressable, Text, StatusBar, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Animated,
+  Pressable,
+  Text,
+  StatusBar,
+  Platform,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { WebView } from "react-native-webview";
 import type { WebViewMessageEvent } from "react-native-webview";
@@ -13,8 +20,8 @@ import { useUserLocation } from "../../../shared/location/useUserLocation";
 import { useMarkerIcons } from "../api/hooks/useMarkerIcons";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import SearchBar from "../../../shared/components/SearchBar";
-import { radius, spacing } from "../../../shared/styles/tokens";
-
+import { spacing } from "../../../shared/styles/tokens";
+import { useTheme } from "../../../shared/theme/useTheme";
 
 const TOP_PADDING =
   Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
@@ -25,12 +32,20 @@ const MAPTILER_KEY = process.env.EXPO_PUBLIC_MAPTILER_KEY;
 if (!MAPTILER_KEY) throw new Error("Missing EXPO_PUBLIC_MAPTILER_KEY");
 const mapTilerKey: string = MAPTILER_KEY;
 
+const LIGHT_STYLE_ID = "019c2031-d766-7298-bdc2-c88076ef2f99";
+const DARK_STYLE_ID = "dataviz-dark"; 
+
+function mapTilerStyleUrl(styleId: string) {
+  return `https://api.maptiler.com/maps/${styleId}/style.json`;
+}
+
 type MapWebViewEvent =
   | { type: "MAP_READY" }
   | { type: "MARKER_PRESS"; shrineId: number }
   | { type: string; [key: string]: any };
 
 export default function MapScreen() {
+  const theme = useTheme();
   const router = useRouter();
   const [mapQuery, setMapQuery] = useState("");
 
@@ -46,10 +61,7 @@ export default function MapScreen() {
   const [isOpen, setIsOpen] = useState(false);
 
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
-  const { preview: selectedShrine } = useShrinePreview(
-    selectedSlug,
-    userLocation,
-  );
+  const { preview: selectedShrine } = useShrinePreview(selectedSlug, userLocation);
 
   // Anim values (must always run, no early returns above this)
   const slideY = useRef(new Animated.Value(80)).current;
@@ -69,11 +81,17 @@ export default function MapScreen() {
     webRef.current?.postMessage(JSON.stringify(msg));
   }, []);
 
+  const styleUrl =
+    theme.mode === "dark"
+      ? mapTilerStyleUrl(DARK_STYLE_ID)
+      : mapTilerStyleUrl(LIGHT_STYLE_ID);
+
   // IMPORTANT:
   // Build HTML WITHOUT userLocation so WebView does NOT reload on GPS updates.
   const html = markerIcons
     ? buildMapHtml({
         apiKey: mapTilerKey,
+        mapStyleUrl: styleUrl,
         center: DEFAULT_CENTER,
         zoom: 15,
         markers,
@@ -82,7 +100,7 @@ export default function MapScreen() {
       })
     : null;
 
-  // If WebView reloads (e.g., hot reload), reset readiness so we re-send location
+  // If WebView reloads (e.g., hot reload), reset readiness so re-send location
   useEffect(() => {
     setMapReady(false);
   }, [html]);
@@ -143,7 +161,7 @@ export default function MapScreen() {
 
       setIsOpen(true);
     },
-    [slugById],
+    [slugById]
   );
 
   const closePopup = useCallback(() => {
@@ -184,7 +202,7 @@ export default function MapScreen() {
         console.log("WebView message parse failed:", err);
       }
     },
-    [openPopup, sendToMap, followOn],
+    [openPopup, sendToMap, followOn]
   );
 
   const toggleFollow = useCallback(() => {
@@ -246,7 +264,7 @@ export default function MapScreen() {
         </View>
       </View>
 
-      {/* Track / Follow button (big circle, bottom-right, above tab bar) */}
+      {/* Track / Follow button */}
       <Pressable
         onPress={toggleFollow}
         style={({ pressed }) => [
@@ -267,7 +285,7 @@ export default function MapScreen() {
           backdropAnim={backdrop}
           shrine={selectedShrine}
           onClose={closePopup}
-          origin={userLocation} 
+          origin={userLocation}
           bottomOffset={tabBarHeight}
         />
       )}

@@ -9,6 +9,7 @@ import { spacing, radius } from "../../../../../shared/styles/tokens";
 import CitationBlock from "../../../../../shared/components/CitationBlock";
 import type { Citation as AppCitation } from "../../../../../shared/components/CitationItem";
 import ImageCitationOverlay from "../../../../../shared/components/ImageCitationOverlay";
+import { useTheme } from "../../../../../shared/theme/useTheme";
 
 type Props = {
   slug: string;
@@ -16,6 +17,7 @@ type Props = {
 };
 
 export default function ShrineHistoryTab({ slug, enabled }: Props) {
+  const theme = useTheme();
   const fallbackImage = require("../../../../../../assets/images/placeholder-vertical.jpg");
 
   const { history, isLoading, error } = useShrineHistoryApi(slug, enabled);
@@ -23,21 +25,40 @@ export default function ShrineHistoryTab({ slug, enabled }: Props) {
   return (
     <View style={styles.container}>
       {isLoading && (
-        <View style={g.card}>
-          <Text style={[t.body, t.center, t.muted]}>Loading history...</Text>
+        <View
+          style={[
+            g.card,
+            { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark },
+          ]}
+        >
+          <Text style={[t.body, t.center, { color: theme.colors.textMuted }]}>
+            Loading history...
+          </Text>
         </View>
       )}
 
       {!!error && (
-        <View style={g.card}>
-          <Text style={[t.body, t.center, t.muted]}>{error}</Text>
+        <View
+          style={[
+            g.card,
+            { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark },
+          ]}
+        >
+          <Text style={[t.body, t.center, { color: theme.colors.textMuted }]}>
+            {error}
+          </Text>
         </View>
       )}
 
       {!isLoading && !error && history.length === 0 ? (
         <>
-          <View style={g.card}>
-            <Text style={[t.body, t.center, t.muted]}>
+          <View
+            style={[
+              g.card,
+              { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark },
+            ]}
+          >
+            <Text style={[t.body, t.center, { color: theme.colors.textMuted }]}>
               No historical records are available for this shrine yet.
             </Text>
           </View>
@@ -53,27 +74,52 @@ export default function ShrineHistoryTab({ slug, enabled }: Props) {
               url: c.url ?? null,
               author: c.author ?? null,
               year: c.year ?? null,
-            }),
+            })
           );
 
           return (
-            <View key={h.history_id} style={[g.card, styles.card]}>
+            <View
+              key={h.history_id}
+              style={[
+                g.card,
+                styles.card,
+                { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark },
+              ]}
+            >
               {/* Timeline spine */}
               <View style={styles.timeline}>
-                <View style={styles.dot} />
-                {index !== history.length - 1 && <View style={styles.line} />}
+                <View
+                  style={[
+                    styles.dot,
+                    { backgroundColor: theme.colors.textPrimary },
+                  ]}
+                />
+                {index !== history.length - 1 && (
+                  <View
+                    style={[
+                      styles.line,
+                      { backgroundColor: theme.colors.border },
+                    ]}
+                  />
+                )}
               </View>
 
               {/* Content */}
               <View style={styles.content}>
-                <Text style={[t.body, t.secondary, styles.historyDate]}>
+                <Text
+                  style={[
+                    t.body,
+                    { color: theme.colors.textSecondary },
+                    styles.historyDate,
+                  ]}
+                >
                   {new Date(h.event_date).getFullYear()}
                 </Text>
 
                 <Text
                   style={[
                     t.title,
-                    { fontFamily: font.title },
+                    { fontFamily: font.title, color: theme.colors.textPrimary },
                     styles.cardTitle,
                   ]}
                 >
@@ -82,7 +128,10 @@ export default function ShrineHistoryTab({ slug, enabled }: Props) {
 
                 {h.information && (
                   <Text
-                    style={[t.body, { fontFamily: font.body, marginTop: 4 }]}
+                    style={[
+                      t.body,
+                      { fontFamily: font.body, marginTop: 4, color: theme.colors.textPrimary },
+                    ]}
                   >
                     {h.information}
                   </Text>
@@ -134,14 +183,12 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#333",
     marginTop: 6,
   },
 
   line: {
     width: 2,
     flex: 1,
-    backgroundColor: "#ccc",
     marginTop: 4,
   },
 

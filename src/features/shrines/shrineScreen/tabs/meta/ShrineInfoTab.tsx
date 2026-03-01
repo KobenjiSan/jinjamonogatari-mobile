@@ -6,10 +6,11 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { g } from "../../../../../shared/styles/global";
 import { t } from "../../../../../shared/styles/text";
-import { colors, spacing, radius } from "../../../../../shared/styles/tokens";
+import { spacing, radius } from "../../../../../shared/styles/tokens";
 import { formatDistance } from "../../../../../shared/location/distance";
 import { openDirectionsToShrine } from "../../../../../shared/location/openDirections";
 import type { LatLon } from "../../../../../shared/location/distance";
+import { useTheme } from "../../../../../shared/theme/useTheme";
 
 type Props = {
   shrine: ShrineDetailModel;
@@ -25,19 +26,26 @@ function InfoRow({
   value?: string | null;
   showDivider?: boolean;
 }) {
+  const theme = useTheme();
+
   return (
     <>
       <View style={styles.infoRow}>
-        <Text style={[t.small, t.secondary]}>{label}</Text>
-        <Text style={[t.body, t.primary]}>{value ?? "Not available"}</Text>
+        <Text style={[t.small, { color: theme.colors.textSecondary }]}>
+          {label}
+        </Text>
+        <Text style={[t.body, { color: theme.colors.textPrimary }]}>
+          {value ?? "Not available"}
+        </Text>
       </View>
 
-      {showDivider && <View style={g.divider} />}
+      {showDivider && <View style={[g.divider, { backgroundColor: theme.colors.border }]} />}
     </>
   );
 }
 
 export default function ShrineInfoTab({ shrine, origin }: Props) {
+  const theme = useTheme();
   const directionScale = useRef(new Animated.Value(1)).current;
 
   const makePressHandlers = (val: Animated.Value, downTo = 0.9) => ({
@@ -108,12 +116,21 @@ export default function ShrineInfoTab({ shrine, origin }: Props) {
     <View style={styles.container}>
       {/* NAVIGATION */}
       <View style={[g.rowCenter, styles.navigation]}>
-        <View style={styles.locationRow}>
-          <FontAwesome6 name="location-dot" size={18} color="black" />
+        <View
+          style={[
+            styles.locationRow,
+            { backgroundColor: theme.colors.tagBg },
+          ]}
+        >
+          <FontAwesome6
+            name="location-dot"
+            size={18}
+            color={theme.colors.textPrimary}
+          />
           <Text
             style={[
               t.body,
-              t.primary,
+              { color: theme.colors.textPrimary },
               { fontFamily: font.title, marginLeft: 4 },
             ]}
           >
@@ -129,9 +146,26 @@ export default function ShrineInfoTab({ shrine, origin }: Props) {
           onPress={onDirections}
         >
           <Animated.View style={{ transform: [{ scale: directionScale }] }}>
-            <View style={[g.btnPrimary, g.rowCenter, styles.directionBtnFix]}>
-              <FontAwesome5 name="directions" size={24} color="white" />
-              <Text style={[t.body, t.white, { fontFamily: font.strong }]}>
+            <View
+              style={[
+                g.btnPrimary,
+                g.rowCenter,
+                styles.directionBtnFix,
+                { backgroundColor: theme.colors.buttonPrimaryBg },
+              ]}
+            >
+              <FontAwesome5
+                name="directions"
+                size={24}
+                color={theme.colors.buttonPrimaryText}
+              />
+              <Text
+                style={[
+                  t.body,
+                  { color: theme.colors.buttonPrimaryText },
+                  { fontFamily: font.strong },
+                ]}
+              >
                 {isDirectionsLoading ? "Opening…" : "Directions"}
               </Text>
             </View>
@@ -140,23 +174,33 @@ export default function ShrineInfoTab({ shrine, origin }: Props) {
       </View>
 
       {/* DESCRIPTION */}
-      <View style={g.card}>
-        <Text style={[t.hero, { fontFamily: font.title }]}>Description</Text>
+      <View style={[g.card, { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark }]}>
+        <Text style={[t.hero, { fontFamily: font.title, color: theme.colors.textPrimary }]}>
+          Description
+        </Text>
 
-        <Text style={[t.body, { marginTop: 6, fontFamily: font.body }]}>
+        <Text
+          style={[
+            t.body,
+            { marginTop: 6, fontFamily: font.body, color: theme.colors.textPrimary },
+          ]}
+        >
           {shrine.shrine_desc ?? "No description yet."}
         </Text>
       </View>
 
       {/* INFORMATION */}
-      <View style={g.card}>
-        <Text style={[t.hero, { fontFamily: font.title }]}>Information</Text>
+      <View style={[g.card, { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark }]}>
+        <Text style={[t.hero, { fontFamily: font.title, color: theme.colors.textPrimary }]}>
+          Information
+        </Text>
 
         <InfoRow label="Address" value={address} />
         <InfoRow label="Phone" value={phone} />
         <InfoRow label="Email" value={email} />
         <InfoRow label="Website" value={website} showDivider={false} />
       </View>
+
       <View style={{ height: 300 }} />
     </View>
   );
@@ -174,7 +218,6 @@ const styles = StyleSheet.create({
   locationRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.gray300,
     paddingHorizontal: spacing.md,
     borderRadius: radius.md,
     marginRight: spacing.md,

@@ -15,13 +15,20 @@ import { useAuth } from "../../core/auth/AuthProvider";
 import { updateMyProfileApi } from "../../features/auth/authApi";
 import { g } from "../../shared/styles/global";
 import { t } from "../../shared/styles/text";
-import { colors, spacing, radius } from "../../shared/styles/tokens";
+import { spacing, radius } from "../../shared/styles/tokens";
 import { font } from "../../shared/styles/typography";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Feather from "@expo/vector-icons/Feather";
 
 import EditProfileModal from "../profile/components/EditProfileModal";
+import ThemeSelectModal from "../profile/components/ThemeSelectModal";
+import {
+  useTheme,
+  useThemeMode,
+  setTheme,
+  type ThemeMode,
+} from "../../shared/theme/useTheme";
 
 const TOP_PADDING =
   Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
@@ -32,11 +39,15 @@ const H_PADDING = Math.min(24, width * 0.05);
 const LIST_BOTTOM_SPACER = 96;
 
 export default function ProfileScreen() {
+  const theme = useTheme();
+  const activeTheme = useThemeMode();
   const { user, loading, authReady, logout, refreshMe } = useAuth();
 
   const [editOpen, setEditOpen] = useState(false);
   const [editSaving, setEditSaving] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
+
+  const [themeOpen, setThemeOpen] = useState(false);
 
   const ctaScale = useRef(new Animated.Value(1)).current;
 
@@ -51,15 +62,22 @@ export default function ProfileScreen() {
 
   if (!authReady) {
     return (
-      <View style={[g.fill, g.center, { backgroundColor: colors.gray100 }]}>
-        <Text style={[t.body, { fontFamily: font.body }]}>Loading...</Text>
+      <View style={[g.fill, g.center, { backgroundColor: theme.colors.bgApp }]}>
+        <Text
+          style={[
+            t.body,
+            { fontFamily: font.body, color: theme.colors.textPrimary },
+          ]}
+        >
+          Loading...
+        </Text>
       </View>
     );
   }
 
   if (!user) {
     return (
-      <View style={[g.fill, g.center, { backgroundColor: colors.gray100 }]}>
+      <View style={[g.fill, g.center, { backgroundColor: theme.colors.bgApp }]}>
         <Text
           style={[
             t.body,
@@ -68,6 +86,7 @@ export default function ProfileScreen() {
               fontFamily: font.strong,
               marginBottom: spacing.sm,
               paddingHorizontal: H_PADDING,
+              color: theme.colors.textPrimary,
             },
           ]}
         >
@@ -88,10 +107,20 @@ export default function ProfileScreen() {
                   paddingVertical: spacing.sm,
                   paddingHorizontal: spacing.xl,
                   opacity: 0.75,
+                  borderColor: theme.colors.border,
                 },
               ]}
             >
-              <Text style={[t.primary, { fontFamily: font.strong, lineHeight: 20, }]}>
+              <Text
+                style={[
+                  t.primary,
+                  {
+                    fontFamily: font.strong,
+                    lineHeight: 20,
+                    color: theme.colors.textPrimary,
+                  },
+                ]}
+              >
                 Get Started
               </Text>
             </View>
@@ -138,9 +167,8 @@ export default function ProfileScreen() {
       });
 
       await refreshMe();
-      closeEdit(); // close ONLY on success
+      closeEdit();
     } catch (e: any) {
-      // This is the message built by apiFetch (detail/title/text fallback)
       const msg = e?.message || "Could not update profile.";
       setEditError(msg);
     } finally {
@@ -149,38 +177,114 @@ export default function ProfileScreen() {
   }
 
   return (
-    <View style={[g.fill, { backgroundColor: colors.gray100 }]}>
+    <View style={[g.fill, { backgroundColor: theme.colors.bgApp }]}>
       <ScrollView
         contentContainerStyle={styles.content}
         bounces={false}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={[t.hero, styles.pageTitle]}>My Profile</Text>
+        <Text
+          style={[
+            t.hero,
+            styles.pageTitle,
+            { color: theme.colors.textPrimary },
+          ]}
+        >
+          My Profile
+        </Text>
 
-        <View style={[g.card, styles.card]}>
+        <View
+          style={[
+            g.card,
+            styles.card,
+            { backgroundColor: theme.colors.bgCard },
+          ]}
+        >
           <View style={styles.userRow}>
-            <View style={styles.avatar} />
+            <View
+              style={[styles.avatar, { backgroundColor: theme.colors.border }]}
+            />
 
             <View style={{ flex: 1 }}>
-              <Text style={[t.title, styles.handle]}>{handle}</Text>
-              <Text style={[t.body, styles.name]}>{fullName}</Text>
+              <Text
+                style={[
+                  t.title,
+                  styles.handle,
+                  { color: theme.colors.textPrimary },
+                ]}
+              >
+                {handle}
+              </Text>
+              <Text
+                style={[
+                  t.body,
+                  styles.name,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
+                {fullName}
+              </Text>
             </View>
           </View>
         </View>
 
-        <View style={g.cardNoPadding}>
-          <Text style={[t.title, styles.sectionTitle]}>Contact</Text>
+        <View
+          style={[g.cardNoPadding, { backgroundColor: theme.colors.bgCard }]}
+        >
+          <Text
+            style={[
+              t.title,
+              styles.sectionTitle,
+              { color: theme.colors.textPrimary },
+            ]}
+          >
+            Contact
+          </Text>
 
           <View style={styles.contactRow}>
-            <Text style={[t.small, styles.label]}>Email</Text>
-            <Text style={[t.body, styles.value]}>{user.email}</Text>
+            <Text
+              style={[
+                t.small,
+                styles.label,
+                { color: theme.colors.textPrimary },
+              ]}
+            >
+              Email
+            </Text>
+            <Text
+              style={[
+                t.body,
+                styles.value,
+                { color: theme.colors.textSecondary },
+              ]}
+            >
+              {user.email}
+            </Text>
           </View>
 
-          <View style={styles.divider} />
+          <View
+            style={[styles.divider, { backgroundColor: theme.colors.border }]}
+          />
 
           <View style={styles.contactRow}>
-            <Text style={[t.small, styles.label]}>Phone</Text>
-            <Text style={[t.body, styles.value, {paddingBottom: 4}]}>{phone || "—"}</Text>
+            <Text
+              style={[
+                t.small,
+                styles.label,
+                { color: theme.colors.textPrimary },
+              ]}
+            >
+              Phone
+            </Text>
+            <Text
+              style={[
+                t.body,
+                styles.value,
+                { paddingBottom: 4, color: theme.colors.textSecondary },
+              ]}
+            >
+              {phone || "—"}
+            </Text>
           </View>
         </View>
 
@@ -191,19 +295,45 @@ export default function ProfileScreen() {
           style={{ alignSelf: "stretch" }}
         >
           <Animated.View
-            style={[styles.collectionBtn, { transform: [{ scale: ctaScale }] }]}
+            style={[
+              styles.collectionBtn,
+              {
+                transform: [{ scale: ctaScale }],
+                backgroundColor: theme.colors.buttonPrimaryBg,
+              },
+            ]}
           >
             <View style={styles.collectionInner}>
-              <Feather name="bookmark" size={18} color={colors.white} />
-              <Text style={[t.body, styles.collectionText]}>
+              <Feather
+                name="bookmark"
+                size={18}
+                color={theme.colors.buttonPrimaryText}
+              />
+              <Text
+                style={[
+                  t.body,
+                  styles.collectionText,
+                  { color: theme.colors.buttonPrimaryText },
+                ]}
+              >
                 Shrine Collection
               </Text>
             </View>
           </Animated.View>
         </Pressable>
 
-        <View style={g.cardNoPadding}>
-          <Text style={[t.title, styles.sectionTitle]}>Settings</Text>
+        <View
+          style={[g.cardNoPadding, { backgroundColor: theme.colors.bgCard }]}
+        >
+          <Text
+            style={[
+              t.title,
+              styles.sectionTitle,
+              { color: theme.colors.textPrimary },
+            ]}
+          >
+            Settings
+          </Text>
 
           {/* Edit Profile */}
           <Pressable
@@ -212,14 +342,85 @@ export default function ProfileScreen() {
             disabled={loading}
           >
             <View style={styles.settingsLeft}>
-              <Feather name="user" size={18} color={colors.gray500} />
-              <Text style={[t.body, styles.settingsText]}>Edit profile</Text>
+              <Feather
+                name="user"
+                size={18}
+                color={theme.colors.textSecondary}
+              />
+              <Text
+                style={[
+                  t.body,
+                  styles.settingsText,
+                  { color: theme.colors.textPrimary },
+                ]}
+              >
+                Edit profile
+              </Text>
             </View>
 
-            <Ionicons name="chevron-forward" size={18} color={colors.gray500} />
+            <Ionicons
+              name="chevron-forward"
+              size={18}
+              color={theme.colors.textSecondary}
+            />
           </Pressable>
 
-          <View style={styles.divider} />
+          <View
+            style={[styles.divider, { backgroundColor: theme.colors.border }]}
+          />
+
+          {/* Theme */}
+          <Pressable
+            style={styles.settingsRow}
+            onPress={() => setThemeOpen(true)}
+          >
+            <View style={styles.settingsLeft}>
+              <Feather
+                name="moon"
+                size={18}
+                color={theme.colors.textSecondary}
+              />
+              <Text
+                style={[
+                  t.body,
+                  styles.settingsText,
+                  { color: theme.colors.textPrimary },
+                ]}
+              >
+                Theme
+              </Text>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: spacing.sm,
+              }}
+            >
+              <Text
+                style={[
+                  t.small,
+                  {
+                    fontFamily: font.body,
+                    paddingTop: 2,
+                    color: theme.colors.textMuted,
+                  },
+                ]}
+              >
+                {activeTheme}
+              </Text>
+              <Ionicons
+                name="chevron-forward"
+                size={18}
+                color={theme.colors.textSecondary}
+              />
+            </View>
+          </Pressable>
+
+          <View
+            style={[styles.divider, { backgroundColor: theme.colors.border }]}
+          />
 
           {/* Logout */}
           <Pressable
@@ -228,13 +429,27 @@ export default function ProfileScreen() {
             disabled={loading}
           >
             <View style={styles.settingsLeft}>
-              <MaterialIcons name="logout" size={18} color={colors.gray500} />
-              <Text style={[t.body, styles.settingsText]}>
+              <MaterialIcons
+                name="logout"
+                size={18}
+                color={theme.colors.textSecondary}
+              />
+              <Text
+                style={[
+                  t.body,
+                  styles.settingsText,
+                  { color: theme.colors.textPrimary },
+                ]}
+              >
                 {loading ? "Logging out..." : "Logout"}
               </Text>
             </View>
 
-            <Ionicons name="chevron-forward" size={18} color={colors.gray500} />
+            <Ionicons
+              name="chevron-forward"
+              size={18}
+              color={theme.colors.textSecondary}
+            />
           </Pressable>
         </View>
 
@@ -253,6 +468,14 @@ export default function ProfileScreen() {
         saving={editSaving}
         error={editError}
       />
+
+      {/* Theme modal */}
+      <ThemeSelectModal
+        visible={themeOpen}
+        onClose={() => setThemeOpen(false)}
+        activeTheme={activeTheme}
+        onSelectTheme={(mode: ThemeMode) => setTheme(mode)}
+      />
     </View>
   );
 }
@@ -267,7 +490,6 @@ const styles = StyleSheet.create({
   pageTitle: {
     fontFamily: font.title,
     textAlign: "center",
-    color: colors.textPrimary,
     marginBottom: spacing.sm,
   },
   card: { paddingVertical: spacing.md },
@@ -280,17 +502,14 @@ const styles = StyleSheet.create({
     width: 76,
     height: 76,
     borderRadius: 999,
-    backgroundColor: colors.gray300,
   },
-  handle: { fontFamily: font.strong, color: colors.textPrimary },
+  handle: { fontFamily: font.strong },
   name: {
     fontFamily: font.body,
-    color: colors.textSecondary,
     marginTop: 2,
   },
   sectionTitle: {
     fontFamily: font.title,
-    color: colors.textPrimary,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
     paddingBottom: spacing.sm,
@@ -301,20 +520,16 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: font.strong,
-    color: colors.textPrimary,
     marginBottom: 2,
   },
   value: {
     fontFamily: font.body,
-    color: colors.textSecondary,
   },
   divider: {
     height: StyleSheet.hairlineWidth,
-    backgroundColor: colors.gray300,
     marginHorizontal: spacing.lg,
   },
   collectionBtn: {
-    backgroundColor: colors.textPrimary,
     borderRadius: radius.lg,
     paddingVertical: spacing.lg,
     paddingHorizontal: spacing.lg,
@@ -328,7 +543,6 @@ const styles = StyleSheet.create({
   },
   collectionText: {
     fontFamily: font.strong,
-    color: colors.white,
   },
   settingsRow: {
     paddingHorizontal: spacing.lg,
@@ -344,7 +558,6 @@ const styles = StyleSheet.create({
   },
   settingsText: {
     fontFamily: font.body,
-    color: colors.textPrimary,
   },
   rowDisabled: {
     opacity: 0.6,

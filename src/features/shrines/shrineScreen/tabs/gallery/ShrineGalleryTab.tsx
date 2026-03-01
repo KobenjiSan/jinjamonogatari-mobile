@@ -12,13 +12,14 @@ import {
 import { font } from "../../../../../shared/styles/typography";
 import { g } from "../../../../../shared/styles/global";
 import { t } from "../../../../../shared/styles/text";
-import { colors, spacing, radius } from "../../../../../shared/styles/tokens";
+import { spacing, radius } from "../../../../../shared/styles/tokens";
 
 import CitationBlock from "../../../../../shared/components/CitationBlock";
 import type { Citation as AppCitation } from "../../../../../shared/components/CitationItem";
 
 import { useShrineGalleryApi } from "./api/gallery/useShrineGallery";
 import { useImageByIdApi } from "./api/images/useImageById";
+import { useTheme } from "../../../../../shared/theme/useTheme";
 
 type Props = {
   slug: string;
@@ -26,12 +27,14 @@ type Props = {
 };
 
 export default function ShrineGalleryTab({ slug, enabled }: Props) {
+  const theme = useTheme();
   const fallbackImage = require("../../../../../../assets/images/placeholder-vertical.jpg");
 
-  const { images: gallery, isLoading, error } = useShrineGalleryApi(
-    slug,
-    enabled,
-  );
+  const {
+    images: gallery,
+    isLoading,
+    error,
+  } = useShrineGalleryApi(slug, enabled);
 
   const { height: winH } = useWindowDimensions();
 
@@ -52,7 +55,6 @@ export default function ShrineGalleryTab({ slug, enabled }: Props) {
     error: imageError,
   } = useImageByIdApi(selectedId, selectedId != null);
 
-  // Precompute aspect ratios from THUMB urls (fast)
   useEffect(() => {
     gallery.forEach((img) => {
       if (!img.imageUrl || ratiosById[img.img_id]) return;
@@ -63,7 +65,6 @@ export default function ShrineGalleryTab({ slug, enabled }: Props) {
         () => setRatiosById((p) => ({ ...p, [img.img_id]: 1 })),
       );
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gallery]);
 
   const { left, right } = useMemo(() => {
@@ -76,9 +77,9 @@ export default function ShrineGalleryTab({ slug, enabled }: Props) {
   const closeModal = () => setSelectedId(null);
 
   const modalAspectRatio =
-  selectedId != null && typeof ratiosById[selectedId] === "number"
-    ? ratiosById[selectedId]
-    : 0.75;
+    selectedId != null && typeof ratiosById[selectedId] === "number"
+      ? ratiosById[selectedId]
+      : 0.75;
 
   const renderThumb = (img: (typeof gallery)[number]) => (
     <Pressable key={img.img_id} onPress={() => setSelectedId(img.img_id)}>
@@ -94,25 +95,34 @@ export default function ShrineGalleryTab({ slug, enabled }: Props) {
   );
 
   // Citation block uses FULL image details
-  const selectedImageCitation: AppCitation[] =
-    selectedFull?.citation?.url
-      ? [
-          {
-            cite_id: selectedFull.citation.cite_id,
-            title: selectedFull.citation.title ?? "Image Source",
-            author: selectedFull.citation.author ?? null,
-            url: selectedFull.citation.url ?? null,
-            year: selectedFull.citation.year ?? null,
-          },
-        ]
-      : [];
+  const selectedImageCitation: AppCitation[] = selectedFull?.citation?.url
+    ? [
+        {
+          cite_id: selectedFull.citation.cite_id,
+          title: selectedFull.citation.title ?? "Image Source",
+          author: selectedFull.citation.author ?? null,
+          url: selectedFull.citation.url ?? null,
+          year: selectedFull.citation.year ?? null,
+        },
+      ]
+    : [];
 
   // Loading / error / empty states
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <View style={g.card}>
-          <Text style={[t.body, t.center, t.muted]}>Loading gallery...</Text>
+        <View
+          style={[
+            g.card,
+            {
+              backgroundColor: theme.colors.bgCard,
+              shadowColor: theme.colors.overlayDark,
+            },
+          ]}
+        >
+          <Text style={[t.body, t.center, { color: theme.colors.textMuted }]}>
+            Loading gallery...
+          </Text>
         </View>
         <View style={{ height: 600 }} />
       </View>
@@ -122,8 +132,18 @@ export default function ShrineGalleryTab({ slug, enabled }: Props) {
   if (error) {
     return (
       <View style={styles.container}>
-        <View style={g.card}>
-          <Text style={[t.body, t.center, t.muted]}>{error}</Text>
+        <View
+          style={[
+            g.card,
+            {
+              backgroundColor: theme.colors.bgCard,
+              shadowColor: theme.colors.overlayDark,
+            },
+          ]}
+        >
+          <Text style={[t.body, t.center, { color: theme.colors.textMuted }]}>
+            {error}
+          </Text>
         </View>
         <View style={{ height: 600 }} />
       </View>
@@ -133,8 +153,16 @@ export default function ShrineGalleryTab({ slug, enabled }: Props) {
   if (gallery.length === 0) {
     return (
       <View style={styles.container}>
-        <View style={g.card}>
-          <Text style={[t.body, t.center, t.muted]}>
+        <View
+          style={[
+            g.card,
+            {
+              backgroundColor: theme.colors.bgCard,
+              shadowColor: theme.colors.overlayDark,
+            },
+          ]}
+        >
+          <Text style={[t.body, t.center, { color: theme.colors.textMuted }]}>
             No gallery images are available for this shrine yet.
           </Text>
         </View>
@@ -158,11 +186,26 @@ export default function ShrineGalleryTab({ slug, enabled }: Props) {
 
         {/* CENTER WRAPPER */}
         <View style={styles.centerWrap}>
-          <View style={[styles.sheet, { maxHeight: winH * 0.85 }]}>
+          <View
+            style={[
+              styles.sheet,
+              {
+                maxHeight: winH * 0.85,
+                backgroundColor: theme.colors.bgCard,
+                shadowColor: theme.colors.overlayDark,
+              },
+            ]}
+          >
             {/* X button */}
             <View style={styles.closeRow}>
-              <Pressable style={styles.closeButton} onPress={closeModal}>
-                <Text style={[t.body, t.primary]}>✕</Text>
+              <Pressable
+                style={styles.closeButton}
+                onPress={closeModal}
+                hitSlop={12}
+              >
+                <Text style={[t.body, { color: theme.colors.textPrimary }]}>
+                  ✕
+                </Text>
               </Pressable>
             </View>
 
@@ -173,13 +216,23 @@ export default function ShrineGalleryTab({ slug, enabled }: Props) {
             >
               {/* status */}
               {isImageLoading && (
-                <Text style={[t.small, t.muted, { marginBottom: spacing.sm }]}>
+                <Text
+                  style={[
+                    t.small,
+                    { color: theme.colors.textMuted, marginBottom: spacing.sm },
+                  ]}
+                >
                   Loading image details...
                 </Text>
               )}
 
               {!!imageError && (
-                <Text style={[t.small, t.muted, { marginBottom: spacing.sm }]}>
+                <Text
+                  style={[
+                    t.small,
+                    { color: theme.colors.textMuted, marginBottom: spacing.sm },
+                  ]}
+                >
                   {imageError}
                 </Text>
               )}
@@ -209,7 +262,11 @@ export default function ShrineGalleryTab({ slug, enabled }: Props) {
                 <Text
                   style={[
                     t.body,
-                    { fontFamily: font.title, marginTop: spacing.md },
+                    {
+                      fontFamily: font.title,
+                      marginTop: spacing.md,
+                      color: theme.colors.textPrimary,
+                    },
                   ]}
                 >
                   {selectedFull.title}
@@ -217,7 +274,9 @@ export default function ShrineGalleryTab({ slug, enabled }: Props) {
               )}
 
               {selectedFull?.desc && (
-                <Text style={[t.body, t.muted]}>{selectedFull.desc}</Text>
+                <Text style={[t.body, { color: theme.colors.textMuted }]}>
+                  {selectedFull.desc}
+                </Text>
               )}
 
               {/* Citations */}
@@ -250,10 +309,8 @@ const styles = StyleSheet.create({
 
   sheet: {
     width: "100%",
-    backgroundColor: colors.white,
     borderRadius: radius.lg,
     overflow: "hidden",
-    shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 6,

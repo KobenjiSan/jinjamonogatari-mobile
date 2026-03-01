@@ -12,10 +12,10 @@ import {
   useWindowDimensions,
 } from "react-native";
 
-import { g } from "../../../shared/styles/global";
 import { t } from "../../../shared/styles/text";
-import { colors, spacing, radius } from "../../../shared/styles/tokens";
+import { spacing, radius } from "../../../shared/styles/tokens";
 import { font } from "../../../shared/styles/typography";
+import { useTheme } from "../../../shared/theme/useTheme";
 
 type EditProfileValues = {
   firstName: string;
@@ -52,6 +52,7 @@ export default function EditProfileModal({
   saving = false,
   error = null,
 }: Props) {
+  const theme = useTheme();
   const { height: winH } = useWindowDimensions();
 
   const [firstName, setFirstName] = useState(initialFirstName ?? "");
@@ -98,9 +99,9 @@ export default function EditProfileModal({
     if (!isDirty) return;
 
     onSave?.({
-        firstName: trimmed.firstName,
-        lastName: trimmed.lastName,
-        phone: trimmed.phone,
+      firstName: trimmed.firstName,
+      lastName: trimmed.lastName,
+      phone: trimmed.phone,
     });
   }
 
@@ -111,21 +112,56 @@ export default function EditProfileModal({
       animationType="fade"
       onRequestClose={close}
     >
-      <Pressable style={styles.backdrop} onPress={close} />
+      <Pressable
+        style={[
+          styles.backdrop,
+          { backgroundColor: theme.colors.overlayDark },
+        ]}
+        onPress={close}
+      />
 
       <View style={styles.centerWrap}>
-        <View style={[styles.sheet, { maxHeight: winH * 0.78 }]}>
+        <View
+          style={[
+            styles.sheet,
+            {
+              maxHeight: winH * 0.78,
+              backgroundColor: theme.colors.bgCard,
+              shadowColor: theme.colors.overlayDark,
+            },
+          ]}
+        >
           {/* Header */}
           <View style={styles.headerRow}>
-            <Text style={[t.title, styles.headerTitle]}>Edit Profile</Text>
+            <Text
+              style={[
+                t.title,
+                styles.headerTitle,
+                { color: theme.colors.textPrimary },
+              ]}
+            >
+              Edit Profile
+            </Text>
 
             <Pressable
-              style={[styles.closeButton, saving && styles.disabled]}
+              style={[
+                styles.closeButton,
+                { backgroundColor: theme.colors.overlayLight },
+                saving && styles.disabled,
+              ]}
               onPress={close}
               hitSlop={12}
               disabled={saving}
             >
-              <Text style={[t.body, t.primary, styles.closeText]}>✕</Text>
+              <Text
+                style={[
+                  t.body,
+                  styles.closeText,
+                  { color: theme.colors.textPrimary },
+                ]}
+              >
+                ✕
+              </Text>
             </Pressable>
           </View>
 
@@ -139,9 +175,21 @@ export default function EditProfileModal({
               showsVerticalScrollIndicator
             >
               {/* Section: Identifiers */}
-              <Text style={[t.title, styles.sectionTitle]}>Identity</Text>
+              <Text
+                style={[
+                  t.title,
+                  styles.sectionTitle,
+                  { color: theme.colors.textPrimary },
+                ]}
+              >
+                Identity
+              </Text>
 
-              <LabeledReadOnlyField label="Username" value={`@${username}`} />
+              <LabeledReadOnlyField
+                label="Username"
+                value={`@${username}`}
+                theme={theme}
+              />
 
               <LabeledInput
                 label="First name"
@@ -150,6 +198,7 @@ export default function EditProfileModal({
                 editable={!saving}
                 autoCapitalize="words"
                 returnKeyType="next"
+                theme={theme}
               />
 
               <LabeledInput
@@ -159,33 +208,55 @@ export default function EditProfileModal({
                 editable={!saving}
                 autoCapitalize="words"
                 returnKeyType="next"
+                theme={theme}
               />
 
               {/* Section: Contact */}
-              <Text style={[t.title, styles.sectionTitle]}>Contact</Text>
+              <Text
+                style={[
+                  t.title,
+                  styles.sectionTitle,
+                  { color: theme.colors.textPrimary },
+                ]}
+              >
+                Contact
+              </Text>
 
-              <LabeledReadOnlyField label="Email" value={email} />
+              <LabeledReadOnlyField label="Email" value={email} theme={theme} />
 
               <LabeledInput
                 label="Phone"
                 value={phone}
                 onChangeText={setPhone}
                 editable={!saving}
-                keyboardType={Platform.OS === "ios" ? "numbers-and-punctuation" : "phone-pad"}
+                keyboardType={
+                  Platform.OS === "ios" ? "numbers-and-punctuation" : "phone-pad"
+                }
                 returnKeyType="done"
+                theme={theme}
               />
 
-              {!!error && <Text style={styles.errorText}>{error}</Text>}
+              {!!error && (
+                <Text style={[styles.errorText, { color: theme.colors.issue }]}>
+                  {error}
+                </Text>
+              )}
 
               <Pressable
                 style={[
                   styles.saveBtn,
+                  { backgroundColor: theme.colors.buttonPrimaryBg },
                   (!isDirty || saving) && styles.btnDisabled,
                 ]}
                 onPress={handleSave}
                 disabled={!isDirty || saving}
               >
-                <Text style={styles.saveText}>
+                <Text
+                  style={[
+                    styles.saveText,
+                    { color: theme.colors.buttonPrimaryText },
+                  ]}
+                >
                   {saving ? "Saving..." : "Save"}
                 </Text>
               </Pressable>
@@ -207,6 +278,7 @@ function LabeledInput(props: {
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
   keyboardType?: any;
   returnKeyType?: any;
+  theme: any;
 }) {
   const {
     label,
@@ -216,34 +288,59 @@ function LabeledInput(props: {
     autoCapitalize = "none",
     keyboardType,
     returnKeyType,
+    theme,
   } = props;
 
   return (
     <View style={styles.fieldBlock}>
-      <Text style={[t.small, styles.label]}>{label}</Text>
+      <Text style={[t.small, styles.label, { color: theme.colors.textPrimary }]}>
+        {label}
+      </Text>
       <TextInput
         placeholder={label}
-        placeholderTextColor={colors.gray500}
+        placeholderTextColor={theme.colors.textMuted}
         value={value}
         onChangeText={onChangeText}
         editable={editable}
         autoCapitalize={autoCapitalize}
         keyboardType={keyboardType}
         returnKeyType={returnKeyType}
-        style={[styles.input, !editable && styles.inputDisabled]}
+        style={[
+          styles.input,
+          {
+            borderColor: theme.colors.border,
+            backgroundColor: theme.colors.inputEditableBg,
+            color: theme.colors.textPrimary,
+          },
+          !editable && styles.inputDisabled,
+        ]}
       />
     </View>
   );
 }
 
-function LabeledReadOnlyField(props: { label: string; value: string }) {
-  const { label, value } = props;
+function LabeledReadOnlyField(props: { label: string; value: string; theme: any }) {
+  const { label, value, theme } = props;
 
   return (
     <View style={styles.fieldBlock}>
-      <Text style={[t.small, styles.label]}>{label}</Text>
-      <View style={[styles.input, styles.readOnlyBox]}>
-        <Text style={styles.readOnlyText} numberOfLines={1}>
+      <Text style={[t.small, styles.label, { color: theme.colors.textPrimary }]}>
+        {label}
+      </Text>
+      <View
+        style={[
+          styles.input,
+          styles.readOnlyBox,
+          {
+            borderColor: theme.colors.border,
+            backgroundColor: theme.colors.inputReadOnlyBg,
+          },
+        ]}
+      >
+        <Text
+          style={[styles.readOnlyText, { color: theme.colors.textSecondary }]}
+          numberOfLines={1}
+        >
           {value}
         </Text>
       </View>
@@ -254,7 +351,6 @@ function LabeledReadOnlyField(props: { label: string; value: string }) {
 const styles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.55)",
   },
 
   centerWrap: {
@@ -266,12 +362,10 @@ const styles = StyleSheet.create({
 
   sheet: {
     width: "100%",
-    backgroundColor: colors.white,
     borderRadius: radius.lg,
     overflow: "hidden",
     paddingBottom: spacing.md,
 
-    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -288,7 +382,6 @@ const styles = StyleSheet.create({
 
   headerTitle: {
     fontFamily: font.title,
-    color: colors.textPrimary,
   },
 
   closeButton: {
@@ -301,7 +394,6 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.overlayLight,
   },
 
   closeText: {
@@ -321,7 +413,6 @@ const styles = StyleSheet.create({
 
   sectionTitle: {
     fontFamily: font.title,
-    color: colors.textPrimary,
     marginTop: spacing.xs,
   },
 
@@ -331,19 +422,15 @@ const styles = StyleSheet.create({
 
   label: {
     fontFamily: font.strong,
-    color: colors.textPrimary,
   },
 
-  // Matches your Register input styling closely
   input: {
     width: "100%",
     borderWidth: 1,
-    borderColor: colors.gray300,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
     borderRadius: radius.lg,
     fontFamily: font.body,
-    backgroundColor: colors.white,
   },
 
   inputDisabled: {
@@ -351,22 +438,18 @@ const styles = StyleSheet.create({
   },
 
   readOnlyBox: {
-    backgroundColor: colors.gray100,
     justifyContent: "center",
   },
 
   readOnlyText: {
     fontFamily: font.body,
-    color: colors.textSecondary,
   },
 
   errorText: {
-    color: "red",
     textAlign: "center",
   },
 
   saveBtn: {
-    backgroundColor: colors.black,
     paddingVertical: spacing.lg,
     borderRadius: radius.lg,
     alignItems: "center",
@@ -378,7 +461,6 @@ const styles = StyleSheet.create({
   },
 
   saveText: {
-    color: colors.white,
     fontFamily: font.strong,
     fontSize: 16,
   },

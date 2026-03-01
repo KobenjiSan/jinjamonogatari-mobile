@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { colors, spacing, radius } from "../styles/tokens";
+import { spacing, radius } from "../styles/tokens";
+import { useTheme } from "../theme/useTheme";
 
 type Props = {
   value?: string;
@@ -41,19 +42,34 @@ export default function SearchBar({
   editable,
   testID,
 }: Props) {
+  const theme = useTheme();
+
   const isLauncher = typeof onPress === "function";
   const canEdit = editable ?? !isLauncher;
 
   const showClear = value.length > 0 && typeof onClear === "function";
 
   const content = (
-    <View style={[styles.root, style]}>
-      <Ionicons name="search" size={18} color={colors.gray600} />
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor: theme.colors.inputEditableBg,
+          borderColor: theme.colors.border,
+        },
+        style,
+      ]}
+    >
+      <Ionicons name="search" size={18} color={theme.colors.textSecondary} />
       <TextInput
         testID={testID}
-        style={[styles.input, inputStyle]}
+        style={[
+          styles.input,
+          { color: theme.colors.textPrimary },
+          inputStyle,
+        ]}
         placeholder={placeholder}
-        placeholderTextColor={colors.gray500}
+        placeholderTextColor={theme.colors.textMuted}
         value={value}
         onChangeText={onChangeText}
         autoFocus={autoFocus}
@@ -67,7 +83,11 @@ export default function SearchBar({
 
       {showClear ? (
         <Pressable onPress={onClear} hitSlop={10} style={styles.clearBtn}>
-          <Ionicons name="close-circle" size={18} color={colors.gray500} />
+          <Ionicons
+            name="close-circle"
+            size={18}
+            color={theme.colors.textMuted}
+          />
         </Pressable>
       ) : null}
     </View>
@@ -75,7 +95,10 @@ export default function SearchBar({
 
   if (isLauncher) {
     return (
-      <Pressable onPress={onPress} style={({ pressed }) => pressed && styles.pressed}>
+      <Pressable
+        onPress={onPress}
+        style={({ pressed }) => pressed && styles.pressed}
+      >
         {content}
       </Pressable>
     );
@@ -92,15 +115,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     height: 44,
     borderRadius: radius.xl,
-    backgroundColor: colors.gray100,
     borderWidth: 1,
-    borderColor: colors.gray500,
   },
 
   input: {
     flex: 1,
     fontSize: 15,
-    color: colors.gray600,
     paddingVertical: 0,
   },
 

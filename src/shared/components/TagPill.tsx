@@ -2,7 +2,8 @@ import React from "react";
 import { Text, View, StyleSheet, ViewStyle, TextStyle } from "react-native";
 import { g } from "../styles/global";
 import { t } from "../styles/text";
-import { colors, spacing, radius } from "../styles/tokens";
+import { spacing, radius } from "../styles/tokens";
+import { useTheme } from "../theme/useTheme";
 
 export type Tag = {
   tag_id: number;
@@ -22,33 +23,29 @@ type TagPillProps = {
 
 const TagPill: React.FC<TagPillProps> = ({
   tag,
-  backgroundColor = "#dadada",
-  textColor = colors.black,
+  backgroundColor,
+  textColor,
   style,
   textStyle,
 }) => {
+  const theme = useTheme();
+
   const en = (tag.title_en ?? "").trim();
   const jp = (tag.title_jp ?? "").trim();
 
   const label = en && jp ? `${en} - ${jp}` : en || jp || "Tag";
 
+  const pillBg = backgroundColor ?? theme.colors.tagBg;
+  const pillText = textColor ?? theme.colors.tagText;
+
   return (
     <View
-      style={[
-        g.pill,
-        { backgroundColor },
-        style,
-      ]}
+      style={[g.pill, { backgroundColor: pillBg }, style]}
       accessibilityRole="text"
       accessibilityLabel={label}
     >
       <Text
-        style={[
-          t.small,
-          styles.text,
-          { color: textColor },
-          textStyle,
-        ]}
+        style={[t.small, styles.text, { color: pillText }, textStyle]}
         numberOfLines={1}
       >
         {label}

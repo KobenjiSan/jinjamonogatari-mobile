@@ -16,10 +16,11 @@ import { usePressScale } from "../../../../shared/gestures/usePressScale";
 import { useRouter } from "expo-router";
 import { g } from "../../../../shared/styles/global";
 import { t } from "../../../../shared/styles/text";
-import { colors, spacing, radius } from "../../../../shared/styles/tokens";
+import { spacing, radius } from "../../../../shared/styles/tokens";
 import BookmarkButton from "../../../../shared/components/BookmarkButton";
 import { formatDistance, LatLon } from "../../../../shared/location/distance";
 import { openDirectionsToShrine } from "../../../../shared/location/openDirections";
+import { useTheme } from "../../../../shared/theme/useTheme";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -36,6 +37,7 @@ export default function MapPopupCardContent({
   origin,
   children,
 }: Props) {
+  const theme = useTheme();
   const fallbackImage = require("../../../../../assets/images/placeholder.png");
 
   const router = useRouter();
@@ -47,38 +49,38 @@ export default function MapPopupCardContent({
   const [isDirectionsLoading, setIsDirectionsLoading] = useState(false);
 
   const distanceLabel =
-  typeof (shrine as any).distance_meters === "number"
-    ? formatDistance((shrine as any).distance_meters)
-    : null;
+    typeof (shrine as any).distance_meters === "number"
+      ? formatDistance((shrine as any).distance_meters)
+      : null;
 
   const onDirections = async () => {
-  if (isDirectionsLoading) return;
+    if (isDirectionsLoading) return;
 
-  const { lat, lon } = shrine;
+    const { lat, lon } = shrine;
 
-  if (typeof lat !== "number" || typeof lon !== "number") {
-    console.warn("MapPopupCardContent: shrine missing lat/lon", {
-      shrine_id: shrine.shrine_id,
-      slug: shrine.slug,
-      lat,
-      lon,
-    });
-    return;
-  }
+    if (typeof lat !== "number" || typeof lon !== "number") {
+      console.warn("MapPopupCardContent: shrine missing lat/lon", {
+        shrine_id: shrine.shrine_id,
+        slug: shrine.slug,
+        lat,
+        lon,
+      });
+      return;
+    }
 
-  try {
-    setIsDirectionsLoading(true);
+    try {
+      setIsDirectionsLoading(true);
 
-    await openDirectionsToShrine({
-      lat,
-      lon,
-      label: shrine.name_en ?? shrine.name_jp ?? "Shrine",
-      origin,
-    });
-  } finally {
-    setTimeout(() => setIsDirectionsLoading(false), 600);
-  }
-};
+      await openDirectionsToShrine({
+        lat,
+        lon,
+        label: shrine.name_en ?? shrine.name_jp ?? "Shrine",
+        origin,
+      });
+    } finally {
+      setTimeout(() => setIsDirectionsLoading(false), 600);
+    }
+  };
 
   return (
     <View>
@@ -95,10 +97,19 @@ export default function MapPopupCardContent({
           hitSlop={10}
           style={[
             styles.closeButton,
+            { backgroundColor: theme.colors.overlayLight },
             { transform: [{ scale: closePress.scale }] },
           ]}
         >
-          <Text style={[t.body, t.primary, styles.closeText]}>✕</Text>
+          <Text
+            style={[
+              t.body,
+              { color: theme.colors.textPrimary },
+              styles.closeText,
+            ]}
+          >
+            ✕
+          </Text>
         </AnimatedPressable>
       </View>
 
@@ -107,7 +118,7 @@ export default function MapPopupCardContent({
           <Text
             style={[
               t.hero,
-              t.primary,
+              { color: theme.colors.textPrimary },
               { fontFamily: font.title },
               styles.title,
             ]}
@@ -117,11 +128,22 @@ export default function MapPopupCardContent({
             {shrine.name_en ?? "Unnamed Shrine"}
           </Text>
 
-          <BookmarkButton shrineId={shrine.shrine_id} size={26} color="black" downTo={0.9} />
+          <BookmarkButton
+            shrineId={shrine.shrine_id}
+            size={26}
+            color={theme.colors.textPrimary}
+            downTo={0.9}
+          />
         </View>
 
         {shrine.name_jp ? (
-          <Text style={[t.title, { fontFamily: font.title }, styles.jpName]}>
+          <Text
+            style={[
+              t.title,
+              { fontFamily: font.title, color: theme.colors.textSecondary },
+              styles.jpName,
+            ]}
+          >
             {shrine.name_jp}
           </Text>
         ) : null}
@@ -146,7 +168,12 @@ export default function MapPopupCardContent({
         ) : null}
 
         <Text
-          style={[t.body, t.muted, { fontFamily: font.strong }, styles.desc]}
+          style={[
+            t.body,
+            { color: theme.colors.textMuted },
+            { fontFamily: font.strong },
+            styles.desc,
+          ]}
           numberOfLines={4}
           ellipsizeMode="tail"
         >
@@ -162,6 +189,11 @@ export default function MapPopupCardContent({
           disabled={isDirectionsLoading}
           style={[
             styles.distanceButton,
+            {
+              backgroundColor: theme.colors.bgCard,
+              borderColor: theme.colors.textPrimary,
+              shadowColor: theme.colors.buttonPrimaryBg,
+            },
             isDirectionsLoading && { opacity: 0.6 },
             { transform: [{ scale: directionPress.scale }] },
           ]}
@@ -169,9 +201,15 @@ export default function MapPopupCardContent({
           <FontAwesome6
             name="location-dot"
             size={18}
-            color={colors.textPrimary}
+            color={theme.colors.textPrimary}
           />
-          <Text style={[t.body, t.primary, styles.distanceButtonText]}>
+          <Text
+            style={[
+              t.body,
+              { color: theme.colors.textPrimary },
+              styles.distanceButtonText,
+            ]}
+          >
             {isDirectionsLoading
               ? "Opening…"
               : distanceLabel
@@ -192,10 +230,17 @@ export default function MapPopupCardContent({
           style={[
             g.btnPrimary,
             styles.viewButton,
+            { backgroundColor: theme.colors.buttonPrimaryBg },
             { transform: [{ scale: viewPress.scale }] },
           ]}
         >
-          <Text style={[t.body, t.white, styles.viewButtonText]}>
+          <Text
+            style={[
+              t.body,
+              { color: theme.colors.buttonPrimaryText },
+              styles.viewButtonText,
+            ]}
+          >
             View Shrine
           </Text>
         </AnimatedPressable>
@@ -223,7 +268,6 @@ const styles = StyleSheet.create({
     top: spacing.md,
     right: spacing.md,
     zIndex: 10,
-    backgroundColor: colors.overlayLight,
     width: 28,
     height: 28,
     borderRadius: 14,
@@ -300,14 +344,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    backgroundColor: colors.white,
     borderWidth: 2,
-    borderColor: colors.textPrimary,
     borderRadius: radius.md,
     paddingVertical: 9,
     paddingHorizontal: spacing.md,
 
-    shadowColor: colors.black,
     shadowOpacity: 0.12,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },

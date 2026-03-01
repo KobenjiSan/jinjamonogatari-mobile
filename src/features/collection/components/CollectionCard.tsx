@@ -8,13 +8,14 @@ import {
   ScrollView,
 } from "react-native";
 import { t } from "../../../shared/styles/text";
-import { colors, spacing, radius } from "../../../shared/styles/tokens";
+import { spacing, radius } from "../../../shared/styles/tokens";
 import { font } from "../../../shared/styles/typography";
 import BookmarkButton from "../../../shared/components/BookmarkButton";
 import TagPill, { Tag } from "../../../shared/components/TagPill";
 import type { CollectionShrineCardModel } from "../api/collection.mapper";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { formatDistance } from "../../../shared/location/distance";
+import { useTheme } from "../../../shared/theme/useTheme";
 
 type Props = {
   shrine: CollectionShrineCardModel;
@@ -22,38 +23,57 @@ type Props = {
 };
 
 export default function CollectionCard({ shrine, onPress }: Props) {
+  const theme = useTheme();
   const fallbackImage = require("../../../../assets/images/placeholder.png");
 
   const title = shrine.name_en ?? "Unnamed Shrine";
 
   const distanceLabel =
-  typeof shrine.distance_meters === "number"
-    ? formatDistance(shrine.distance_meters)
-    : "—";
+    typeof shrine.distance_meters === "number"
+      ? formatDistance(shrine.distance_meters)
+      : "—";
 
   const tags = Array.isArray(shrine.tags)
     ? (shrine.tags as unknown as Tag[])
     : [];
 
   return (
-    <Pressable onPress={onPress} style={styles.card}>
+    <Pressable
+      onPress={onPress}
+      style={[
+        styles.card,
+        {
+          backgroundColor: theme.colors.bgCard,
+          borderColor: theme.colors.border,
+        },
+      ]}
+    >
       <View style={styles.row}>
         <View style={styles.imgLocationBlock}>
           <Image
-            source={
-              shrine.image_url ? { uri: shrine.image_url } : fallbackImage
-            }
-            style={styles.image}
+            source={shrine.image_url ? { uri: shrine.image_url } : fallbackImage}
+            style={[
+              styles.image,
+              {
+                backgroundColor: theme.colors.bgApp,
+              },
+            ]}
             resizeMode="cover"
           />
+
           <View style={styles.locationArea}>
             <FontAwesome6
               name="location-dot"
               size={20}
-              color={colors.gray600}
+              color={theme.colors.textSecondary}
             />
             <Text
-              style={[t.body, { fontFamily: font.title }, styles.locationText]}
+              style={[
+                t.body,
+                { fontFamily: font.title },
+                styles.locationText,
+                { color: theme.colors.textSecondary },
+              ]}
             >
               {distanceLabel}
             </Text>
@@ -65,9 +85,9 @@ export default function CollectionCard({ shrine, onPress }: Props) {
             <Text
               style={[
                 t.title,
-                t.primary,
                 { fontFamily: font.title },
                 styles.title,
+                { color: theme.colors.textPrimary },
               ]}
               numberOfLines={1}
               ellipsizeMode="tail"
@@ -78,19 +98,24 @@ export default function CollectionCard({ shrine, onPress }: Props) {
             <BookmarkButton
               shrineId={shrine.shrine_id}
               size={22}
-              color={colors.textPrimary}
+              color={theme.colors.textPrimary}
               downTo={0.92}
             />
           </View>
 
           {shrine.name_jp ? (
-            <Text style={[t.muted, { fontFamily: font.title }, styles.jp]}>
+            <Text
+              style={[
+                { fontFamily: font.title },
+                styles.jp,
+                { color: theme.colors.textMuted },
+              ]}
+            >
               {shrine.name_jp}
             </Text>
           ) : null}
 
-          {Array.isArray((shrine as any).tags) &&
-          (shrine as any).tags.length > 0 ? (
+          {Array.isArray((shrine as any).tags) && (shrine as any).tags.length > 0 ? (
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -109,7 +134,14 @@ export default function CollectionCard({ shrine, onPress }: Props) {
           ) : null}
 
           {shrine.shrine_desc ? (
-            <Text style={[t.body, t.muted, styles.desc]} numberOfLines={2}>
+            <Text
+              style={[
+                t.body,
+                styles.desc,
+                { color: theme.colors.textMuted, fontFamily: font.body },
+              ]}
+              numberOfLines={2}
+            >
               {shrine.shrine_desc}
             </Text>
           ) : null}
@@ -121,9 +153,7 @@ export default function CollectionCard({ shrine, onPress }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: colors.gray300,
     borderRadius: radius.lg ?? 14,
     padding: spacing.md,
   },
@@ -138,7 +168,6 @@ const styles = StyleSheet.create({
     width: 86,
     height: 86,
     borderRadius: radius.md,
-    backgroundColor: colors.gray100,
   },
 
   meta: {
@@ -194,7 +223,6 @@ const styles = StyleSheet.create({
 
   locationText: {
     marginLeft: spacing.xs,
-    color: colors.gray600,
   },
 
   imgLocationBlock: {

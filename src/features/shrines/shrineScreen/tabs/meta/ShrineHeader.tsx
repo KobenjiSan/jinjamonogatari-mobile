@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -17,9 +17,10 @@ import { useRouter } from "expo-router";
 import Octicons from "@expo/vector-icons/Octicons";
 import { g } from "../../../../../shared/styles/global";
 import { t } from "../../../../../shared/styles/text";
-import { colors, spacing, radius } from "../../../../../shared/styles/tokens";
+import { colors, spacing } from "../../../../../shared/styles/tokens";
 import BookmarkButton from "../../../../../shared/components/BookmarkButton";
 import { usePressScale } from "../../../../../shared/gestures/usePressScale";
+import { useTheme } from "../../../../../shared/theme/useTheme";
 
 type Props = {
   shrine: ShrinePreviewModel;
@@ -34,6 +35,7 @@ export default function ShrineHeader({
   onHeroLayout,
   onIntroLayout,
 }: Props) {
+  const theme = useTheme();
   const fallbackImage = require("../../../../../../assets/images/placeholder.png");
 
   const router = useRouter();
@@ -62,8 +64,17 @@ export default function ShrineHeader({
           style={styles.backButton}
         >
           <Animated.View style={{ transform: [{ scale: backPress.scale }] }}>
-            <View style={[g.iconBtnCircle, g.iconBtnOverlay]}>
-              <Ionicons name="chevron-back" size={22} color="black" />
+            <View
+              style={[
+                g.iconBtnCircle,
+                { backgroundColor: theme.colors.backOverlayBg },
+              ]}
+            >
+              <Ionicons
+                name="chevron-back"
+                size={22}
+                color={theme.colors.backIconColor}
+              />
             </View>
           </Animated.View>
         </Pressable>
@@ -118,7 +129,7 @@ export default function ShrineHeader({
                   <TagPill
                     key={tag.tag_id}
                     tag={tag}
-                    backgroundColor="#505050"
+                    backgroundColor={theme.colors.headerActions}
                     textColor={colors.white}
                   />
                 ))}
@@ -133,10 +144,13 @@ export default function ShrineHeader({
               hitSlop={8}
               onPress={() => console.log(`Shared Shrine ${shrine.name_en}`)}
             >
-              <Animated.View
-                style={{ transform: [{ scale: sharePress.scale }] }}
-              >
-                <View style={[g.iconBtnCircle, { backgroundColor: "#505050" }]}>
+              <Animated.View style={{ transform: [{ scale: sharePress.scale }] }}>
+                <View
+                  style={[
+                    g.iconBtnCircle,
+                    { backgroundColor: theme.colors.headerActions },
+                  ]}
+                >
                   <Octicons name="share" size={18} color="white" />
                 </View>
               </Animated.View>
@@ -147,7 +161,10 @@ export default function ShrineHeader({
               size={18}
               color="white"
               downTo={0.9}
-              containerStyle={[g.iconBtnCircle, { backgroundColor: "#505050" }]}
+              containerStyle={[
+                g.iconBtnCircle,
+                { backgroundColor: theme.colors.headerActions },
+              ]}
             />
           </View>
         </View>

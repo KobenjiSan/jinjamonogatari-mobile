@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useEtiquetteGuideApi } from "./useEtiquetteGuideApi";
 import GlanceCard from "./components/GlanceCard";
-import { colors, spacing } from "../../shared/styles/tokens";
+import { spacing } from "../../shared/styles/tokens";
 import HighlightCard from "./components/HighlightCard";
 import { font } from "../../shared/styles/typography";
 import GuideAccordionCard from "./components/GuideAccordionCard";
@@ -20,6 +20,7 @@ import { t } from "../../shared/styles/text";
 
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { useTheme } from "../../shared/theme/useTheme";
 
 const TOP_PADDING =
   Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
@@ -27,10 +28,9 @@ const TOP_PADDING =
 const LIST_BOTTOM_SPACER = 96;
 
 export default function EtiquetteScreen() {
-  // const { guide, isEmpty } = useEtiquetteGuide();
+  const theme = useTheme();
   const { guide, isEmpty, isLoading, error } = useEtiquetteGuideApi();
 
-  // Modal state for glance items (minimal typing to keep diffs small)
   const [selectedGlance, setSelectedGlance] = useState<any | null>(null);
   const isModalOpen = !!selectedGlance;
 
@@ -61,40 +61,61 @@ export default function EtiquetteScreen() {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, styles.content]}>
+      <View style={[styles.container, styles.content, { backgroundColor: theme.colors.bgApp }]}>
         <View style={styles.titleArea}>
-          <Text style={[styles.title, { fontFamily: font.title }]}>
+          <Text
+            style={[
+              styles.title,
+              { fontFamily: font.title, color: theme.colors.textSecondary },
+            ]}
+          >
             Shrine Etiquette
           </Text>
         </View>
-        <Text style={[t.body, t.center, t.muted]}>Loading…</Text>
+        <Text style={[t.body, t.center, { color: theme.colors.textMuted }]}>
+          Loading…
+        </Text>
       </View>
     );
   }
 
   if (error) {
     return (
-      <View style={[styles.container, styles.content]}>
+      <View style={[styles.container, styles.content, { backgroundColor: theme.colors.bgApp }]}>
         <View style={styles.titleArea}>
-          <Text style={[styles.title, { fontFamily: font.title }]}>
+          <Text
+            style={[
+              styles.title,
+              { fontFamily: font.title, color: theme.colors.textSecondary },
+            ]}
+          >
             Shrine Etiquette
           </Text>
         </View>
-        <Text style={[t.body, t.center]}>API Error:</Text>
-        <Text style={[t.body, t.center, t.muted]}>{error}</Text>
+        <Text style={[t.body, t.center, { color: theme.colors.textPrimary }]}>
+          API Error:
+        </Text>
+        <Text style={[t.body, t.center, { color: theme.colors.textMuted }]}>
+          {error}
+        </Text>
       </View>
     );
   }
 
   if (isEmpty) {
     return (
-      <View style={[styles.container, styles.content]}>
+      <View style={[styles.container, styles.content, { backgroundColor: theme.colors.bgApp }]}>
         <View style={styles.titleArea}>
-          <Text style={[styles.title, { fontFamily: font.title }]}>
+          <Text
+            style={[
+              styles.title,
+              { fontFamily: font.title, color: theme.colors.textSecondary },
+            ]}
+          >
             Shrine Etiquette
           </Text>
         </View>
-        <Text style={[t.body, t.center, t.muted]}>
+        <Text style={[t.body, t.center, { color: theme.colors.textMuted }]}>
           We Aplogize! The Etiquette Guide is not available.
         </Text>
       </View>
@@ -102,17 +123,27 @@ export default function EtiquetteScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.bgApp }]}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.titleArea}>
-          <Text style={[styles.title, { fontFamily: font.title }]}>
+          <Text
+            style={[
+              styles.title,
+              { fontFamily: font.title, color: theme.colors.textSecondary },
+            ]}
+          >
             Shrine Etiquette
           </Text>
         </View>
 
         {/* AT A GLANCE */}
         <View style={{ marginTop: 16 }}>
-          <Text style={[styles.h2, { fontFamily: font.title }]}>
+          <Text
+            style={[
+              styles.h2,
+              { fontFamily: font.title, color: theme.colors.textPrimary },
+            ]}
+          >
             At a Glance
           </Text>
           <View style={styles.glance}>
@@ -141,10 +172,21 @@ export default function EtiquetteScreen() {
 
         {/* FULL GUIDE */}
         <View style={styles.section}>
-          <Text style={[styles.h2, { fontFamily: font.title }]}>
+          <Text
+            style={[
+              styles.h2,
+              { fontFamily: font.title, color: theme.colors.textPrimary },
+            ]}
+          >
             Full Etiquette Guide
           </Text>
-          <View style={[styles.accordion, g.cardNoPadding]}>
+          <View
+            style={[
+              styles.accordion,
+              g.cardNoPadding,
+              { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark },
+            ]}
+          >
             {guide.fullGuide.map((item: any) => (
               <GuideAccordionCard key={item.topic_id} item={item} />
             ))}
@@ -162,14 +204,33 @@ export default function EtiquetteScreen() {
         <Pressable style={styles.backdrop} onPress={closeModal} />
 
         <View style={styles.centerWrap}>
-          <View style={styles.sheet}>
+          <View
+            style={[
+              styles.sheet,
+              {
+                backgroundColor: theme.colors.bgCard,
+                shadowColor: theme.colors.overlayDark,
+              },
+            ]}
+          >
             <View style={styles.closeRow}>
               <Pressable
-                style={styles.closeButton}
+                style={[
+                  styles.closeButton,
+                  { backgroundColor: theme.colors.overlayLight },
+                ]}
                 onPress={closeModal}
                 hitSlop={12}
               >
-                <Text style={[t.body, t.primary, styles.closeText]}>✕</Text>
+                <Text
+                  style={[
+                    t.body,
+                    { color: theme.colors.textPrimary },
+                    styles.closeText,
+                  ]}
+                >
+                  ✕
+                </Text>
               </Pressable>
             </View>
 
@@ -183,13 +244,19 @@ export default function EtiquetteScreen() {
                   <SelectedIcon
                     name={(selectedGlance?.icon_key ?? "") as any}
                     size={34}
-                    color={colors.textPrimary}
+                    color={theme.colors.textPrimary}
                   />
                 </View>
               )}
 
               {/* Long Title */}
-              <Text style={[t.title, { fontFamily: font.title }, t.center]}>
+              <Text
+                style={[
+                  t.title,
+                  { fontFamily: font.title, color: theme.colors.textPrimary },
+                  t.center,
+                ]}
+              >
                 {selectedGlance?.title_long ??
                   selectedGlance?.title_short ??
                   "Untitled"}
@@ -201,7 +268,7 @@ export default function EtiquetteScreen() {
                   style={[
                     t.body,
                     styles.modalBodyText,
-                    { fontFamily: font.body },
+                    { fontFamily: font.body, color: theme.colors.textPrimary },
                   ]}
                 >
                   {selectedGlance.summary}
@@ -210,7 +277,7 @@ export default function EtiquetteScreen() {
 
               {/* Nudge */}
               <View style={styles.readMoreWrap}>
-                <Text style={[t.small, t.muted, t.center]}>
+                <Text style={[t.small, t.center, { color: theme.colors.textMuted }]}>
                   Read more in Full Guide
                 </Text>
               </View>
@@ -240,7 +307,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     lineHeight: 28,
-    color: colors.gray600,
   },
 
   h1: { fontSize: 24, marginBottom: 12 },
@@ -285,7 +351,7 @@ const styles = StyleSheet.create({
     height: LIST_BOTTOM_SPACER,
   },
 
-  // ---- Modal styles (kept close to your example) ----
+  // ---- Modal styles ----
   backdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.55)",
@@ -301,12 +367,9 @@ const styles = StyleSheet.create({
   sheet: {
     width: "100%",
     maxHeight: "75%",
-    backgroundColor: colors.white,
     borderRadius: 16,
     overflow: "hidden",
-    // paddingBottom: spacing.md,
 
-    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -330,7 +393,6 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.overlayLight,
   },
 
   closeText: {

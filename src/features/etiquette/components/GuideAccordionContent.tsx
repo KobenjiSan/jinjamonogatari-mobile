@@ -1,13 +1,13 @@
-// GuideAccordionContent.tsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { View, Text, StyleSheet, Animated, Easing, Image } from "react-native";
 
 import { t } from "../../../shared/styles/text";
-import { colors, spacing, radius } from "../../../shared/styles/tokens";
+import { spacing, radius } from "../../../shared/styles/tokens";
 
 import CitationBlock from "../../../shared/components/CitationBlock";
 import type { Citation as AppCitation } from "../../../shared/components/CitationItem";
 import ImageCitationOverlay from "../../../shared/components/ImageCitationOverlay";
+import { useTheme } from "../../../shared/theme/useTheme";
 
 export type Citation = {
   cite_id: number;
@@ -51,6 +51,8 @@ export default function GuideAccordionContent({
   isOpen,
   durationMs = 360,
 }: GuideAccordionContentProps) {
+  const theme = useTheme();
+
   const steps = useMemo(() => item.steps ?? [], [item.steps]);
   const citations = useMemo(() => item.citations ?? [], [item.citations]);
 
@@ -63,7 +65,7 @@ export default function GuideAccordionContent({
         author: c.author ?? null,
         year: c.year ?? null,
       })),
-    [citations],
+    [citations]
   );
 
   const [contentHeight, setContentHeight] = useState(0);
@@ -91,9 +93,21 @@ export default function GuideAccordionContent({
   }, [isOpen, durationMs, progress]);
 
   return (
-    <Animated.View style={[styles.bodyClip, { height }]}>
+    <Animated.View
+      style={[
+        styles.bodyClip,
+        { height, backgroundColor: theme.colors.bgApp },
+      ]}
+    >
       <Animated.View
-        style={[styles.body, { opacity, transform: [{ translateY }] }]}
+        style={[
+          styles.body,
+          {
+            opacity,
+            transform: [{ translateY }],
+            backgroundColor: theme.colors.bgApp,
+          },
+        ]}
         onLayout={(e) => {
           const h = e.nativeEvent.layout.height;
           // Keep the max measured height so collapse/expand is stable
@@ -101,7 +115,7 @@ export default function GuideAccordionContent({
         }}
       >
         {!!item.summary && (
-          <Text style={[t.body, t.primary, styles.summary]}>
+          <Text style={[t.body, styles.summary, { color: theme.colors.textPrimary }]}>
             {item.summary}
           </Text>
         )}
@@ -109,7 +123,16 @@ export default function GuideAccordionContent({
         {!!steps.length && (
           <View style={styles.stepsWrap}>
             {steps.map((s) => (
-              <View key={s.step_id} style={styles.stepCard}>
+              <View
+                key={s.step_id}
+                style={[
+                  styles.stepCard,
+                  {
+                    backgroundColor: theme.colors.bgCard,
+                    shadowColor: theme.colors.overlayDark,
+                  },
+                ]}
+              >
                 {!!s.image_url && (
                   <View style={styles.stepImageWrap}>
                     <Image
@@ -131,7 +154,7 @@ export default function GuideAccordionContent({
                   </View>
                 )}
 
-                <Text style={[t.body, styles.stepText]}>
+                <Text style={[t.body, styles.stepText, { color: theme.colors.textPrimary }]}>
                   {s.step_order}. {s.text}
                 </Text>
               </View>
@@ -148,7 +171,6 @@ export default function GuideAccordionContent({
 const styles = StyleSheet.create({
   bodyClip: {
     overflow: "hidden",
-    backgroundColor: colors.gray100,
   },
 
   body: {
@@ -156,7 +178,6 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.lg,
     paddingTop: spacing.sm,
     gap: spacing.sm,
-    backgroundColor: colors.gray100,
   },
 
   summary: {
@@ -168,12 +189,10 @@ const styles = StyleSheet.create({
   },
 
   stepCard: {
-    backgroundColor: colors.white,
     borderRadius: radius.sm,
     padding: spacing.sm,
     gap: spacing.xs,
 
-    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 2,

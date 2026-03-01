@@ -16,11 +16,13 @@ import { router } from "expo-router";
 import { useAuth } from "../../core/auth/AuthProvider";
 import { g } from "../../shared/styles/global";
 import { t } from "../../shared/styles/text";
-import { colors, spacing, radius } from "../../shared/styles/tokens";
+import { spacing, radius } from "../../shared/styles/tokens";
 import { font } from "../../shared/styles/typography";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useTheme } from "../../shared/theme/useTheme";
 
 export default function LoginScreen() {
+  const theme = useTheme();
   const logo = require("../../../assets/images/LogoTest.png");
   const { login, loading } = useAuth();
 
@@ -52,7 +54,7 @@ export default function LoginScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={[g.fill, styles.root]}>
+      <View style={[g.fill, styles.root, { backgroundColor: theme.colors.bgApp }]}>
         <KeyboardAvoidingView
           style={g.fill}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -66,8 +68,18 @@ export default function LoginScreen() {
             {/* Top Area */}
             <View style={styles.topArea}>
               <Pressable onPress={onBack} hitSlop={10}>
-                <View style={[g.iconBtnCircle, g.iconBtnOverlay]}>
-                  <Ionicons name="chevron-back" size={22} color="black" />
+                <View
+                  style={[
+                    g.iconBtnCircle,
+                    g.iconBtnOverlay,
+                    { backgroundColor: theme.colors.overlayLight },
+                  ]}
+                >
+                  <Ionicons
+                    name="chevron-back"
+                    size={22}
+                    color={theme.colors.textPrimary}
+                  />
                 </View>
               </Pressable>
             </View>
@@ -77,21 +89,39 @@ export default function LoginScreen() {
               {/* Logo */}
               <Image
                 source={logo}
-                style={styles.logo}
+                style={[
+                  styles.logo,
+                  { backgroundColor: theme.colors.bgCard, borderColor: theme.colors.border },
+                ]}
                 resizeMode="contain"
               />
 
-              <Text style={[t.hero, styles.title]}>Login</Text>
+              <Text
+                style={[
+                  t.hero,
+                  styles.title,
+                  { color: theme.colors.textPrimary },
+                ]}
+              >
+                Login
+              </Text>
 
               {/* Inputs */}
               <View style={styles.inputWrap}>
                 <TextInput
                   placeholder="Email or Username"
-                  placeholderTextColor={colors.gray500}
+                  placeholderTextColor={theme.colors.textMuted}
                   value={identifier}
                   onChangeText={setIdentifier}
                   autoCapitalize="none"
-                  style={styles.input}
+                  style={[
+                    styles.input,
+                    {
+                      borderColor: theme.colors.border,
+                      backgroundColor: theme.colors.inputEditableBg,
+                      color: theme.colors.textPrimary,
+                    },
+                  ]}
                   returnKeyType="next"
                   editable={!loading}
                 />
@@ -99,11 +129,19 @@ export default function LoginScreen() {
                 <View style={styles.passwordWrap}>
                   <TextInput
                     placeholder="Password"
-                    placeholderTextColor={colors.gray500}
+                    placeholderTextColor={theme.colors.textMuted}
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry={!showPw}
-                    style={[styles.input, styles.inputWithIcon]}
+                    style={[
+                      styles.input,
+                      styles.inputWithIcon,
+                      {
+                        borderColor: theme.colors.border,
+                        backgroundColor: theme.colors.inputEditableBg,
+                        color: theme.colors.textPrimary,
+                      },
+                    ]}
                     returnKeyType="done"
                     onSubmitEditing={onLogin}
                     editable={!loading}
@@ -118,27 +156,42 @@ export default function LoginScreen() {
                     <Ionicons
                       name={showPw ? "eye-off-outline" : "eye-outline"}
                       size={22}
-                      color={colors.gray600}
+                      color={theme.colors.textSecondary}
                     />
                   </Pressable>
                 </View>
 
-                {error && <Text style={styles.error}>{error}</Text>}
+                {error && (
+                  <Text style={[styles.error, { color: theme.colors.issue }]}>
+                    {error}
+                  </Text>
+                )}
 
                 <Pressable
-                  style={[styles.signInBtn, loading && styles.btnDisabled]}
+                  style={[
+                    styles.signInBtn,
+                    { backgroundColor: theme.colors.buttonPrimaryBg },
+                    loading && styles.btnDisabled,
+                  ]}
                   onPress={onLogin}
                   disabled={loading}
                 >
-                  <Text style={styles.signInText}>{loading ? "Signing In..." : "Sign In"}</Text>
+                  <Text
+                    style={[
+                      styles.signInText,
+                      { color: theme.colors.buttonPrimaryText },
+                    ]}
+                  >
+                    {loading ? "Signing In..." : "Sign In"}
+                  </Text>
                 </Pressable>
               </View>
 
               {/* Bottom Link */}
-              <Text style={styles.bottomText}>
+              <Text style={[styles.bottomText, { color: theme.colors.textSecondary }]}>
                 New here?{" "}
                 <Text
-                  style={t.link}
+                  style={[t.link, { color: theme.colors.link }]}
                   onPress={() => {
                     router.replace("/register");
                   }}
@@ -155,9 +208,7 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    backgroundColor: colors.gray100,
-  },
+  root: {},
 
   scrollContent: {
     flexGrow: 1,
@@ -185,10 +236,8 @@ const styles = StyleSheet.create({
   logo: {
     width: 96,
     height: 96,
-    backgroundColor: colors.white,
     borderRadius: radius.lg,
-    // borderWidth: 1,
-    borderColor: colors.gray300,
+    borderWidth: 1,
     marginBottom: spacing.xl,
   },
 
@@ -200,12 +249,10 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     borderWidth: 1,
-    borderColor: colors.gray300,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
     borderRadius: radius.lg,
     fontFamily: font.body,
-    backgroundColor: colors.white,
   },
 
   inputWithIcon: {
@@ -226,12 +273,10 @@ const styles = StyleSheet.create({
   },
 
   error: {
-    color: "red",
     textAlign: "center",
   },
 
   signInBtn: {
-    backgroundColor: colors.black,
     paddingVertical: spacing.lg,
     borderRadius: radius.lg,
     alignItems: "center",
@@ -239,7 +284,6 @@ const styles = StyleSheet.create({
   },
 
   signInText: {
-    color: colors.white,
     fontFamily: font.strong,
     fontSize: 16,
   },

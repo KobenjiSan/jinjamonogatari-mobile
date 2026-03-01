@@ -12,11 +12,12 @@ import {
 import { font } from "../../../../../../shared/styles/typography";
 import { g } from "../../../../../../shared/styles/global";
 import { t } from "../../../../../../shared/styles/text";
-import { colors, spacing, radius } from "../../../../../../shared/styles/tokens";
+import { spacing, radius } from "../../../../../../shared/styles/tokens";
 
 import CitationBlock from "../../../../../../shared/components/CitationBlock";
 import type { Citation as AppCitation } from "../../../../../../shared/components/CitationItem";
 import ImageCitationOverlay from "../../../../../../shared/components/ImageCitationOverlay";
+import { useTheme } from "../../../../../../shared/theme/useTheme";
 
 export type FolkloreCitation = {
   cite_id: number;
@@ -49,6 +50,7 @@ export default function FolkloreStoryCard({
   citations,
   fallbackImage,
 }: Props) {
+  const theme = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const { height: winH } = useWindowDimensions();
 
@@ -67,7 +69,13 @@ export default function FolkloreStoryCard({
     <View style={styles.container}>
       {/* MAIN card */}
       <Pressable onPress={openModal}>
-        <View style={[g.card, styles.card]}>
+        <View
+          style={[
+            g.card,
+            styles.card,
+            { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark },
+          ]}
+        >
           <View style={styles.imgContainer}>
             <Image
               source={imageUrl ? { uri: imageUrl } : fallbackImage}
@@ -77,17 +85,28 @@ export default function FolkloreStoryCard({
 
             {/* citation overlay */}
             <ImageCitationOverlay citation={imageCitation} />
-            
           </View>
 
           <View style={styles.titleBlock}>
-            <Text style={[t.title, styles.title, { fontFamily: font.title }]}>
+            <Text
+              style={[
+                t.title,
+                styles.title,
+                { fontFamily: font.title, color: theme.colors.textPrimary },
+              ]}
+            >
               {title}
             </Text>
           </View>
 
           <View style={styles.tapHintBlock}>
-            <Text style={[t.meta, styles.tapHintText, { fontFamily: font.body }]}>
+            <Text
+              style={[
+                t.meta,
+                styles.tapHintText,
+                { fontFamily: font.body, color: theme.colors.textMuted },
+              ]}
+            >
               Tap to read story
             </Text>
           </View>
@@ -104,14 +123,34 @@ export default function FolkloreStoryCard({
         <Pressable style={styles.backdrop} onPress={closeModal} />
 
         <View style={styles.centerWrap}>
-          <View style={[styles.sheet, { maxHeight: winH * 0.75 }]}>
+          <View
+            style={[
+              styles.sheet,
+              {
+                maxHeight: winH * 0.75,
+                backgroundColor: theme.colors.bgCard,
+                shadowColor: theme.colors.overlayDark,
+              },
+            ]}
+          >
             <View style={styles.closeRow}>
               <Pressable
-                style={styles.closeButton}
+                style={[
+                  styles.closeButton,
+                  { backgroundColor: theme.colors.overlayLight },
+                ]}
                 onPress={closeModal}
                 hitSlop={12}
               >
-                <Text style={[t.body, t.primary, styles.closeText]}>✕</Text>
+                <Text
+                  style={[
+                    t.body,
+                    styles.closeText,
+                    { color: theme.colors.textPrimary },
+                  ]}
+                >
+                  ✕
+                </Text>
               </Pressable>
             </View>
 
@@ -119,9 +158,22 @@ export default function FolkloreStoryCard({
               contentContainerStyle={styles.sheetContent}
               showsVerticalScrollIndicator
             >
-              <Text style={[t.title, { fontFamily: font.title }]}>{title}</Text>
+              <Text
+                style={[
+                  t.title,
+                  { fontFamily: font.title, color: theme.colors.textPrimary },
+                ]}
+              >
+                {title}
+              </Text>
 
-              <Text style={[t.body, styles.storyText, { fontFamily: font.body }]}>
+              <Text
+                style={[
+                  t.body,
+                  styles.storyText,
+                  { fontFamily: font.body, color: theme.colors.textPrimary },
+                ]}
+              >
                 {story}
               </Text>
 
@@ -197,12 +249,10 @@ const styles = StyleSheet.create({
 
   sheet: {
     width: "100%",
-    backgroundColor: colors.white,
     borderRadius: radius.lg,
     overflow: "hidden",
     paddingBottom: spacing.md,
 
-    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -226,7 +276,6 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.overlayLight,
   },
 
   closeText: {

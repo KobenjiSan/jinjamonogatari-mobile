@@ -16,11 +16,13 @@ import { router } from "expo-router";
 import { useAuth } from "../../core/auth/AuthProvider";
 import { g } from "../../shared/styles/global";
 import { t } from "../../shared/styles/text";
-import { colors, spacing, radius } from "../../shared/styles/tokens";
+import { spacing, radius } from "../../shared/styles/tokens";
 import { font } from "../../shared/styles/typography";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useTheme } from "../../shared/theme/useTheme";
 
 export default function RegisterScreen() {
+  const theme = useTheme();
   const logo = require("../../../assets/images/LogoTest.png");
   const { register, loading } = useAuth();
 
@@ -48,7 +50,7 @@ export default function RegisterScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={[g.fill, styles.root]}>
+      <View style={[g.fill, styles.root, { backgroundColor: theme.colors.bgApp }]}>
         <KeyboardAvoidingView
           style={g.fill}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -62,8 +64,18 @@ export default function RegisterScreen() {
             {/* Top Area */}
             <View style={styles.topArea}>
               <Pressable onPress={onBack} hitSlop={10}>
-                <View style={[g.iconBtnCircle, g.iconBtnOverlay]}>
-                  <Ionicons name="chevron-back" size={22} color="black" />
+                <View
+                  style={[
+                    g.iconBtnCircle,
+                    g.iconBtnOverlay,
+                    { backgroundColor: theme.colors.overlayLight },
+                  ]}
+                >
+                  <Ionicons
+                    name="chevron-back"
+                    size={22}
+                    color={theme.colors.textPrimary}
+                  />
                 </View>
               </Pressable>
             </View>
@@ -73,33 +85,61 @@ export default function RegisterScreen() {
               {/* Logo */}
               <Image
                 source={logo}
-                style={styles.logo}
+                style={[
+                  styles.logo,
+                  {
+                    backgroundColor: theme.colors.bgCard,
+                    borderColor: theme.colors.border,
+                  },
+                ]}
                 resizeMode="contain"
               />
 
-              <Text style={[t.hero, styles.title]}>Register</Text>
+              <Text
+                style={[
+                  t.hero,
+                  styles.title,
+                  { color: theme.colors.textPrimary },
+                ]}
+              >
+                Register
+              </Text>
 
               {/* Inputs */}
               <View style={styles.inputWrap}>
                 <TextInput
                   placeholder="Username"
-                  placeholderTextColor={colors.gray500}
+                  placeholderTextColor={theme.colors.textMuted}
                   value={username}
                   onChangeText={setUsername}
                   autoCapitalize="none"
-                  style={styles.input}
+                  style={[
+                    styles.input,
+                    {
+                      borderColor: theme.colors.border,
+                      backgroundColor: theme.colors.inputEditableBg,
+                      color: theme.colors.textPrimary,
+                    },
+                  ]}
                   returnKeyType="next"
                   editable={!loading}
                 />
 
                 <TextInput
                   placeholder="Email"
-                  placeholderTextColor={colors.gray500}
+                  placeholderTextColor={theme.colors.textMuted}
                   value={email}
                   onChangeText={setEmail}
                   autoCapitalize="none"
                   keyboardType="email-address"
-                  style={styles.input}
+                  style={[
+                    styles.input,
+                    {
+                      borderColor: theme.colors.border,
+                      backgroundColor: theme.colors.inputEditableBg,
+                      color: theme.colors.textPrimary,
+                    },
+                  ]}
                   returnKeyType="next"
                   editable={!loading}
                 />
@@ -107,11 +147,19 @@ export default function RegisterScreen() {
                 <View style={styles.passwordWrap}>
                   <TextInput
                     placeholder="Password"
-                    placeholderTextColor={colors.gray500}
+                    placeholderTextColor={theme.colors.textMuted}
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry={!showPw}
-                    style={[styles.input, styles.inputWithIcon]}
+                    style={[
+                      styles.input,
+                      styles.inputWithIcon,
+                      {
+                        borderColor: theme.colors.border,
+                        backgroundColor: theme.colors.inputEditableBg,
+                        color: theme.colors.textPrimary,
+                      },
+                    ]}
                     returnKeyType="done"
                     onSubmitEditing={onRegister}
                     editable={!loading}
@@ -126,28 +174,49 @@ export default function RegisterScreen() {
                     <Ionicons
                       name={showPw ? "eye-off-outline" : "eye-outline"}
                       size={22}
-                      color={colors.gray600}
+                      color={theme.colors.textSecondary}
                     />
                   </Pressable>
                 </View>
 
-                {error && <Text style={styles.error}>{error}</Text>}
+                {error && (
+                  <Text style={[styles.error, { color: theme.colors.issue }]}>
+                    {error}
+                  </Text>
+                )}
 
                 <Pressable
-                  style={[styles.primaryBtn, loading && styles.btnDisabled]}
+                  style={[
+                    styles.primaryBtn,
+                    { backgroundColor: theme.colors.buttonPrimaryBg },
+                    loading && styles.btnDisabled,
+                  ]}
                   onPress={onRegister}
                   disabled={loading}
                 >
-                  <Text style={styles.primaryText}>
+                  <Text
+                    style={[
+                      styles.primaryText,
+                      { color: theme.colors.buttonPrimaryText },
+                    ]}
+                  >
                     {loading ? "Creating..." : "Create Account"}
                   </Text>
                 </Pressable>
               </View>
 
               {/* Bottom Link */}
-              <Text style={styles.bottomText}>
+              <Text
+                style={[
+                  styles.bottomText,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
                 Already have an account?{" "}
-                <Text style={t.link} onPress={() => router.replace("/login")}>
+                <Text
+                  style={[t.link, { color: theme.colors.link }]}
+                  onPress={() => router.replace("/login")}
+                >
                   Log In
                 </Text>
               </Text>
@@ -160,9 +229,7 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    backgroundColor: colors.gray100,
-  },
+  root: {},
 
   scrollContent: {
     flexGrow: 1,
@@ -190,10 +257,8 @@ const styles = StyleSheet.create({
   logo: {
     width: 96,
     height: 96,
-    backgroundColor: colors.white,
     borderRadius: radius.lg,
-    // borderWidth: 1,
-    borderColor: colors.gray300,
+    borderWidth: 1,
     marginBottom: spacing.xl,
   },
 
@@ -205,12 +270,10 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     borderWidth: 1,
-    borderColor: colors.gray300,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
     borderRadius: radius.lg,
     fontFamily: font.body,
-    backgroundColor: colors.white,
   },
 
   inputWithIcon: {
@@ -231,12 +294,10 @@ const styles = StyleSheet.create({
   },
 
   error: {
-    color: "red",
     textAlign: "center",
   },
 
   primaryBtn: {
-    backgroundColor: colors.black,
     paddingVertical: spacing.lg,
     borderRadius: radius.lg,
     alignItems: "center",
@@ -244,7 +305,6 @@ const styles = StyleSheet.create({
   },
 
   primaryText: {
-    color: colors.white,
     fontFamily: font.strong,
     fontSize: 16,
   },

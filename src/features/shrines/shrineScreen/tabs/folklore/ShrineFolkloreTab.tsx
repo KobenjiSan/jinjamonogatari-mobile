@@ -6,7 +6,8 @@ import Feather from "@expo/vector-icons/Feather";
 import { font } from "../../../../../shared/styles/typography";
 import { g } from "../../../../../shared/styles/global";
 import { t } from "../../../../../shared/styles/text";
-import { spacing, radius, colors } from "../../../../../shared/styles/tokens";
+import { spacing, radius } from "../../../../../shared/styles/tokens";
+import { useTheme } from "../../../../../shared/theme/useTheme";
 
 type Props = {
   slug: string;
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export default function ShrineFolkloreTab({ slug, enabled }: Props) {
+  const theme = useTheme();
   const fallbackImage = require("../../../../../../assets/images/placeholder-vertical.jpg");
   const { folklore, isLoading, error } = useShrineFolkloreApi(slug, enabled);
 
@@ -45,21 +47,40 @@ export default function ShrineFolkloreTab({ slug, enabled }: Props) {
   return (
     <View style={styles.container}>
       {isLoading && (
-        <View style={g.card}>
-          <Text style={[t.body, t.center, t.muted]}>Loading folklore...</Text>
+        <View
+          style={[
+            g.card,
+            { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark },
+          ]}
+        >
+          <Text style={[t.body, t.center, { color: theme.colors.textMuted }]}>
+            Loading folklore...
+          </Text>
         </View>
       )}
 
       {!!error && (
-        <View style={g.card}>
-          <Text style={[t.body, t.center, t.muted]}>{error}</Text>
+        <View
+          style={[
+            g.card,
+            { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark },
+          ]}
+        >
+          <Text style={[t.body, t.center, { color: theme.colors.textMuted }]}>
+            {error}
+          </Text>
         </View>
       )}
 
       {!isLoading && !error && !hasFolklore ? (
         <>
-          <View style={g.card}>
-            <Text style={[t.body, t.center, t.muted]}>
+          <View
+            style={[
+              g.card,
+              { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark },
+            ]}
+          >
+            <Text style={[t.body, t.center, { color: theme.colors.textMuted }]}>
               No folklore has been added for this shrine yet.
             </Text>
           </View>
@@ -84,29 +105,43 @@ export default function ShrineFolkloreTab({ slug, enabled }: Props) {
             <>
               <View style={[g.rowBetween, { paddingTop: spacing.xl }]}>
                 <Pressable onPress={goPrev} style={styles.navBtn} hitSlop={8}>
-                  <Feather name="circle" size={20} color="#0000008f" />
+                  <Feather
+                    name="circle"
+                    size={20}
+                    color={theme.colors.textMuted}
+                  />
                   <Text
-                    style={[t.small, { fontFamily: font.body, opacity: 0.85 }]}
+                    style={[
+                      t.small,
+                      { fontFamily: font.body, opacity: 0.85, color: theme.colors.textPrimary },
+                    ]}
                   >
                     Prev
                   </Text>
                 </Pressable>
 
-                <Text style={[t.small, t.muted]}>
+                <Text style={[t.small, { color: theme.colors.textMuted }]}>
                   {index + 1} / {folklore.length}
                 </Text>
 
                 <Pressable onPress={goNext} style={styles.navBtn} hitSlop={8}>
-                  <Feather name="circle" size={20} color="#0000008f" />
+                  <Feather
+                    name="circle"
+                    size={20}
+                    color={theme.colors.textMuted}
+                  />
                   <Text
-                    style={[t.small, { fontFamily: font.body, opacity: 0.85 }]}
+                    style={[
+                      t.small,
+                      { fontFamily: font.body, opacity: 0.85, color: theme.colors.textPrimary },
+                    ]}
                   >
                     Next
                   </Text>
                 </Pressable>
               </View>
 
-              <View style={styles.track} />
+              <View style={[styles.track, { backgroundColor: theme.colors.border }]} />
             </>
           ) : (
             <View style={{ height: 150 }} />
@@ -133,7 +168,6 @@ const styles = StyleSheet.create({
   track: {
     marginVertical: spacing.xl,
     height: 1,
-    backgroundColor: colors.gray300,
     width: "100%",
   },
 });

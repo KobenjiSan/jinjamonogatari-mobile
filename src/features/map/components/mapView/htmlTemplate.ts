@@ -11,6 +11,7 @@ type BuildMapHtmlParams = {
   markers: WebMapMarker[];
   userLocation?: { lat: number; lon: number };
   markerIcons: { defaultUri: string; selectedUri: string };
+  mapStyleUrl: string;
 };
 
 export function buildMapHtml({
@@ -20,10 +21,13 @@ export function buildMapHtml({
   markers,
   userLocation,
   markerIcons,
+  mapStyleUrl,
 }: BuildMapHtmlParams): string {
   const markersJson = JSON.stringify(markers);
   const markerIconsJson = JSON.stringify(markerIcons);
   const userLocationJson = JSON.stringify(userLocation ?? null);
+
+  const styleUrl = `${mapStyleUrl}?key=${apiKey}`;
 
   return `<!DOCTYPE html>
 <html>
@@ -77,7 +81,7 @@ export function buildMapHtml({
 
       const map = new maplibregl.Map({
         container: "map",
-        style: "https://api.maptiler.com/maps/019c2031-d766-7298-bdc2-c88076ef2f99/style.json?key=${apiKey}",
+        style: "${styleUrl}",
         center: [${center.lng}, ${center.lat}],
         zoom: ${zoom},
         interactive: true,

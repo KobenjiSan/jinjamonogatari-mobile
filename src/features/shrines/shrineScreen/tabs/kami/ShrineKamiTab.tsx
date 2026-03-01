@@ -4,11 +4,12 @@ import { font } from "../../../../../shared/styles/typography";
 import { useShrineKamiApi } from "./api/useShrineKami";
 import { g } from "../../../../../shared/styles/global";
 import { t } from "../../../../../shared/styles/text";
-import { colors, spacing, radius } from "../../../../../shared/styles/tokens";
+import { spacing, radius } from "../../../../../shared/styles/tokens";
 
 import CitationBlock from "../../../../../shared/components/CitationBlock";
 import type { Citation as AppCitation } from "../../../../../shared/components/CitationItem";
 import ImageCitationOverlay from "../../../../../shared/components/ImageCitationOverlay";
+import { useTheme } from "../../../../../shared/theme/useTheme";
 
 type Props = {
   slug: string;
@@ -16,27 +17,47 @@ type Props = {
 };
 
 export default function ShrineKamiTab({ slug, enabled }: Props) {
+  const theme = useTheme();
   const fallbackImage = require("../../../../../../assets/images/placeholder-vertical.jpg");
   const { kami, isLoading, error } = useShrineKamiApi(slug, enabled);
 
   return (
     <View style={styles.container}>
       {isLoading && (
-        <View style={g.card}>
-          <Text style={[t.body, t.center, t.muted]}>Loading kami...</Text>
+        <View
+          style={[
+            g.card,
+            { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark },
+          ]}
+        >
+          <Text style={[t.body, t.center, { color: theme.colors.textMuted }]}>
+            Loading kami...
+          </Text>
         </View>
       )}
 
       {!!error && (
-        <View style={g.card}>
-          <Text style={[t.body, t.center, t.muted]}>{error}</Text>
+        <View
+          style={[
+            g.card,
+            { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark },
+          ]}
+        >
+          <Text style={[t.body, t.center, { color: theme.colors.textMuted }]}>
+            {error}
+          </Text>
         </View>
       )}
 
       {!isLoading && !error && kami.length === 0 ? (
         <>
-          <View style={g.card}>
-            <Text style={[t.body, t.center, t.muted]}>
+          <View
+            style={[
+              g.card,
+              { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark },
+            ]}
+          >
+            <Text style={[t.body, t.center, { color: theme.colors.textMuted }]}>
               No kami have been linked to this shrine yet.
             </Text>
           </View>
@@ -53,13 +74,18 @@ export default function ShrineKamiTab({ slug, enabled }: Props) {
                 url: c.url ?? null,
                 author: c.author ?? null,
                 year: c.year ?? null,
-              }),
+              })
             );
 
             return (
               <View key={k.kami_id}>
                 {/* KAMI IMAGE CARD */}
-                <View style={styles.kamiCard}>
+                <View
+                  style={[
+                    styles.kamiCard,
+                    { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark },
+                  ]}
+                >
                   <View style={styles.kamiImgContainer}>
                     <Image
                       source={k.imageUrl ? { uri: k.imageUrl } : fallbackImage}
@@ -75,7 +101,7 @@ export default function ShrineKamiTab({ slug, enabled }: Props) {
                     <Text
                       style={[
                         t.title,
-                        { fontFamily: font.title },
+                        { fontFamily: font.title, color: theme.colors.textPrimary },
                         styles.kamiNameEN,
                       ]}
                     >
@@ -85,7 +111,7 @@ export default function ShrineKamiTab({ slug, enabled }: Props) {
                     <Text
                       style={[
                         t.title,
-                        { fontFamily: font.strong },
+                        { fontFamily: font.strong, color: theme.colors.textSecondary },
                         styles.kamiNameJP,
                       ]}
                     >
@@ -95,11 +121,16 @@ export default function ShrineKamiTab({ slug, enabled }: Props) {
                 </View>
 
                 {/* DESCRIPTION CARD */}
-                <View style={g.card}>
+                <View
+                  style={[
+                    g.card,
+                    { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark },
+                  ]}
+                >
                   <Text
                     style={[
                       t.title,
-                      { fontFamily: font.title },
+                      { fontFamily: font.title, color: theme.colors.textPrimary },
                       styles.cardTitle,
                     ]}
                   >
@@ -108,7 +139,10 @@ export default function ShrineKamiTab({ slug, enabled }: Props) {
 
                   {k.desc && (
                     <Text
-                      style={[t.body, { fontFamily: font.body, marginTop: 6 }]}
+                      style={[
+                        t.body,
+                        { fontFamily: font.body, marginTop: 6, color: theme.colors.textPrimary },
+                      ]}
                     >
                       {k.desc}
                     </Text>
@@ -117,7 +151,12 @@ export default function ShrineKamiTab({ slug, enabled }: Props) {
                   <CitationBlock citations={mappedCitations} />
                 </View>
 
-                <View style={styles.track} />
+                <View
+                  style={[
+                    styles.track,
+                    { backgroundColor: theme.colors.border },
+                  ]}
+                />
               </View>
             );
           })}
@@ -166,9 +205,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xs,
   },
 
-  kamiNameJP: {
-    color: colors.textSecondary,
-  },
+  kamiNameJP: {},
 
   cardTitle: {
     letterSpacing: 0.6,
@@ -177,7 +214,6 @@ const styles = StyleSheet.create({
   track: {
     marginVertical: spacing.xl,
     height: 1,
-    backgroundColor: colors.gray300,
     width: "100%",
   },
 });
