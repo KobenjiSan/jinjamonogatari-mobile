@@ -123,6 +123,7 @@ export default function ShrineKamiTab({ slug, enabled }: Props) {
           })}
         </View>
       )}
+      <View style={{ height: 250 }} />
     </View>
   );
 }

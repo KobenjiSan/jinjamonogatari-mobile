@@ -107,6 +107,7 @@ export default function ShrineHistoryTab({ slug, enabled }: Props) {
           );
         })
       )}
+      <View style={{ height: 250 }} />
     </View>
   );
 }

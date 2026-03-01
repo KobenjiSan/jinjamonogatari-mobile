@@ -1,5 +1,11 @@
 import { apiFetch } from "../../core/api/client";
 
+export type UpdateMyProfileRequest = {
+  firstName?: string | null;
+  lastName?: string | null;
+  phone?: string | null;
+};
+
 export type MeResult = {
   userId: number;
   email: string;
@@ -54,5 +60,14 @@ export async function logoutApi(refreshToken: string): Promise<void> {
   await apiFetch("/api/users/logout", {
     method: "POST",
     body: JSON.stringify({ refreshToken }),
+  });
+}
+
+export async function updateMyProfileApi(
+  payload: UpdateMyProfileRequest
+): Promise<MeResult> {
+  return apiFetch("/api/users/me/profile", {
+    method: "PUT",
+    body: JSON.stringify(payload),
   });
 }

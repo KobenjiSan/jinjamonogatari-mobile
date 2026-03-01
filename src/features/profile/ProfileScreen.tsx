@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { useAuth } from "../../core/auth/AuthProvider";
+import { updateMyProfileApi } from "../../features/auth/authApi";
 import { g } from "../../shared/styles/global";
 import { t } from "../../shared/styles/text";
 import { colors, spacing, radius } from "../../shared/styles/tokens";
@@ -19,6 +20,8 @@ import { font } from "../../shared/styles/typography";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Feather from "@expo/vector-icons/Feather";
+
+import EditProfileModal from "../profile/components/EditProfileModal";
 
 const TOP_PADDING =
   Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
@@ -29,7 +32,11 @@ const H_PADDING = Math.min(24, width * 0.05);
 const LIST_BOTTOM_SPACER = 96;
 
 export default function ProfileScreen() {
-  const { user, loading, authReady, logout } = useAuth();
+  const { user, loading, authReady, logout, refreshMe } = useAuth();
+
+  const [editOpen, setEditOpen] = useState(false);
+  const [editSaving, setEditSaving] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
 
   const ctaScale = useRef(new Animated.Value(1)).current;
 
@@ -96,12 +103,49 @@ export default function ProfileScreen() {
 
   const handle = `@${user.username}`;
   const fullName =
-    [user.firstName, user.lastName].filter(Boolean).join(" ") || "Sam Keller";
+    [user.firstName, user.lastName].filter(Boolean).join(" ") || "—";
   const phone = user.phone || "";
 
   async function onLogout() {
     if (loading) return;
     await logout();
+  }
+
+  function openEdit() {
+    setEditError(null);
+    setEditOpen(true);
+  }
+
+  function closeEdit() {
+    setEditOpen(false);
+  }
+
+  async function onSaveProfile(payload: {
+    firstName: string;
+    lastName: string;
+    phone: string;
+  }) {
+    if (editSaving) return;
+
+    setEditSaving(true);
+    setEditError(null);
+
+    try {
+      await updateMyProfileApi({
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        phone: payload.phone,
+      });
+
+      await refreshMe();
+      closeEdit(); // close ONLY on success
+    } catch (e: any) {
+      // This is the message built by apiFetch (detail/title/text fallback)
+      const msg = e?.message || "Could not update profile.";
+      setEditError(msg);
+    } finally {
+      setEditSaving(false);
+    }
   }
 
   return (
@@ -136,7 +180,7 @@ export default function ProfileScreen() {
 
           <View style={styles.contactRow}>
             <Text style={[t.small, styles.label]}>Phone</Text>
-            <Text style={[t.body, styles.value]}>{phone || "—"}</Text>
+            <Text style={[t.body, styles.value, {paddingBottom: 4}]}>{phone || "—"}</Text>
           </View>
         </View>
 
@@ -161,6 +205,23 @@ export default function ProfileScreen() {
         <View style={g.cardNoPadding}>
           <Text style={[t.title, styles.sectionTitle]}>Settings</Text>
 
+          {/* Edit Profile */}
+          <Pressable
+            style={[styles.settingsRow, loading && styles.rowDisabled]}
+            onPress={openEdit}
+            disabled={loading}
+          >
+            <View style={styles.settingsLeft}>
+              <Feather name="user" size={18} color={colors.gray500} />
+              <Text style={[t.body, styles.settingsText]}>Edit profile</Text>
+            </View>
+
+            <Ionicons name="chevron-forward" size={18} color={colors.gray500} />
+          </Pressable>
+
+          <View style={styles.divider} />
+
+          {/* Logout */}
           <Pressable
             style={[styles.settingsRow, loading && styles.rowDisabled]}
             onPress={onLogout}
@@ -179,6 +240,19 @@ export default function ProfileScreen() {
 
         <View style={{ height: LIST_BOTTOM_SPACER }} />
       </ScrollView>
+
+      <EditProfileModal
+        visible={editOpen}
+        onClose={closeEdit}
+        username={user.username}
+        email={user.email}
+        initialFirstName={user.firstName ?? ""}
+        initialLastName={user.lastName ?? ""}
+        initialPhone={user.phone ?? ""}
+        onSave={onSaveProfile}
+        saving={editSaving}
+        error={editError}
+      />
     </View>
   );
 }
