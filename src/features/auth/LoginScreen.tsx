@@ -22,7 +22,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function LoginScreen() {
   const logo = require("../../../assets/images/LogoTest.png");
-  const { login } = useAuth();
+  const { login, loading } = useAuth();
 
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -39,6 +39,8 @@ export default function LoginScreen() {
   }
 
   async function onLogin() {
+    if (loading) return;
+
     try {
       setError(null);
       await login(identifier.trim(), password);
@@ -91,6 +93,7 @@ export default function LoginScreen() {
                   autoCapitalize="none"
                   style={styles.input}
                   returnKeyType="next"
+                  editable={!loading}
                 />
 
                 <View style={styles.passwordWrap}>
@@ -103,9 +106,11 @@ export default function LoginScreen() {
                     style={[styles.input, styles.inputWithIcon]}
                     returnKeyType="done"
                     onSubmitEditing={onLogin}
+                    editable={!loading}
                   />
 
                   <Pressable
+                    disabled={loading}
                     onPress={() => setShowPw((v) => !v)}
                     style={styles.eyeBtn}
                     hitSlop={10}
@@ -120,8 +125,12 @@ export default function LoginScreen() {
 
                 {error && <Text style={styles.error}>{error}</Text>}
 
-                <Pressable style={styles.signInBtn} onPress={onLogin}>
-                  <Text style={styles.signInText}>Sign In</Text>
+                <Pressable
+                  style={[styles.signInBtn, loading && styles.btnDisabled]}
+                  onPress={onLogin}
+                  disabled={loading}
+                >
+                  <Text style={styles.signInText}>{loading ? "Signing In..." : "Sign In"}</Text>
                 </Pressable>
               </View>
 
@@ -238,5 +247,9 @@ const styles = StyleSheet.create({
   bottomText: {
     marginTop: spacing.xl,
     textAlign: "center",
+  },
+
+  btnDisabled: {
+    opacity: 0.6,
   },
 });

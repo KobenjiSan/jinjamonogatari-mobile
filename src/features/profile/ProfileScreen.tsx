@@ -29,7 +29,7 @@ const H_PADDING = Math.min(24, width * 0.05);
 const LIST_BOTTOM_SPACER = 96;
 
 export default function ProfileScreen() {
-  const { user, loading, logout } = useAuth();
+  const { user, loading, authReady, logout } = useAuth();
 
   const ctaScale = useRef(new Animated.Value(1)).current;
 
@@ -42,7 +42,7 @@ export default function ProfileScreen() {
 
   const ctaHandlers = makePressHandlers(ctaScale, 0.96);
 
-  if (loading) {
+  if (!authReady) {
     return (
       <View style={[g.fill, g.center, { backgroundColor: colors.gray100 }]}>
         <Text style={[t.body, { fontFamily: font.body }]}>Loading...</Text>
@@ -98,6 +98,11 @@ export default function ProfileScreen() {
   const fullName =
     [user.firstName, user.lastName].filter(Boolean).join(" ") || "Sam Keller";
   const phone = user.phone || "";
+
+  async function onLogout() {
+    if (loading) return;
+    await logout();
+  }
 
   return (
     <View style={[g.fill, { backgroundColor: colors.gray100 }]}>
@@ -156,10 +161,16 @@ export default function ProfileScreen() {
         <View style={g.cardNoPadding}>
           <Text style={[t.title, styles.sectionTitle]}>Settings</Text>
 
-          <Pressable style={styles.settingsRow} onPress={logout}>
+          <Pressable
+            style={[styles.settingsRow, loading && styles.rowDisabled]}
+            onPress={onLogout}
+            disabled={loading}
+          >
             <View style={styles.settingsLeft}>
               <MaterialIcons name="logout" size={18} color={colors.gray500} />
-              <Text style={[t.body, styles.settingsText]}>Logout</Text>
+              <Text style={[t.body, styles.settingsText]}>
+                {loading ? "Logging out..." : "Logout"}
+              </Text>
             </View>
 
             <Ionicons name="chevron-forward" size={18} color={colors.gray500} />
@@ -260,5 +271,8 @@ const styles = StyleSheet.create({
   settingsText: {
     fontFamily: font.body,
     color: colors.textPrimary,
+  },
+  rowDisabled: {
+    opacity: 0.6,
   },
 });

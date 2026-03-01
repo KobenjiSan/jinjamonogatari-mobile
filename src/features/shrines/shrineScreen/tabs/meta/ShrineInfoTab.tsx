@@ -157,6 +157,7 @@ export default function ShrineInfoTab({ shrine, origin }: Props) {
         <InfoRow label="Email" value={email} />
         <InfoRow label="Website" value={website} showDivider={false} />
       </View>
+      <View style={{ height: 300 }} />
     </View>
   );
 }

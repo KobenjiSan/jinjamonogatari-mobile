@@ -22,7 +22,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function RegisterScreen() {
   const logo = require("../../../assets/images/LogoTest.png");
-  const { register } = useAuth();
+  const { register, loading } = useAuth();
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -35,6 +35,8 @@ export default function RegisterScreen() {
   }
 
   async function onRegister() {
+    if (loading) return;
+
     try {
       setError(null);
       await register(username.trim(), email.trim(), password);
@@ -87,6 +89,7 @@ export default function RegisterScreen() {
                   autoCapitalize="none"
                   style={styles.input}
                   returnKeyType="next"
+                  editable={!loading}
                 />
 
                 <TextInput
@@ -98,6 +101,7 @@ export default function RegisterScreen() {
                   keyboardType="email-address"
                   style={styles.input}
                   returnKeyType="next"
+                  editable={!loading}
                 />
 
                 <View style={styles.passwordWrap}>
@@ -110,9 +114,11 @@ export default function RegisterScreen() {
                     style={[styles.input, styles.inputWithIcon]}
                     returnKeyType="done"
                     onSubmitEditing={onRegister}
+                    editable={!loading}
                   />
 
                   <Pressable
+                    disabled={loading}
                     onPress={() => setShowPw((v) => !v)}
                     style={styles.eyeBtn}
                     hitSlop={10}
@@ -127,8 +133,14 @@ export default function RegisterScreen() {
 
                 {error && <Text style={styles.error}>{error}</Text>}
 
-                <Pressable style={styles.primaryBtn} onPress={onRegister}>
-                  <Text style={styles.primaryText}>Create Account</Text>
+                <Pressable
+                  style={[styles.primaryBtn, loading && styles.btnDisabled]}
+                  onPress={onRegister}
+                  disabled={loading}
+                >
+                  <Text style={styles.primaryText}>
+                    {loading ? "Creating..." : "Create Account"}
+                  </Text>
                 </Pressable>
               </View>
 
@@ -240,5 +252,9 @@ const styles = StyleSheet.create({
   bottomText: {
     marginTop: spacing.xl,
     textAlign: "center",
+  },
+
+  btnDisabled: {
+    opacity: 0.6,
   },
 });
