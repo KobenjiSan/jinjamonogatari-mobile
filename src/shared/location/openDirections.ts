@@ -36,6 +36,16 @@ export async function openDirectionsToShrine({
   const encodedDestination = encodeURIComponent(destination);
   const encodedOrigin = originStr ? encodeURIComponent(originStr) : "";
 
+  const webUrl = hasOrigin
+    ? `https://www.google.com/maps/dir/?api=1&origin=${encodedOrigin}&destination=${encodedDestination}&travelmode=walking`
+    : `https://www.google.com/maps/dir/?api=1&destination=${encodedDestination}&travelmode=walking`;
+
+  // Web: skip native app schemes entirely
+  if (Platform.OS === "web") {
+    window.open(webUrl, "_blank", "noopener,noreferrer");
+    return;
+  }
+
   // Native schemes
   const nativeUrl =
     Platform.OS === "ios"
@@ -47,11 +57,6 @@ export async function openDirectionsToShrine({
         // Android google.navigation
         ? `google.navigation:q=${destination}&origin=${originStr}&mode=w`
         : `google.navigation:q=${destination}&mode=w`;
-
-  // Fallback
-  const webUrl = hasOrigin
-    ? `https://www.google.com/maps/dir/?api=1&origin=${encodedOrigin}&destination=${encodedDestination}&travelmode=walking`
-    : `https://www.google.com/maps/dir/?api=1&destination=${encodedDestination}&travelmode=walking`;
 
   try {
     const canOpenNative = await Linking.canOpenURL(nativeUrl);

@@ -23,9 +23,9 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useTheme } from "../../shared/theme/useTheme";
 
 const TOP_PADDING =
-  Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
+  Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : Platform.OS === "web" ? 16 : 44;
 
-const LIST_BOTTOM_SPACER = 96;
+const LIST_BOTTOM_SPACER = Platform.OS === "web" ? 68 : 96;
 
 export default function EtiquetteScreen() {
   const theme = useTheme();

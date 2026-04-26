@@ -25,27 +25,31 @@ import { useTheme } from "../../../../../shared/theme/useTheme";
 type Props = {
   shrine: ShrinePreviewModel;
   insetsTop: number;
-  onHeroLayout: (e: any) => void;
-  onIntroLayout: (e: any) => void;
+  onHeaderLayout: (e: any) => void;
 };
 
 export default function ShrineHeader({
   shrine,
   insetsTop,
-  onHeroLayout,
-  onIntroLayout,
+  onHeaderLayout,
 }: Props) {
   const theme = useTheme();
   const fallbackImage = require("../../../../../../assets/images/placeholder.png");
 
   const router = useRouter();
-  const onBack = () => router.back();
+  const onBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/"); 
+    }
+  };
 
   const backPress = usePressScale(0.9);
   const sharePress = usePressScale(0.9);
 
   return (
-    <>
+    <View onLayout={onHeaderLayout}>
       {/* top spacer */}
       <View
         style={{
@@ -55,7 +59,7 @@ export default function ShrineHeader({
       />
 
       {/* HERO */}
-      <View style={styles.heroWrap} onLayout={onHeroLayout}>
+      <View style={styles.heroWrap}>
         {/* Back */}
         <Pressable
           onPress={onBack}
@@ -101,7 +105,7 @@ export default function ShrineHeader({
       </View>
 
       {/* INTRO */}
-      <View style={styles.introOverlay} onLayout={onIntroLayout}>
+      <View style={styles.introOverlay}>
         <Text
           style={[t.hero, t.white, { fontFamily: font.title }]}
           numberOfLines={1}
@@ -169,7 +173,7 @@ export default function ShrineHeader({
           </View>
         </View>
       </View>
-    </>
+    </View>
   );
 }
 

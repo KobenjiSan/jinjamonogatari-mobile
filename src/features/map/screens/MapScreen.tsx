@@ -26,7 +26,7 @@ import { useTheme } from "../../../shared/theme/useTheme";
 import MapViewWeb from "../components/mapView/MapViewWeb";
 
 const TOP_PADDING =
-  Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
+  Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : Platform.OS === "web" ? 16 : 44;
 
 const DEFAULT_CENTER = { lat: 35.0116, lng: 135.7681 }; // Kyoto
 

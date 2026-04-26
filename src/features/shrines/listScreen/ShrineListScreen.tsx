@@ -19,12 +19,12 @@ import SearchBar from "../../../shared/components/SearchBar";
 import { useTheme } from "../../../shared/theme/useTheme";
 
 const TOP_PADDING =
-  Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
+  Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : Platform.OS === "web" ? 16 : 44;
 
 const { width } = Dimensions.get("window");
 const H_PADDING = Math.min(24, width * 0.05);
 
-const LIST_BOTTOM_SPACER = 96;
+const LIST_BOTTOM_SPACER = Platform.OS === "web" ? 68 : 96;
 
 export default function ShrineListScreen() {
   const theme = useTheme();

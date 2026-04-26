@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { Tabs } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
@@ -8,6 +8,11 @@ import { useTheme } from "../../src/shared/theme/useTheme";
 
 const ICON_SIZE = 32;
 const BOX = 48;
+var navHeight = 96;
+
+if (Platform.OS === "web") {
+    navHeight = 68;
+}
 
 function TabIcon({ children }: { children: React.ReactNode }) {
   return (
@@ -39,7 +44,7 @@ export default function TabLayout() {
           right: 0,
           bottom: 0,
 
-          height: 96,
+          height: navHeight,
           paddingTop: 12,
           paddingBottom: 18,
 

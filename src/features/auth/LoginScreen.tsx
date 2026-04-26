@@ -53,7 +53,7 @@ export default function LoginScreen() {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+    // <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={[g.fill, styles.root, { backgroundColor: theme.colors.bgApp }]}>
         <KeyboardAvoidingView
           style={g.fill}
@@ -203,7 +203,7 @@ export default function LoginScreen() {
           </ScrollView>
         </KeyboardAvoidingView>
       </View>
-    </TouchableWithoutFeedback>
+    // </TouchableWithoutFeedback>
   );
 }
 

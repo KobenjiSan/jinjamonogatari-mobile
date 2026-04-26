@@ -31,7 +31,7 @@ import {
 } from "../../shared/theme/useTheme";
 
 const TOP_PADDING =
-  Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
+  Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : Platform.OS === "web" ? 16 : 44;
 
 const { width } = Dimensions.get("window");
 const H_PADDING = Math.min(24, width * 0.05);

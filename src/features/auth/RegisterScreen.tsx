@@ -32,9 +32,13 @@ export default function RegisterScreen() {
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function onBack() {
-    router.back();
-  }
+  const onBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/(tabs)/profile"); 
+    }
+  };
 
   async function onRegister() {
     if (loading) return;
@@ -49,7 +53,7 @@ export default function RegisterScreen() {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+    // <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={[g.fill, styles.root, { backgroundColor: theme.colors.bgApp }]}>
         <KeyboardAvoidingView
           style={g.fill}
@@ -224,7 +228,7 @@ export default function RegisterScreen() {
           </ScrollView>
         </KeyboardAvoidingView>
       </View>
-    </TouchableWithoutFeedback>
+    // </TouchableWithoutFeedback>
   );
 }
 

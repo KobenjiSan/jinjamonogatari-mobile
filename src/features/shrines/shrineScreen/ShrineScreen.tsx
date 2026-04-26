@@ -5,7 +5,7 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, useWindowDimensions, Platform } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -32,43 +32,37 @@ export default function ShrineScreen({ slug }: Props) {
   const insets = useSafeAreaInsets();
 
   const [containerH, setContainerH] = useState(0);
-  const [heroH, setHeroH] = useState(0);
-  const [introH, setIntroH] = useState(0);
+  const [headerH, setHeaderH] = useState(0);
+
+  const { height: windowH } = useWindowDimensions();
+  const screenH = Platform.OS === "web" ? windowH : containerH;
 
   const onContainerLayout = useCallback((e: any) => {
     setContainerH(Math.round(e.nativeEvent.layout.height));
   }, []);
 
-  const onHeroLayout = useCallback((e: any) => {
-    setHeroH(Math.round(e.nativeEvent.layout.height));
-  }, []);
-
-  const onIntroLayout = useCallback((e: any) => {
-    setIntroH(Math.round(e.nativeEvent.layout.height));
-  }, []);
+  const onHeaderLayout = useCallback((e: any) => {
+  setHeaderH(Math.round(e.nativeEvent.layout.height));
+}, []);
 
   const snapPoints = useMemo(() => {
-    if (containerH === 0 || heroH === 0 || introH === 0) return ["45%", "99%"];
+  if (screenH === 0 || headerH === 0) {
+    return ["45%", "99%"];
+  }
 
-    const aboveH = insets.top + 8 + heroH + introH;
-    let collapsed = Math.round(containerH - aboveH);
+  const collapsed = Math.round(screenH - headerH);
+  const expanded = Math.round(screenH);
 
-    collapsed = Math.max(
-      120,
-      Math.min(collapsed, Math.round(containerH * 0.85)),
-    );
-
-    const expanded = Math.round(containerH * 0.99);
-    return [collapsed, expanded];
-  }, [containerH, heroH, introH, insets.top]);
+  return [collapsed, expanded];
+}, [screenH, headerH]);
 
   const sheetRef = useRef<BottomSheet>(null);
 
   useEffect(() => {
-    if (containerH && heroH && introH) {
-      sheetRef.current?.snapToIndex(0);
-    }
-  }, [containerH, heroH, introH]);
+  if (screenH && headerH) {
+    sheetRef.current?.snapToIndex(0);
+  }
+}, [screenH, headerH]);
 
   const [activeTab, setActiveTab] = useState<Tab>("Info");
   const [openedKamiOnce, setOpenedKamiOnce] = useState(false);
@@ -84,7 +78,6 @@ export default function ShrineScreen({ slug }: Props) {
       setOpenedHistoryOnce(true);
     }
 
-    // NEW
     if (activeTab === "Folklore" && !openedFolkloreOnce) {
       setOpenedFolkloreOnce(true);
     }
@@ -163,8 +156,7 @@ export default function ShrineScreen({ slug }: Props) {
       <ShrineHeader
         shrine={shrine}
         insetsTop={insets.top}
-        onHeroLayout={onHeroLayout}
-        onIntroLayout={onIntroLayout}
+        onHeaderLayout={onHeaderLayout}
       />
 
       <ShrineSheet

@@ -4,27 +4,22 @@ import { FontAwesome } from "@expo/vector-icons";
 import { usePressScale } from "../gestures/usePressScale";
 import { useBookmarkState } from "../hooks/useBookmarkState";
 import { useCollectionIdsStore } from "../../features/collection/api/collectionIds.store";
+import { useAuth } from "../../core/auth/AuthProvider";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 type Props = {
   shrineId: number;
-
   downTo?: number;
   size?: number;
-
   color?: string;
   savedColor?: string;
-
   containerStyle?: StyleProp<ViewStyle>;
   hitSlop?: number | { top: number; bottom: number; left: number; right: number };
-
   onError?: (err: unknown) => void;
   disabled?: boolean;
-
   // If ids haven't loaded yet, show outline (or solid) instead of flashing wrong state
   showUnknownAsOutline?: boolean;
-
   // disable presses until ids are loaded (prevents weirdness on cold start)
   disableUntilLoaded?: boolean;
 };
@@ -43,6 +38,7 @@ export default function BookmarkButton({
   disableUntilLoaded = true,
 }: Props) {
   const { scale, handlers } = usePressScale(downTo);
+  const { user } = useAuth();
 
   // Global ids store status so we can treat "not loaded yet" as unknown
   const { status: idsStatus } = useCollectionIdsStore();
@@ -68,7 +64,7 @@ export default function BookmarkButton({
 
   const iconColor = saved ? (savedColor ?? color) : color;
 
-  const isDisabled =
+  const isDisabled = !user
     disabled ||
     hookDisabled ||
     isSaving ||
