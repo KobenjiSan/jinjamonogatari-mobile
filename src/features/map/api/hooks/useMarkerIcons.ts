@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import { useEffect, useState } from "react";
 import { Asset } from "expo-asset";
 import { File } from "expo-file-system";
@@ -14,6 +15,10 @@ async function toDataUri(moduleId: number): Promise<string> {
 
   if (!asset.localUri) {
     throw new Error("Asset failed to load (no localUri)");
+  }
+
+  if (Platform.OS === "web") {
+    return asset.localUri;
   }
 
   // Convert to base64

@@ -23,6 +23,8 @@ import SearchBar from "../../../shared/components/SearchBar";
 import { spacing } from "../../../shared/styles/tokens";
 import { useTheme } from "../../../shared/theme/useTheme";
 
+import MapViewWeb from "../components/mapView/MapViewWeb";
+
 const TOP_PADDING =
   Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : 44;
 
@@ -33,7 +35,7 @@ if (!MAPTILER_KEY) throw new Error("Missing EXPO_PUBLIC_MAPTILER_KEY");
 const mapTilerKey: string = MAPTILER_KEY;
 
 const LIGHT_STYLE_ID = "019c2031-d766-7298-bdc2-c88076ef2f99";
-const DARK_STYLE_ID = "dataviz-dark"; 
+const DARK_STYLE_ID = "dataviz-dark";
 
 function mapTilerStyleUrl(styleId: string) {
   return `https://api.maptiler.com/maps/${styleId}/style.json`;
@@ -61,7 +63,10 @@ export default function MapScreen() {
   const [isOpen, setIsOpen] = useState(false);
 
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
-  const { preview: selectedShrine } = useShrinePreview(selectedSlug, userLocation);
+  const { preview: selectedShrine } = useShrinePreview(
+    selectedSlug,
+    userLocation,
+  );
 
   // Anim values (must always run, no early returns above this)
   const slideY = useRef(new Animated.Value(80)).current;
@@ -161,12 +166,13 @@ export default function MapScreen() {
 
       setIsOpen(true);
     },
-    [slugById]
+    [slugById],
   );
 
   const closePopup = useCallback(() => {
     setIsOpen(false);
     setSelectedSlug(null);
+    setSelectedShrineId(null);
 
     sendToMap({ type: "CLEAR_SELECTED_SHRINE" });
   }, [sendToMap]);
@@ -179,10 +185,8 @@ export default function MapScreen() {
         if (msg.type === "MAP_READY") {
           setMapReady(true);
 
-          // Sync follow mode on ready (prevents desync after reloads)
           sendToMap({ type: followOn ? "FOLLOW_ON" : "FOLLOW_OFF" });
 
-          // Immediately show the dot if we already have a location
           const loc = lastLocRef.current;
           if (loc) {
             sendToMap({
@@ -202,7 +206,7 @@ export default function MapScreen() {
         console.log("WebView message parse failed:", err);
       }
     },
-    [openPopup, sendToMap, followOn]
+    [openPopup, sendToMap, followOn],
   );
 
   const toggleFollow = useCallback(() => {
@@ -233,7 +237,7 @@ export default function MapScreen() {
 
   return (
     <View style={styles.container}>
-      {html ? (
+      {/* {html ? (
         <WebView
           ref={webRef}
           originWhitelist={["*"]}
@@ -243,9 +247,17 @@ export default function MapScreen() {
           onMessage={onMessage}
         />
       ) : (
-        // Placeholder while marker icons load
         <View style={styles.container} />
-      )}
+      )} */}
+
+      <MapViewWeb
+        markers={markers}
+        markerIcons={markerIcons}
+        onMarkerPress={openPopup}
+        selectedShrineId={selectedShrineId}
+        userLocation={userLocation}
+        followOn={followOn}
+      />
 
       <View style={styles.searchOverlay} pointerEvents="box-none">
         <View style={styles.searchInner}>
