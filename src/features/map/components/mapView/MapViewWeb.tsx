@@ -19,21 +19,25 @@ type UserLocation = {
 };
 
 type MapViewWebProps = {
+  apiKey: string;
   markers: WebMapMarker[];
   markerIcons: MarkerIcons | null;
   onMarkerPress?: (shrineId: number) => void;
   selectedShrineId: number | null;
   userLocation: UserLocation | null;
   followOn: boolean;
+  mapStyleUrl: string;
 };
 
 export default function MapViewWeb({
+  apiKey,
   markers,
   markerIcons,
   onMarkerPress,
   selectedShrineId,
   userLocation,
   followOn,
+  mapStyleUrl,
 }: MapViewWebProps) {
   const [mapReady, setMapReady] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -53,7 +57,7 @@ export default function MapViewWeb({
     // render map
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: `https://api.maptiler.com/maps/019c2031-d766-7298-bdc2-c88076ef2f99/style.json?key=${process.env.EXPO_PUBLIC_MAPTILER_KEY}`,
+      style: `${mapStyleUrl}?key=${apiKey}`,
       center: [135.7681, 35.0116],
       zoom: 17,
       interactive: true,
@@ -139,7 +143,7 @@ export default function MapViewWeb({
       userMarkerRef.current = null;
       setMapReady(false);
     };
-  }, [markers, markerIcons, onMarkerPress]);
+  }, [markers, markerIcons, onMarkerPress, mapStyleUrl]);
 
   useEffect(() => {
     if (!markerIcons) return;

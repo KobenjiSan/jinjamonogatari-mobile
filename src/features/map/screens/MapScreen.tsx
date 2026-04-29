@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -86,10 +86,11 @@ export default function MapScreen() {
     webRef.current?.postMessage(JSON.stringify(msg));
   }, []);
 
-  const styleUrl =
-    theme.mode === "dark"
-      ? mapTilerStyleUrl(DARK_STYLE_ID)
-      : mapTilerStyleUrl(LIGHT_STYLE_ID);
+const styleUrl = useMemo(() => {
+  return theme.mode === "dark"
+    ? mapTilerStyleUrl(DARK_STYLE_ID)
+    : mapTilerStyleUrl(LIGHT_STYLE_ID);
+}, [theme.mode]);
 
   // IMPORTANT:
   // Build HTML WITHOUT userLocation so WebView does NOT reload on GPS updates.
@@ -251,12 +252,14 @@ export default function MapScreen() {
       )} */}
 
       <MapViewWeb
+        apiKey={mapTilerKey}
         markers={markers}
         markerIcons={markerIcons}
         onMarkerPress={openPopup}
         selectedShrineId={selectedShrineId}
         userLocation={userLocation}
         followOn={followOn}
+        mapStyleUrl={styleUrl}
       />
 
       <View style={styles.searchOverlay} pointerEvents="box-none">

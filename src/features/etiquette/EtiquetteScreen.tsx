@@ -23,7 +23,11 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useTheme } from "../../shared/theme/useTheme";
 
 const TOP_PADDING =
-  Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) : Platform.OS === "web" ? 16 : 44;
+  Platform.OS === "android"
+    ? (StatusBar.currentHeight ?? 0)
+    : Platform.OS === "web"
+      ? 16
+      : 44;
 
 const LIST_BOTTOM_SPACER = Platform.OS === "web" ? 68 : 96;
 
@@ -61,7 +65,13 @@ export default function EtiquetteScreen() {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, styles.content, { backgroundColor: theme.colors.bgApp }]}>
+      <View
+        style={[
+          styles.container,
+          styles.content,
+          { backgroundColor: theme.colors.bgApp },
+        ]}
+      >
         <View style={styles.titleArea}>
           <Text
             style={[
@@ -81,7 +91,13 @@ export default function EtiquetteScreen() {
 
   if (error) {
     return (
-      <View style={[styles.container, styles.content, { backgroundColor: theme.colors.bgApp }]}>
+      <View
+        style={[
+          styles.container,
+          styles.content,
+          { backgroundColor: theme.colors.bgApp },
+        ]}
+      >
         <View style={styles.titleArea}>
           <Text
             style={[
@@ -104,7 +120,13 @@ export default function EtiquetteScreen() {
 
   if (isEmpty) {
     return (
-      <View style={[styles.container, styles.content, { backgroundColor: theme.colors.bgApp }]}>
+      <View
+        style={[
+          styles.container,
+          styles.content,
+          { backgroundColor: theme.colors.bgApp },
+        ]}
+      >
         <View style={styles.titleArea}>
           <Text
             style={[
@@ -184,7 +206,10 @@ export default function EtiquetteScreen() {
             style={[
               styles.accordion,
               g.cardNoPadding,
-              { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark },
+              {
+                backgroundColor: theme.colors.bgCard,
+                shadowColor: theme.colors.overlayDark,
+              },
             ]}
           >
             {guide.fullGuide.map((item: any) => (
@@ -201,10 +226,8 @@ export default function EtiquetteScreen() {
         animationType="fade"
         onRequestClose={closeModal}
       >
-        <Pressable style={styles.backdrop} onPress={closeModal} />
-
-        <View style={styles.centerWrap}>
-          <View
+        <Pressable style={styles.modalRoot} onPress={closeModal}>
+          <Pressable
             style={[
               styles.sheet,
               {
@@ -212,27 +235,26 @@ export default function EtiquetteScreen() {
                 shadowColor: theme.colors.overlayDark,
               },
             ]}
+            onPress={(e) => e.stopPropagation()}
           >
-            <View style={styles.closeRow}>
-              <Pressable
+            <Pressable
+              style={[
+                styles.closeButton,
+                { backgroundColor: theme.colors.overlayLight },
+              ]}
+              onPress={closeModal}
+              hitSlop={12}
+            >
+              <Text
                 style={[
-                  styles.closeButton,
-                  { backgroundColor: theme.colors.overlayLight },
+                  t.body,
+                  { color: theme.colors.textPrimary },
+                  styles.closeText,
                 ]}
-                onPress={closeModal}
-                hitSlop={12}
               >
-                <Text
-                  style={[
-                    t.body,
-                    { color: theme.colors.textPrimary },
-                    styles.closeText,
-                  ]}
-                >
-                  ✕
-                </Text>
-              </Pressable>
-            </View>
+                ✕
+              </Text>
+            </Pressable>
 
             <ScrollView
               contentContainerStyle={styles.sheetContent}
@@ -277,13 +299,15 @@ export default function EtiquetteScreen() {
 
               {/* Nudge */}
               <View style={styles.readMoreWrap}>
-                <Text style={[t.small, t.center, { color: theme.colors.textMuted }]}>
+                <Text
+                  style={[t.small, t.center, { color: theme.colors.textMuted }]}
+                >
                   Read more in Full Guide
                 </Text>
               </View>
             </ScrollView>
-          </View>
-        </View>
+          </Pressable>
+        </Pressable>
       </Modal>
 
       <View style={styles.footerSpacer} />
@@ -352,13 +376,9 @@ const styles = StyleSheet.create({
   },
 
   // ---- Modal styles ----
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.55)",
-  },
-
-  centerWrap: {
+  modalRoot: {
     flex: 1,
+    backgroundColor: "rgba(0,0,0,0.55)",
     justifyContent: "center",
     alignItems: "center",
     padding: spacing.lg,
@@ -374,13 +394,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 6,
-  },
-
-  closeRow: {
-    height: spacing.md,
-    alignItems: "flex-end",
-    justifyContent: "center",
-    paddingHorizontal: spacing.md,
   },
 
   closeButton: {

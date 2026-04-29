@@ -180,13 +180,14 @@ export default function ShrineGalleryTab({ slug, enabled }: Props) {
 
       <View style={{ height: 400 }} />
 
-      <Modal visible={selectedId != null} transparent animationType="fade">
-        {/* backdrop */}
-        <Pressable style={styles.backdrop} onPress={closeModal} />
-
-        {/* CENTER WRAPPER */}
-        <View style={styles.centerWrap}>
-          <View
+      <Modal
+        visible={selectedId != null}
+        transparent
+        animationType="fade"
+        onRequestClose={closeModal}
+      >
+        <Pressable style={styles.modalRoot} onPress={closeModal}>
+          <Pressable
             style={[
               styles.sheet,
               {
@@ -195,19 +196,18 @@ export default function ShrineGalleryTab({ slug, enabled }: Props) {
                 shadowColor: theme.colors.overlayDark,
               },
             ]}
+            onPress={(e) => e.stopPropagation()}
           >
             {/* X button */}
-            <View style={styles.closeRow}>
-              <Pressable
-                style={styles.closeButton}
-                onPress={closeModal}
-                hitSlop={12}
-              >
-                <Text style={[t.body, { color: theme.colors.textPrimary }]}>
-                  ✕
-                </Text>
-              </Pressable>
-            </View>
+            <Pressable
+              style={styles.closeButton}
+              onPress={closeModal}
+              hitSlop={12}
+            >
+              <Text style={[t.body, { color: theme.colors.textPrimary }]}>
+                ✕
+              </Text>
+            </Pressable>
 
             {/* content */}
             <ScrollView
@@ -282,8 +282,8 @@ export default function ShrineGalleryTab({ slug, enabled }: Props) {
               {/* Citations */}
               <CitationBlock citations={selectedImageCitation} />
             </ScrollView>
-          </View>
-        </View>
+          </Pressable>
+        </Pressable>
       </Modal>
     </View>
   );
@@ -295,13 +295,9 @@ const styles = StyleSheet.create({
   columns: { flexDirection: "row", gap: spacing.md },
   col: { flex: 1, gap: spacing.md },
 
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.55)",
-  },
-
-  centerWrap: {
+  modalRoot: {
     flex: 1,
+    backgroundColor: "rgba(0,0,0,0.55)",
     justifyContent: "center",
     alignItems: "center",
     padding: spacing.lg,
@@ -317,19 +313,15 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
 
-  closeRow: {
-    height: 28,
-    alignItems: "flex-end",
-    justifyContent: "center",
-    paddingHorizontal: spacing.md,
-  },
-
   closeButton: {
     position: "absolute",
+    top: spacing.sm,
     right: spacing.sm,
     zIndex: 10,
     width: 28,
     height: 28,
+    backgroundColor: "rgba(143, 143, 143, 0.55)",
+    borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
   },

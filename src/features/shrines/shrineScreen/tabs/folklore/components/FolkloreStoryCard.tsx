@@ -73,7 +73,10 @@ export default function FolkloreStoryCard({
           style={[
             g.card,
             styles.card,
-            { backgroundColor: theme.colors.bgCard, shadowColor: theme.colors.overlayDark },
+            {
+              backgroundColor: theme.colors.bgCard,
+              shadowColor: theme.colors.overlayDark,
+            },
           ]}
         >
           <View style={styles.imgContainer}>
@@ -120,10 +123,8 @@ export default function FolkloreStoryCard({
         animationType="fade"
         onRequestClose={closeModal}
       >
-        <Pressable style={styles.backdrop} onPress={closeModal} />
-
-        <View style={styles.centerWrap}>
-          <View
+        <Pressable style={styles.modalRoot} onPress={closeModal}>
+          <Pressable
             style={[
               styles.sheet,
               {
@@ -132,27 +133,26 @@ export default function FolkloreStoryCard({
                 shadowColor: theme.colors.overlayDark,
               },
             ]}
+            onPress={(e) => e.stopPropagation()}
           >
-            <View style={styles.closeRow}>
-              <Pressable
+            <Pressable
+              style={[
+                styles.closeButton,
+                { backgroundColor: theme.colors.overlayLight },
+              ]}
+              onPress={closeModal}
+              hitSlop={12}
+            >
+              <Text
                 style={[
-                  styles.closeButton,
-                  { backgroundColor: theme.colors.overlayLight },
+                  t.body,
+                  styles.closeText,
+                  { color: theme.colors.textPrimary },
                 ]}
-                onPress={closeModal}
-                hitSlop={12}
               >
-                <Text
-                  style={[
-                    t.body,
-                    styles.closeText,
-                    { color: theme.colors.textPrimary },
-                  ]}
-                >
-                  ✕
-                </Text>
-              </Pressable>
-            </View>
+                ✕
+              </Text>
+            </Pressable>
 
             <ScrollView
               contentContainerStyle={styles.sheetContent}
@@ -179,8 +179,8 @@ export default function FolkloreStoryCard({
 
               <CitationBlock citations={mappedCitations} />
             </ScrollView>
-          </View>
-        </View>
+          </Pressable>
+        </Pressable>
       </Modal>
     </View>
   );
@@ -235,16 +235,12 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
 
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.55)",
-  },
-
-  centerWrap: {
+  modalRoot: {
     flex: 1,
+    backgroundColor: "rgba(0,0,0,0.55)",
     justifyContent: "center",
     alignItems: "center",
-    padding: spacing.lg,
+    padding: spacing.xl,
   },
 
   sheet: {

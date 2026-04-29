@@ -114,14 +114,12 @@ export default function EditProfileModal({
     >
       <Pressable
         style={[
-          styles.backdrop,
+          styles.modalRoot,
           { backgroundColor: theme.colors.overlayDark },
         ]}
         onPress={close}
-      />
-
-      <View style={styles.centerWrap}>
-        <View
+      >
+        <Pressable
           style={[
             styles.sheet,
             {
@@ -130,6 +128,7 @@ export default function EditProfileModal({
               shadowColor: theme.colors.overlayDark,
             },
           ]}
+          onPress={(e) => e.stopPropagation()}
         >
           {/* Header */}
           <View style={styles.headerRow}>
@@ -166,10 +165,12 @@ export default function EditProfileModal({
           </View>
 
           <KeyboardAvoidingView
+            style={styles.keyboardWrap}
             behavior={Platform.OS === "ios" ? "padding" : undefined}
             keyboardVerticalOffset={Platform.OS === "ios" ? 24 : 0}
           >
             <ScrollView
+              style={styles.scroll}
               contentContainerStyle={styles.content}
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator
@@ -230,7 +231,9 @@ export default function EditProfileModal({
                 onChangeText={setPhone}
                 editable={!saving}
                 keyboardType={
-                  Platform.OS === "ios" ? "numbers-and-punctuation" : "phone-pad"
+                  Platform.OS === "ios"
+                    ? "numbers-and-punctuation"
+                    : "phone-pad"
                 }
                 returnKeyType="done"
                 theme={theme}
@@ -264,8 +267,8 @@ export default function EditProfileModal({
               <View style={{ height: spacing.sm }} />
             </ScrollView>
           </KeyboardAvoidingView>
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }
@@ -293,7 +296,9 @@ function LabeledInput(props: {
 
   return (
     <View style={styles.fieldBlock}>
-      <Text style={[t.small, styles.label, { color: theme.colors.textPrimary }]}>
+      <Text
+        style={[t.small, styles.label, { color: theme.colors.textPrimary }]}
+      >
         {label}
       </Text>
       <TextInput
@@ -319,12 +324,18 @@ function LabeledInput(props: {
   );
 }
 
-function LabeledReadOnlyField(props: { label: string; value: string; theme: any }) {
+function LabeledReadOnlyField(props: {
+  label: string;
+  value: string;
+  theme: any;
+}) {
   const { label, value, theme } = props;
 
   return (
     <View style={styles.fieldBlock}>
-      <Text style={[t.small, styles.label, { color: theme.colors.textPrimary }]}>
+      <Text
+        style={[t.small, styles.label, { color: theme.colors.textPrimary }]}
+      >
         {label}
       </Text>
       <View
@@ -349,11 +360,7 @@ function LabeledReadOnlyField(props: { label: string; value: string; theme: any 
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-  },
-
-  centerWrap: {
+  modalRoot: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -383,6 +390,14 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontFamily: font.title,
   },
+
+  keyboardWrap: {
+  flexShrink: 1,
+},
+
+scroll: {
+  flexShrink: 1,
+},
 
   closeButton: {
     position: "absolute",

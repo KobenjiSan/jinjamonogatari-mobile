@@ -59,10 +59,8 @@ export default function ThemeSelectModal({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <Pressable style={styles.backdrop} onPress={onClose} />
-
-      <View style={styles.centerWrap}>
-        <View
+      <Pressable style={styles.modalRoot} onPress={onClose}>
+        <Pressable
           style={[
             styles.sheet,
             {
@@ -71,123 +69,131 @@ export default function ThemeSelectModal({
               shadowColor: theme.colors.overlayDark,
             },
           ]}
+          onPress={(e) => e.stopPropagation()}
         >
-          {/* Close */}
-          <View style={styles.closeRow}>
-            <Pressable
-              style={[
-                styles.closeButton,
-                { backgroundColor: theme.colors.overlayLight },
-              ]}
-              onPress={onClose}
-              hitSlop={12}
+          <View
+            style={[
+              styles.sheet,
+              {
+                maxHeight: winH * 0.75,
+                backgroundColor: theme.colors.bgCard,
+                shadowColor: theme.colors.overlayDark,
+              },
+            ]}
+          >
+            {/* Close */}
+            <View style={styles.closeRow}>
+              <Pressable
+                style={[
+                  styles.closeButton,
+                  { backgroundColor: theme.colors.overlayLight },
+                ]}
+                onPress={onClose}
+                hitSlop={12}
+              >
+                <Text
+                  style={[
+                    t.body,
+                    styles.closeText,
+                    { color: theme.colors.textPrimary },
+                  ]}
+                >
+                  ✕
+                </Text>
+              </Pressable>
+            </View>
+
+            <ScrollView
+              contentContainerStyle={styles.sheetContent}
+              showsVerticalScrollIndicator
             >
               <Text
                 style={[
-                  t.body,
-                  styles.closeText,
-                  { color: theme.colors.textPrimary },
+                  t.title,
+                  { fontFamily: font.title, color: theme.colors.textPrimary },
                 ]}
               >
-                ✕
+                Theme
               </Text>
-            </Pressable>
-          </View>
 
-          <ScrollView
-            contentContainerStyle={styles.sheetContent}
-            showsVerticalScrollIndicator
-          >
-            <Text
-              style={[
-                t.title,
-                { fontFamily: font.title, color: theme.colors.textPrimary },
-              ]}
-            >
-              Theme
-            </Text>
+              <Text
+                style={[
+                  t.body,
+                  { fontFamily: font.body, color: theme.colors.textSecondary },
+                ]}
+              >
+                Pick a look. You can change this anytime.
+              </Text>
 
-            <Text
-              style={[
-                t.body,
-                { fontFamily: font.body, color: theme.colors.textSecondary },
-              ]}
-            >
-              Pick a look. You can change this anytime.
-            </Text>
+              <View style={styles.list}>
+                {THEME_OPTIONS.map((opt) => {
+                  const selected = opt.key === activeTheme;
 
-            <View style={styles.list}>
-              {THEME_OPTIONS.map((opt) => {
-                const selected = opt.key === activeTheme;
+                  return (
+                    <Pressable
+                      key={opt.key}
+                      onPress={() => handlePick(opt.key)}
+                      style={[
+                        styles.row,
+                        { borderColor: theme.colors.border },
+                        selected && {
+                          borderColor: theme.colors.link,
+                        },
+                      ]}
+                    >
+                      <View style={styles.left}>
+                        <Text
+                          style={[
+                            t.body,
+                            {
+                              fontFamily: font.strong,
+                              color: theme.colors.textPrimary,
+                            },
+                          ]}
+                        >
+                          {opt.label}
+                        </Text>
+                        <Text
+                          style={[
+                            t.small,
+                            {
+                              fontFamily: font.body,
+                              color: theme.colors.textMuted,
+                              marginTop: 2,
+                            },
+                          ]}
+                        >
+                          {opt.description}
+                        </Text>
+                      </View>
 
-                return (
-                  <Pressable
-                    key={opt.key}
-                    onPress={() => handlePick(opt.key)}
-                    style={[
-                      styles.row,
-                      { borderColor: theme.colors.border },
-                      selected && {
-                        borderColor: theme.colors.link,
-                      },
-                    ]}
-                  >
-                    <View style={styles.left}>
-                      <Text
-                        style={[
-                          t.body,
-                          {
-                            fontFamily: font.strong,
-                            color: theme.colors.textPrimary,
-                          },
-                        ]}
-                      >
-                        {opt.label}
-                      </Text>
-                      <Text
-                        style={[
-                          t.small,
-                          {
-                            fontFamily: font.body,
-                            color: theme.colors.textMuted,
-                            marginTop: 2,
-                          },
-                        ]}
-                      >
-                        {opt.description}
-                      </Text>
-                    </View>
-
-                    {/* Selected dot */}
-                    <View style={styles.right}>
-                      {selected && (
-                        <View
+                      {/* Selected dot */}
+                      <View style={styles.right}>
+                        {selected && (
+                          <View
                             style={[
-                            styles.previewDot,
-                            { backgroundColor: theme.colors.buttonPrimaryBg },
+                              styles.previewDot,
+                              { backgroundColor: theme.colors.buttonPrimaryBg },
                             ]}
-                        />
-                      )}
-                    </View>
-                  </Pressable>
-                );
-              })}
-            </View>
-          </ScrollView>
-        </View>
-      </View>
+                          />
+                        )}
+                      </View>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </ScrollView>
+          </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.55)",
-  },
-
-  centerWrap: {
+  modalRoot: {
     flex: 1,
+    backgroundColor: "rgba(0,0,0,0.55)",
     justifyContent: "center",
     alignItems: "center",
     padding: spacing.lg,
