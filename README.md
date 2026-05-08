@@ -10,8 +10,8 @@ The mobile app is the public, read-focused client for JinjaMonogatari. It is bui
 
 Related repositories:
 
-API: https://github.com/KobenjiSan/jinjamonogatari-api
-CMS: https://github.com/KobenjiSan/jinjamonogatari-cms
+- API: https://github.com/KobenjiSan/jinjamonogatari-api
+- CMS: https://github.com/KobenjiSan/jinjamonogatari-cms
 
 ## 🧠 Problem & Motivation
 
