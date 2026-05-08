@@ -8,8 +8,10 @@ JinjaMonogatari Mobile is a React Native (Expo) application for discovering Shin
 
 The mobile app is the public, read-focused client for JinjaMonogatari. It is built around a single primary flow: discover → preview → deep dive, optimized for mobile scanning and quick navigation while preserving research transparency through consistent attribution patterns (citations and image source overlays).
 
-This repository contains **only the mobile application**. The backend API lives in a separate repository:
-- API: https://github.com/KobenjiSan/jinjamonogatari-api
+Related repositories:
+
+API: https://github.com/KobenjiSan/jinjamonogatari-api
+CMS: https://github.com/KobenjiSan/jinjamonogatari-cms
 
 ## 🧠 Problem & Motivation
 
